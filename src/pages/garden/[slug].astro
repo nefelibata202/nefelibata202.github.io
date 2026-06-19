@@ -1,0 +1,18 @@
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('garden');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<html lang="zh-CN">
+  <head><meta charset="utf-8" /><title>{entry.data.title} — 归来</title></head>
+  <body>
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </body>
+</html>
