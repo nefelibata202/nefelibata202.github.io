@@ -4,24 +4,23 @@ import PostLayout from '../../layouts/PostLayout.astro';
 import Backlinks from '../../components/Backlinks.astro';
 import { buildBacklinkIndex, toUrl, type DocLike } from '../../lib/links';
 
-const articles = await getCollection('articles', ({ data }) => !data.draft);
-const garden = await getCollection('garden');
-
-const docs: DocLike[] = [
-  ...articles.map((e) => ({ title: e.data.title, collection: 'articles' as const, slug: e.id, body: e.body ?? '' })),
-  ...garden.map((e) => ({ title: e.data.title, collection: 'garden' as const, slug: e.id, body: e.body ?? '' })),
-];
-const backlinkIndex = buildBacklinkIndex(docs);
-
 export async function getStaticPaths() {
-  const entries = await getCollection('garden');
-  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  const garden = await getCollection('garden');
+  const docs: DocLike[] = [
+    ...articles.map((e) => ({ title: e.data.title, collection: 'articles' as const, slug: e.id, body: e.body ?? '' })),
+    ...garden.map((e) => ({ title: e.data.title, collection: 'garden' as const, slug: e.id, body: e.body ?? '' })),
+  ];
+  const backlinkIndex = buildBacklinkIndex(docs);
+  return garden.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, backlinks: backlinkIndex.get(toUrl('garden', entry.id)) ?? [] },
+  }));
 }
 
-const { entry } = Astro.props;
+const { entry, backlinks } = Astro.props;
 const { Content } = await render(entry);
 const meta = `更新于 ${entry.data.updated.toISOString().slice(0, 10)}`;
-const backlinks = backlinkIndex.get(toUrl('garden', entry.id)) ?? [];
 ---
 <PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags}>
   <Content />
