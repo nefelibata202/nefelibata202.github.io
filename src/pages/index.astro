@@ -1,6 +1,26 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5)
+  .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date) }));
+
+const garden = (await getCollection('garden'))
+  .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf())
+  .slice(0, 5)
+  .map((e) => ({ url: `/garden/${e.id}`, title: e.data.title, meta: `更新于 ${fmt(e.data.updated)}` }));
 ---
-<BaseLayout title="归来">
+<BaseLayout title="归来" description="Evan 的个人写作博客与数字花园">
   <p class="lead">记录、思考、与归处。</p>
+
+  <h2>最近文章</h2>
+  <PostList items={articles} />
+
+  <h2>花园近况</h2>
+  <PostList items={garden} />
 </BaseLayout>

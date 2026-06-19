@@ -1,0 +1,13 @@
+---
+interface Item { url: string; title: string; meta: string; }
+interface Props { items: Item[]; }
+const { items } = Astro.props;
+---
+<ul class="post-list">
+  {items.map((it) => (
+    <li>
+      <a href={it.url}>{it.title}</a>
+      <div class="meta">{it.meta}</div>
+    </li>
+  ))}
+</ul>
