@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadFavorites } from '../lib/favorites';
+import raw from '../data/favorites.json';
+
+const favorites = loadFavorites(raw);
+const stars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+const books = favorites.filter((f) => f.type === 'book');
+const movies = favorites.filter((f) => f.type === 'movie');
+---
+<BaseLayout title="收藏 · 归来" description="读过的书与看过的影视">
+  <h1>收藏</h1>
+
+  <h2>书籍</h2>
+  <ul class="post-list">
+    {books.map((b) => (
+      <li>
+        <strong>{b.title}</strong> <span class="meta">— {b.creator} · {stars(b.rating)} · {b.date}</span>
+        {b.note && <div class="meta">{b.note}</div>}
+      </li>
+    ))}
+  </ul>
+
+  <h2>影视</h2>
+  <ul class="post-list">
+    {movies.map((m) => (
+      <li>
+        <strong>{m.title}</strong> <span class="meta">— {m.creator} · {stars(m.rating)} · {m.date}</span>
+        {m.note && <div class="meta">{m.note}</div>}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
