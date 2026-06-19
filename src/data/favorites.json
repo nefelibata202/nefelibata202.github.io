@@ -1,0 +1,5 @@
+[
+  { "type": "book", "title": "瓦尔登湖", "creator": "梭罗", "rating": 5, "date": "2026-05", "note": "独处与简朴的力量。" },
+  { "type": "book", "title": "深度工作", "creator": "Cal Newport", "rating": 4, "date": "2026-04", "note": "" },
+  { "type": "movie", "title": "心灵奇旅", "creator": "彼特·道格特", "rating": 5, "date": "2026-03", "note": "关于活着本身。" }
+]
