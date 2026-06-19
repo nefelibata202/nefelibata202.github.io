@@ -1,7 +1,7 @@
 import fg from 'fast-glob';
 import matter from 'gray-matter';
 import { readFileSync } from 'node:fs';
-import { basename } from 'node:path';
+import { relative } from 'node:path';
 import { buildLinkMap, toUrl, type Collection, type LinkTarget } from './links';
 
 export function buildLinkMapFromDisk(): Map<string, LinkTarget> {
@@ -12,7 +12,8 @@ export function buildLinkMapFromDisk(): Map<string, LinkTarget> {
       const { data } = matter(readFileSync(file, 'utf-8'));
       const title = data.title as string | undefined;
       if (!title) continue;
-      const slug = basename(file, '.md');
+      if (data.draft === true) continue;
+      const slug = relative(`src/content/${collection}`, file).replace(/\.md$/, '');
       targets.push({ title, collection, slug, url: toUrl(collection, slug) });
     }
   }

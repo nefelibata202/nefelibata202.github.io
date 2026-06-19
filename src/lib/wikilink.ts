@@ -17,7 +17,7 @@ export function remarkWikiLink(linkMap: Map<string, LinkTarget>) {
           const start = match.index ?? 0;
           if (start > last) out.push({ type: 'text', value: node.value.slice(last, start) });
 
-          const [rawTitle, rawDisplay] = match[1].split('|');
+          const [rawTitle, rawDisplay] = match[1].split('|', 2);
           const title = rawTitle.trim();
           const display = (rawDisplay ?? rawTitle).trim();
           const target = linkMap.get(title);
