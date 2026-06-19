@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const items = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date) }));
+---
+<BaseLayout title="文章 · 归来">
+  <h1>文章</h1>
+  <PostList items={items} />
+</BaseLayout>

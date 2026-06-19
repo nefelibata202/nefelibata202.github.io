@@ -1,0 +1,18 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagChip from '../components/TagChip.astro';
+
+interface Props { title: string; meta: string; tags: string[]; }
+const { title, meta, tags } = Astro.props;
+---
+<BaseLayout title={title}>
+  <article>
+    <h1>{title}</h1>
+    <div class="meta">
+      {meta}
+      {tags.length > 0 && <span> · {tags.map((t) => <TagChip tag={t} />)}</span>}
+    </div>
+    <slot />
+  </article>
+  <slot name="after" />
+</BaseLayout>
