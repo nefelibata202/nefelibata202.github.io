@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+
+export async function getStaticPaths() {
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  const garden = await getCollection('garden');
+
+  const items = [
+    ...articles.map((e) => ({ tags: e.data.tags, url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), sort: e.data.date.valueOf() })),
+    ...garden.map((e) => ({ tags: e.data.tags, url: `/garden/${e.id}`, title: e.data.title, meta: `更新于 ${fmt(e.data.updated)}`, sort: e.data.updated.valueOf() })),
+  ];
+
+  const tags = [...new Set(items.flatMap((i) => i.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      items: items
+        .filter((i) => i.tags.includes(tag))
+        .sort((a, b) => b.sort - a.sort)
+        .map(({ url, title, meta }) => ({ url, title, meta })),
+    },
+  }));
+}
+
+const { tag, items } = Astro.props;
+---
+<BaseLayout title={`#${tag} · 归来`}>
+  <h1>#{tag}</h1>
+  <PostList items={items} />
+</BaseLayout>
