@@ -211,6 +211,10 @@ main > h1 {
 .col-stats .n { font-family: var(--disp); font-weight: 700; font-size: 1.45rem; line-height: .9; }
 .col-stats .l { font-family: var(--mono); font-weight: 700; font-size: .56rem; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; margin-top: 5px; }
 .col-tags { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 20px; flex: 1 1 auto; align-content: center; }
+.col-social { display: flex; align-items: center; gap: 9px; padding: 11px 18px; border-left: 3px solid var(--line); flex: 0 0 auto; }
+.col-social a { width: 36px; height: 36px; border: 2.5px solid var(--line); display: flex; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); transition: .12s; }
+.col-social a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
+.col-social svg { width: 17px; height: 17px; }
 
 /* ---------- 首页区块标题（标题 + 右侧说明链接） ---------- */
 .section { display: flex; align-items: baseline; gap: 14px; margin: 46px 0 18px; }
@@ -344,6 +348,7 @@ main > h1 {
   .colophon { flex-wrap: wrap; }
   .col-who, .col-stats { border-right: none; border-bottom: 3px solid var(--line); width: 100%; }
   .col-stats div { flex: 1; }
+  .col-social { border-left: none; border-top: 3px solid var(--line); width: 100%; justify-content: flex-start; }
   .ledger .row { grid-template-columns: 1fr auto; gap: 6px 14px; }
   .ledger .date { order: 1; }
   .ledger .kind { order: 2; justify-self: end; padding: 1px 8px; }
