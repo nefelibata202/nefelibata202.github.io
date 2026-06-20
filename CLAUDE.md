@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-「归来」(Guī Lái) — Evan's personal **writing blog + digital garden**. Astro 5 static site, zero client-side JS, design "方案 A" (minimal, black/white, single ~680px reading column). Deployed to GitHub Pages at https://nefelibata202.github.io/ (repo `nefelibata202/nefelibata202.github.io`).
+「归来」(Guī Lái) — Evan's personal **writing blog + digital garden**. Astro 5 static site, zero client-side JS. Visual direction is **neo-brutalist** (Direction "D2"): ink + warm paper + 马金黄 marigold accent + 朱砂 seal red, hard 3px borders with offset hard shadows, a typographic 归来 masthead with a seal stamp, full-bleed ticker/footer. Display face is 得意黑 Smiley Sans (`cn-fontsource-smiley-sans-oblique-regular`), with Archivo for Latin and JetBrains Mono for data; body is system sans. The home is a wide two-column showcase (hero + feed + sidebar); article/garden detail pages stay a single ~680px reading column. Dark mode follows `prefers-color-scheme` (no toggle, to honor the no-JS constraint). Deployed to GitHub Pages at https://nefelibata202.github.io/ (repo `nefelibata202/nefelibata202.github.io`).
 
 ## Commands
 
