@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "test": "vitest run"
   },
@@ -24,6 +24,7 @@
     "cn-fontsource-lxgw-wen-kai-gb-screen": "^1.0.6",
     "fast-glob": "^3.3.0",
     "gray-matter": "^4.0.3",
+    "pagefind": "^1.5.2",
     "remark": "^15.0.0",
     "typescript": "^5.5.0",
     "unist-util-visit": "^5.0.0",

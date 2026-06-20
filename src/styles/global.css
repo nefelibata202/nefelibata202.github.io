@@ -30,8 +30,9 @@
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
+/* 暗色令牌（跟随系统；但可被 <html data-theme> 手动覆盖） */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #14120C;
     --paper: #1E1B13;
     --soft: #211E15;
@@ -43,6 +44,18 @@
     --seal: #E45A4D;
     --on-gold: #16140F;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #14120C;
+  --paper: #1E1B13;
+  --soft: #211E15;
+  --ink: #F2ECDC;
+  --line: #F2ECDC;
+  --hair: rgba(242,236,220,.16);
+  --muted: #9A9382;
+  --gold: #F2B312;
+  --seal: #E45A4D;
+  --on-gold: #16140F;
 }
 
 * { box-sizing: border-box; }
@@ -97,6 +110,38 @@ a { color: var(--ink); text-decoration: none; }
 }
 .site-nav a:hover { background: var(--gold); color: var(--on-gold); border-color: var(--ink); }
 .site-nav a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* 导航工具：亮暗切换 + 搜索（图标按钮） */
+.nav-tools { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; padding-left: 8px; border-left: 2.5px solid var(--hair); }
+.nav-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 32px; padding: 0;
+  background: none; color: var(--ink); border: 2.5px solid transparent; cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.nav-btn:hover { background: var(--gold); color: var(--on-gold); border-color: var(--ink); }
+.nav-btn svg { width: 18px; height: 18px; }
+/* 太阳/月亮按当前解析主题切换显示 */
+.theme-toggle .ico-sun { display: none; }
+.theme-toggle .ico-moon { display: inline-flex; }
+:root[data-theme="dark"] .theme-toggle .ico-sun { display: inline-flex; }
+:root[data-theme="dark"] .theme-toggle .ico-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .ico-sun { display: inline-flex; }
+  :root:not([data-theme="light"]) .theme-toggle .ico-moon { display: none; }
+}
+
+/* Pagefind 搜索 UI · 贴合粗野主义令牌 */
+.pf {
+  --pagefind-ui-primary: var(--ink);
+  --pagefind-ui-text: var(--ink);
+  --pagefind-ui-background: var(--paper);
+  --pagefind-ui-border: var(--line);
+  --pagefind-ui-tag: var(--soft);
+  --pagefind-ui-border-width: 2.5px;
+  --pagefind-ui-border-radius: 0;
+  --pagefind-ui-font: var(--zh);
+  margin-top: 18px;
+}
 
 /* ---------- 首页 HERO 报头 ---------- */
 .hero { padding: 30px 0 26px; }

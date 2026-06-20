@@ -6,7 +6,7 @@ interface Props { title: string; meta: string; tags: string[]; kind?: 'article' 
 const { title, meta, tags, kind = 'article' } = Astro.props;
 ---
 <BaseLayout title={title}>
-  <article class:list={['post', kind === 'note' ? 'is-note' : 'is-article']}>
+  <article class:list={['post', kind === 'note' ? 'is-note' : 'is-article']} data-pagefind-body>
     <h1>{title}</h1>
     <div class="meta">
       {meta}

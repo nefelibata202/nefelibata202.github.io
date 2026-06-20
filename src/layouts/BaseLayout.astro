@@ -24,6 +24,10 @@ const { title, description, wide = false } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      // 首帧前套用已保存主题，避免闪烁；未设置则跟随系统
+      try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
   </head>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="搜索 · 归来" description="搜索归来的文章与花园笔记">
+  <h1>搜索</h1>
+  <p class="lead">在全部文章与花园笔记里查找。</p>
+
+  <div id="search" class="pf"></div>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof PagefindUI === 'undefined') return;
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        translations: {
+          placeholder: '搜索归来…',
+          clear_search: '清除',
+          load_more: '加载更多',
+          search_label: '搜索本站',
+          zero_results: '没找到与「[SEARCH_TERM]」相关的内容',
+          many_results: '共 [COUNT] 条结果',
+          one_result: '共 [COUNT] 条结果',
+          alt_search: '没有「[SEARCH_TERM]」的结果，改为显示「[DIFFERENT_TERM]」',
+          search_suggestion: '没有「[SEARCH_TERM]」的结果，试试别的词',
+        },
+      });
+    });
+  </script>
+</BaseLayout>
