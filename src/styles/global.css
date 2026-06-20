@@ -1,33 +1,210 @@
+/* ============================================================
+   归来 — 文人衬线 · 霞鹜文楷
+   设计令牌 + 排版 + 暗色模式（零客户端 JS，跟随系统 prefers-color-scheme）
+   ============================================================ */
+
 :root {
-  --ink: #1a1a1a;
-  --muted: #777;
-  --line: #e8e8e8;
-  --bg: #ffffff;
+  --paper: #faf8f3;        /* 暖米白 */
+  --paper-2: #f3efe6;      /* 卡片 / 分区底 */
+  --ink: #22201c;          /* 近墨 */
+  --ink-soft: #4a463f;     /* 次级正文 */
+  --muted: #8a8275;        /* 暖灰 */
+  --line: #e4ddcf;         /* 暖分割线 */
+  --seal: #9e3b32;         /* 朱印红，强调色（克制使用） */
+  --seal-soft: rgba(158, 59, 50, .35);
+  --code-bg: #f1ece0;
+
   --maxw: 680px;
+  --serif-cn: "LXGW WenKai GB Screen";
+  --serif-en: "Newsreader", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font: var(--serif-en), var(--serif-cn), serif;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1a1815;
+    --paper-2: #232019;
+    --ink: #e9e3d7;
+    --ink-soft: #bcb4a4;
+    --muted: #8f877a;
+    --line: #34302a;
+    --seal: #cf7a6e;
+    --seal-soft: rgba(207, 122, 110, .4);
+    --code-bg: #221f19;
+  }
+}
+
 * { box-sizing: border-box; }
-html { font-size: 17px; }
+
+html {
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   margin: 0;
+  background: var(--paper);
   color: var(--ink);
-  background: var(--bg);
-  font-family: -apple-system, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
-  line-height: 1.75;
+  font-family: var(--font);
+  line-height: 1.9;
+  text-wrap: pretty;
+  transition: background .3s, color .3s;
 }
-.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
 a { color: var(--ink); text-underline-offset: 3px; }
-.site-header { display: flex; justify-content: space-between; align-items: baseline; padding: 28px 0; }
-.site-header .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: -.5px; text-decoration: none; }
-.site-nav a { margin-left: 16px; font-size: .9rem; color: var(--muted); text-decoration: none; }
+
+/* ---------- 页眉 / 导航 ---------- */
+.site-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 36px 0 30px;
+}
+.site-header .logo {
+  font-family: var(--font); font-size: 1.45rem; font-weight: 700;
+  letter-spacing: .04em; text-decoration: none; color: var(--ink);
+}
+.site-header .logo .dot { color: var(--seal); }
+.site-nav a {
+  margin-left: 22px; font-size: .92rem; color: var(--muted);
+  text-decoration: none; position: relative;
+}
 .site-nav a:hover { color: var(--ink); }
-.site-footer { margin: 64px 0 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -3px;
+  height: 1px; background: var(--seal); transition: right .25s ease;
+}
+.site-nav a:hover::after { right: 0; }
+
+/* ---------- 通用标题 ---------- */
+h1 { font-family: var(--font); font-weight: 600; line-height: 1.3; letter-spacing: .01em; }
+
+/* 区块小标题（首页「最近文章」、收藏「书籍」等） */
+main > h2,
+.section-title {
+  font-family: var(--font); font-size: .82rem; font-weight: 600;
+  letter-spacing: .22em; color: var(--muted);
+  margin: 54px 0 8px; display: flex; align-items: center; gap: 14px;
+}
+main > h2::after,
+.section-title::after {
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+
+.lead { color: var(--ink-soft); font-style: italic; font-size: 1.12rem; line-height: 1.7; margin: 8px 0 6px; }
+.lead-zh { font-style: normal; }
+
+/* ---------- 列表（文章 / 花园 / 收藏 / 标签） ---------- */
 .post-list { list-style: none; padding: 0; margin: 0; }
-.post-list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
-.post-list .meta { color: var(--muted); font-size: .82rem; }
-.tag { display: inline-block; font-size: .72rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 7px; margin-right: 5px; text-decoration: none; }
-.tag:hover { border-color: var(--muted); }
-article h1 { line-height: 1.3; margin-bottom: .2em; }
-article .meta { color: var(--muted); font-size: .85rem; margin-bottom: 2em; }
-.backlinks { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
-.backlinks h2 { font-size: .95rem; color: var(--muted); }
-.lead { color: var(--muted); }
+.post-list li { padding: 20px 0; border-bottom: 1px solid var(--line); }
+.post-list li:last-child { border-bottom: none; }
+.post-list a {
+  font-family: var(--font); font-size: 1.16rem; font-weight: 500;
+  text-decoration: none; color: var(--ink);
+}
+.post-list a:hover { color: var(--seal); }
+.post-list .summary { color: var(--ink-soft); font-size: .98rem; margin-top: 4px; line-height: 1.7; }
+.post-list .meta { color: var(--muted); font-size: .8rem; margin-top: 7px; font-family: var(--serif-en); letter-spacing: .03em; }
+.post-list strong { font-weight: 600; }
+
+/* ---------- 标签 ---------- */
+.tag {
+  display: inline-block; font-size: .74rem; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 2px; padding: 1px 9px;
+  margin-right: 5px; text-decoration: none; font-family: var(--font);
+}
+.tag:hover { border-color: var(--seal); color: var(--seal); }
+
+/* ---------- 文章 / 花园正文（.post 由 PostLayout 赋予） ---------- */
+.post { padding-top: 8px; }
+.post h1 { font-size: 2.15rem; font-weight: 700; margin: 0 0 .35em; }
+.post > .meta {
+  color: var(--muted); font-size: .85rem; font-family: var(--serif-en);
+  letter-spacing: .03em; margin-bottom: 2.4em; padding-bottom: 1.6em;
+  border-bottom: 1px solid var(--line);
+}
+.post > .meta .tag { margin-left: 6px; margin-right: 0; }
+
+.post.is-article > p:first-of-type::first-letter {
+  font-family: var(--serif-cn), var(--serif-en);
+  font-size: 3.1rem; line-height: .9; font-weight: 700;
+  float: left; margin: .08em .12em 0 0; color: var(--seal);
+}
+
+.post p { margin: 0 0 1.5em; }
+.post h2 {
+  font-family: var(--font); font-size: 1.4rem; font-weight: 600;
+  color: var(--ink); margin: 2.2em 0 .6em;
+  display: block; letter-spacing: normal;
+}
+.post h2::after { content: none; }
+.post h2::before { content: "§"; color: var(--seal); font-weight: 400; margin-right: .4em; opacity: .6; }
+.post h3 { font-family: var(--font); font-size: 1.12rem; font-weight: 600; color: var(--ink-soft); margin: 1.8em 0 .5em; }
+
+.post blockquote {
+  margin: 1.8em 0; padding: .2em 0 .2em 1.4em;
+  border-left: 2px solid var(--seal); color: var(--ink-soft); font-style: italic;
+}
+.post ul, .post ol { padding-left: 1.3em; margin: 0 0 1.5em; }
+.post li { margin: .4em 0; }
+.post li::marker { color: var(--seal); }
+
+.post hr { border: none; border-top: 1px solid var(--line); margin: 2.6em 0; text-align: center; overflow: visible; }
+.post hr::after { content: "❋"; color: var(--muted); position: relative; top: -.75em; background: var(--paper); padding: 0 .8em; font-size: .85rem; }
+
+/* 行内 + 块级代码 */
+.post :not(pre) > code {
+  font-family: var(--mono); font-size: .85em;
+  background: var(--code-bg); padding: .1em .4em; border-radius: 3px;
+}
+.post pre {
+  background: var(--code-bg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 16px 18px; overflow: auto; margin: 1.6em 0; line-height: 1.6;
+}
+.post pre code { font-family: var(--mono); font-size: .82rem; background: none; padding: 0; color: var(--ink); }
+
+/* 图片 */
+.post img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; margin: 2em auto; }
+
+/* wikilink — 朱红虚线下划线（remark 插件注入 .wikilink class） */
+.post a.wikilink, a.wikilink {
+  color: var(--seal); text-decoration: none;
+  border-bottom: 1px dashed var(--seal-soft);
+}
+.post a.wikilink:hover, a.wikilink:hover { border-bottom-style: solid; border-bottom-color: var(--seal); }
+
+/* ---------- 反向链接卡片 ---------- */
+.backlinks { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); }
+.backlinks h2 {
+  font-family: var(--font); font-size: .82rem; font-weight: 600;
+  letter-spacing: .22em; color: var(--muted); margin: 0 0 14px;
+  display: block;
+}
+.backlinks h2::after, .backlinks h2::before { content: none; }
+.backlinks ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.backlinks li { padding: 0; border: none; }
+.bl-card {
+  display: block; padding: 14px 16px; background: var(--paper-2);
+  border: 1px solid var(--line); border-radius: 4px; text-decoration: none;
+  font-family: var(--font); font-weight: 500; color: var(--ink);
+  transition: border-color .18s, transform .18s;
+}
+.bl-card::before { content: "← "; color: var(--seal); }
+.bl-card:hover { border-color: var(--seal); transform: translateX(2px); }
+
+/* ---------- 页脚 ---------- */
+.site-footer {
+  margin: 80px 0 48px; padding-top: 22px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: .82rem; font-family: var(--serif-en); letter-spacing: .03em;
+}
+.site-footer a { color: var(--muted); }
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 560px) {
+  html { font-size: 16.5px; }
+  .post h1 { font-size: 1.75rem; }
+  .site-header { flex-direction: column; gap: 14px; align-items: flex-start; }
+  .site-nav a { margin: 0 18px 0 0; }
+}

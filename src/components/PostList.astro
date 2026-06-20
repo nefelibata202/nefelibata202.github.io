@@ -1,5 +1,5 @@
 ---
-interface Item { url: string; title: string; meta: string; }
+interface Item { url: string; title: string; meta: string; summary?: string; }
 interface Props { items: Item[]; }
 const { items } = Astro.props;
 ---
@@ -7,6 +7,7 @@ const { items } = Astro.props;
   {items.map((it) => (
     <li>
       <a href={it.url}>{it.title}</a>
+      {it.summary && <div class="summary">{it.summary}</div>}
       <div class="meta">{it.meta}</div>
     </li>
   ))}

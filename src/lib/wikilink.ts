@@ -26,6 +26,7 @@ export function remarkWikiLink(linkMap: Map<string, LinkTarget>) {
             out.push({
               type: 'link',
               url: target.url,
+              data: { hProperties: { className: ['wikilink'] } },
               children: [{ type: 'text', value: display }],
             });
           } else {

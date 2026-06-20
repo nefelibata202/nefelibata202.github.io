@@ -2,11 +2,11 @@
 import BaseLayout from './BaseLayout.astro';
 import TagChip from '../components/TagChip.astro';
 
-interface Props { title: string; meta: string; tags: string[]; }
-const { title, meta, tags } = Astro.props;
+interface Props { title: string; meta: string; tags: string[]; kind?: 'article' | 'note'; }
+const { title, meta, tags, kind = 'article' } = Astro.props;
 ---
 <BaseLayout title={title}>
-  <article>
+  <article class:list={['post', kind === 'note' ? 'is-note' : 'is-article']}>
     <h1>{title}</h1>
     <div class="meta">
       {meta}

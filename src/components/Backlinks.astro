@@ -5,10 +5,10 @@ const { items } = Astro.props;
 ---
 {items.length > 0 && (
   <section class="backlinks">
-    <h2>链接到此页的笔记</h2>
-    <ul class="post-list">
+    <h2>反 向 链 接</h2>
+    <ul>
       {items.map((it) => (
-        <li><a href={it.url}>{it.title}</a></li>
+        <li><a class="bl-card" href={it.url}>{it.title}</a></li>
       ))}
     </ul>
   </section>

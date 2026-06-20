@@ -2,7 +2,9 @@
   "name": "guilai-website",
   "type": "module",
   "version": "0.1.0",
-  "engines": { "node": ">=20.3" },
+  "engines": {
+    "node": ">=20.3"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,16 +12,19 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "astro": "^5.0.0",
     "@astrojs/rss": "^4.0.0",
-    "@astrojs/sitemap": "^3.0.0"
+    "@astrojs/sitemap": "^3.0.0",
+    "astro": "^5.0.0"
   },
   "devDependencies": {
-    "vitest": "^2.0.0",
-    "typescript": "^5.5.0",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/newsreader": "^5.2.10",
+    "cn-fontsource-lxgw-wen-kai-gb-screen": "^1.0.6",
     "fast-glob": "^3.3.0",
     "gray-matter": "^4.0.3",
     "remark": "^15.0.0",
-    "unist-util-visit": "^5.0.0"
+    "typescript": "^5.5.0",
+    "unist-util-visit": "^5.0.0",
+    "vitest": "^2.0.0"
   }
 }

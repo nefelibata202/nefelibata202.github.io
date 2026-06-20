@@ -22,7 +22,7 @@ const { entry, backlinks } = Astro.props;
 const { Content } = await render(entry);
 const meta = `更新于 ${entry.data.updated.toISOString().slice(0, 10)}`;
 ---
-<PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags}>
+<PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags} kind="note">
   <Content />
   <Backlinks slot="after" items={backlinks} />
 </PostLayout>
