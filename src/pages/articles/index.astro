@@ -1,17 +1,88 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostList from '../../components/PostList.astro';
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 const readTime = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
+
 const items = (await getCollection('articles', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), summary: e.data.summary, tag: e.data.tags[0], read: readTime(e.body) }));
+  .map((e) => ({
+    url: `/articles/${e.id}`,
+    title: e.data.title,
+    date: fmt(e.data.date),
+    summary: e.data.summary,
+    tags: e.data.tags,
+    read: readTime(e.body),
+  }));
+
+const allTags = [...new Set(items.flatMap((i) => i.tags))];
+const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
 ---
 <BaseLayout title="文章 · 归来" wide>
   <h1>文章</h1>
-  <div class="article-grid">
-    <PostList items={items} />
+
+  <div class="filters">
+    <div class="frow" role="group" aria-label="按标签筛选">
+      <span class="flabel">标签</span>
+      <button type="button" class="fchip is-on" data-tag="*">全部</button>
+      {allTags.map((t) => <button type="button" class="fchip" data-tag={t}>{t}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按时间排序">
+      <span class="flabel">时间</span>
+      <button type="button" class="fchip is-on" data-sort="new">最新优先</button>
+      <button type="button" class="fchip" data-sort="old">最早优先</button>
+    </div>
   </div>
+
+  <div class="article-grid">
+    <ul class="feed">
+      {items.map((it, i) => (
+        <li class="card" data-tags={it.tags.join(',')} data-date={it.date}>
+          <a class="card-link" href={it.url}>
+            <div class="card-head">
+              {it.tags[0] && <span class={catClass[i % 3]}>{it.tags[0]}</span>}
+              <span class="read">{it.read}</span>
+            </div>
+            <h3 class="card-title">{it.title}</h3>
+            {it.summary && <p class="card-sum">{it.summary}</p>}
+            <div class="card-meta">{it.date}</div>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="noresult" hidden>没有符合条件的文章。</p>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const grid = document.querySelector('.article-grid .feed');
+      if (!grid) return;
+      const cards = Array.from(grid.children);
+      const empty = document.querySelector('.article-grid .noresult');
+      let tag = '*', sort = 'new';
+      const apply = () => {
+        cards.forEach((c) => {
+          const tags = (c.dataset.tags || '').split(',');
+          c.hidden = !(tag === '*' || tags.includes(tag));
+        });
+        const vis = cards.filter((c) => !c.hidden);
+        vis.sort((a, b) => sort === 'new'
+          ? b.dataset.date.localeCompare(a.dataset.date)
+          : a.dataset.date.localeCompare(b.dataset.date));
+        vis.forEach((c) => grid.appendChild(c));
+        if (empty) empty.hidden = vis.length > 0;
+      };
+      document.querySelectorAll('[data-tag]').forEach((btn) => btn.addEventListener('click', () => {
+        tag = btn.dataset.tag;
+        document.querySelectorAll('[data-tag]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        apply();
+      }));
+      document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
+        sort = btn.dataset.sort;
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        apply();
+      }));
+    })();
+  </script>
 </BaseLayout>

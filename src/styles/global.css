@@ -201,8 +201,21 @@ main > h1 {
 
 /* ---------- 文章流：粗野卡片 ---------- */
 .feed { display: flex; flex-direction: column; gap: 22px; margin: 0; padding: 0; list-style: none; }
-/* 文章列表页：两栏并列（仅作用于 .article-grid 包裹的 PostList） */
-.article-grid .feed { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
+/* 文章列表页：两栏并列 + 等高卡片（多余文字省略号截断） */
+.article-grid .feed { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; grid-auto-rows: 1fr; }
+.article-grid .card-link { display: flex; flex-direction: column; height: 100%; }
+.article-grid .card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.article-grid .card-sum { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.article-grid .card-meta { margin-top: auto; }
+
+/* 文章列表页：顶部筛选（标签 + 时间） */
+.filters { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 26px; }
+.frow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.frow .flabel { font-family: var(--mono); font-weight: 700; font-size: .66rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); width: 40px; flex: 0 0 auto; }
+.fchip { font-family: var(--mono); font-weight: 700; font-size: .76rem; color: var(--ink); background: var(--paper); border: 2.5px solid var(--line); padding: 5px 12px; cursor: pointer; transition: background .12s, color .12s, transform .12s, box-shadow .12s; }
+.fchip:hover { background: var(--gold); color: var(--on-gold); transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--line); }
+.fchip.is-on { background: var(--ink); color: var(--bg); }
+.noresult { font-family: var(--mono); color: var(--muted); font-size: .9rem; padding: 18px 0; }
 .card {
   border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow);
   transition: transform .14s, box-shadow .14s;
@@ -402,7 +415,7 @@ main > h1 {
 @media (max-width: 760px) {
   .home-grid { grid-template-columns: 1fr; gap: 0; margin-top: 30px; }
   .home-side { position: static; margin-top: 30px; }
-  .article-grid .feed { grid-template-columns: 1fr; }
+  .article-grid .feed { grid-template-columns: 1fr; grid-auto-rows: auto; }
   .ledger .row { grid-template-columns: 1fr auto; gap: 6px 14px; }
   .ledger .date { order: 1; }
   .ledger .kind { order: 2; justify-self: end; padding: 1px 8px; }
