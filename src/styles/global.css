@@ -195,26 +195,33 @@ main > h1 {
 .more a:hover { background: var(--ink); color: var(--bg); transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--line); }
 .more a:active { transform: translate(3px,3px); box-shadow: var(--shadow-sm); }
 
-/* ---------- 首页档案条（满宽 · 取代侧栏，消除右栏空洞） ---------- */
-.colophon { display: flex; align-items: stretch; border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow); margin: 18px 0 12px; }
-.col-who { display: flex; align-items: center; gap: 13px; padding: 14px 20px; border-right: 3px solid var(--line); flex: 0 0 auto; }
-.col-who .avatar {
-  width: 46px; height: 46px; border: 3px solid var(--ink); background: var(--gold); color: var(--on-gold);
-  font-family: var(--disp); font-weight: 700; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+/* ---------- 首页两栏：左＝文章流，右＝归来名片 ---------- */
+.home-grid { display: grid; grid-template-columns: 1fr 304px; gap: 34px; align-items: start; margin-top: 38px; padding-bottom: 30px; }
+.home-side { position: sticky; top: 22px; }
+.home-main .section { margin-top: 0; }
+
+/* 归来名片（Evan · 文章/花园/标签 · 常用标签 · 社交） */
+.profile { border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow); }
+.profile .head { background: var(--gold); border-bottom: 3px solid var(--line); padding: 16px 18px; display: flex; align-items: center; gap: 13px; }
+.profile .avatar {
+  width: 48px; height: 48px; border: 3px solid var(--ink); background: var(--paper); color: var(--ink);
+  font-family: var(--disp); font-weight: 700; font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
   box-shadow: 2px 2px 0 var(--ink); flex: 0 0 auto;
 }
-.col-who .name { font-family: var(--disp); font-weight: 700; font-size: 1.2rem; line-height: 1; }
-.col-who .role { font-family: var(--mono); font-weight: 700; font-size: .6rem; text-transform: uppercase; color: var(--muted); letter-spacing: .06em; margin-top: 5px; }
-.col-stats { display: flex; border-right: 3px solid var(--line); flex: 0 0 auto; }
-.col-stats div { padding: 12px 20px; border-right: 1px solid var(--hair); text-align: center; display: flex; flex-direction: column; justify-content: center; }
-.col-stats div:last-child { border-right: none; }
-.col-stats .n { font-family: var(--disp); font-weight: 700; font-size: 1.45rem; line-height: .9; }
-.col-stats .l { font-family: var(--mono); font-weight: 700; font-size: .56rem; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; margin-top: 5px; }
-.col-tags { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 20px; flex: 1 1 auto; align-content: center; }
-.col-social { display: flex; align-items: center; gap: 9px; padding: 11px 18px; border-left: 3px solid var(--line); flex: 0 0 auto; }
-.col-social a { width: 36px; height: 36px; border: 2.5px solid var(--line); display: flex; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); transition: .12s; }
-.col-social a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
-.col-social svg { width: 17px; height: 17px; }
+.profile .name { font-family: var(--disp); font-weight: 700; font-size: 1.3rem; line-height: 1; color: var(--on-gold); }
+.profile .role { font-family: var(--mono); font-weight: 700; font-size: .62rem; text-transform: uppercase; color: var(--on-gold); letter-spacing: .06em; margin-top: 5px; opacity: .85; }
+.profile .body { padding: 16px 18px; }
+.profile .stats3 { display: flex; border: 2.5px solid var(--line); margin-bottom: 16px; }
+.profile .stats3 div { flex: 1; text-align: center; padding: 10px 0; border-right: 2.5px solid var(--line); }
+.profile .stats3 div:last-child { border-right: none; }
+.profile .stats3 .n { font-family: var(--disp); font-weight: 700; font-size: 1.4rem; display: block; line-height: 1; }
+.profile .stats3 .l { font-family: var(--mono); font-weight: 700; font-size: .58rem; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
+.profile .ptitle { font-family: var(--mono); font-weight: 700; font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; }
+.profile .ptags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.profile .psocial { display: flex; gap: 9px; }
+.profile .psocial a { width: 38px; height: 38px; border: 2.5px solid var(--line); display: flex; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); transition: .12s; }
+.profile .psocial a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
+.profile .psocial svg { width: 17px; height: 17px; }
 
 /* ---------- 首页区块标题（标题 + 右侧说明链接） ---------- */
 .section { display: flex; align-items: baseline; gap: 14px; margin: 46px 0 18px; }
@@ -345,10 +352,8 @@ main > h1 {
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 760px) {
-  .colophon { flex-wrap: wrap; }
-  .col-who, .col-stats { border-right: none; border-bottom: 3px solid var(--line); width: 100%; }
-  .col-stats div { flex: 1; }
-  .col-social { border-left: none; border-top: 3px solid var(--line); width: 100%; justify-content: flex-start; }
+  .home-grid { grid-template-columns: 1fr; gap: 0; margin-top: 30px; }
+  .home-side { position: static; margin-top: 30px; }
   .ledger .row { grid-template-columns: 1fr auto; gap: 6px 14px; }
   .ledger .date { order: 1; }
   .ledger .kind { order: 2; justify-self: end; padding: 1px 8px; }
