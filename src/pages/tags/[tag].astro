@@ -5,12 +5,13 @@ import PostList from '../../components/PostList.astro';
 
 export async function getStaticPaths() {
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const readTime = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
   const articles = await getCollection('articles', ({ data }) => !data.draft);
   const garden = await getCollection('garden');
 
   const items = [
-    ...articles.map((e) => ({ tags: e.data.tags, url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), sort: e.data.date.valueOf() })),
-    ...garden.map((e) => ({ tags: e.data.tags, url: `/garden/${e.id}`, title: e.data.title, meta: `更新于 ${fmt(e.data.updated)}`, sort: e.data.updated.valueOf() })),
+    ...articles.map((e) => ({ tags: e.data.tags, url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), read: readTime(e.body), sort: e.data.date.valueOf() })),
+    ...garden.map((e) => ({ tags: e.data.tags, url: `/garden/${e.id}`, title: e.data.title, meta: `更新于 ${fmt(e.data.updated)}`, read: readTime(e.body), sort: e.data.updated.valueOf() })),
   ];
 
   const tags = [...new Set(items.flatMap((i) => i.tags))];
@@ -21,7 +22,7 @@ export async function getStaticPaths() {
       items: items
         .filter((i) => i.tags.includes(tag))
         .sort((a, b) => b.sort - a.sort)
-        .map(({ url, title, meta }) => ({ url, title, meta })),
+        .map(({ url, title, meta, read }) => ({ url, title, meta, read, tag })),
     },
   }));
 }

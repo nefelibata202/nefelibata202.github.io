@@ -1,11 +1,19 @@
 ---
+const path = Astro.url.pathname;
+const active = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+const links = [
+  { href: '/articles', label: '文章' },
+  { href: '/garden', label: '花园' },
+  { href: '/collections', label: '收藏' },
+  { href: '/about', label: '关于' },
+];
 ---
 <header class="site-header">
   <a href="/" class="logo">归来<span class="dot">.</span></a>
-  <nav class="site-nav">
-    <a href="/articles">文章</a>
-    <a href="/garden">花园</a>
-    <a href="/collections">收藏</a>
-    <a href="/about">关于</a>
+  <nav class="site-nav" aria-label="主导航">
+    {links.map((l) => (
+      <a href={l.href} aria-current={active(l.href) ? 'page' : undefined}>{l.label}</a>
+    ))}
   </nav>
 </header>

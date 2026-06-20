@@ -1,14 +1,23 @@
 ---
-interface Item { url: string; title: string; meta: string; summary?: string; }
+interface Item { url: string; title: string; meta: string; summary?: string; tag?: string; read?: string; }
 interface Props { items: Item[]; }
 const { items } = Astro.props;
+const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
 ---
-<ul class="post-list">
-  {items.map((it) => (
-    <li>
-      <a href={it.url}>{it.title}</a>
-      {it.summary && <div class="summary">{it.summary}</div>}
-      <div class="meta">{it.meta}</div>
+<ul class="feed">
+  {items.map((it, i) => (
+    <li class="card">
+      <a class="card-link" href={it.url}>
+        {(it.tag || it.read) && (
+          <div class="card-head">
+            {it.tag && <span class={catClass[i % 3]}>{it.tag}</span>}
+            {it.read && <span class="read">{it.read}</span>}
+          </div>
+        )}
+        <h3 class="card-title">{it.title}</h3>
+        {it.summary && <p class="card-sum">{it.summary}</p>}
+        <div class="card-meta">{it.meta}</div>
+      </a>
     </li>
   ))}
 </ul>

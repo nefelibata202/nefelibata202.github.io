@@ -14,7 +14,9 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.0",
     "@astrojs/sitemap": "^3.0.0",
-    "astro": "^5.0.0"
+    "@fontsource/archivo": "^5.2.8",
+    "astro": "^5.0.0",
+    "cn-fontsource-smiley-sans-oblique-regular": "^1.0.1"
   },
   "devDependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",

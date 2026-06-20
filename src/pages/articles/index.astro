@@ -4,9 +4,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostList from '../../components/PostList.astro';
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const readTime = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
 const items = (await getCollection('articles', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), summary: e.data.summary }));
+  .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), summary: e.data.summary, tag: e.data.tags[0], read: readTime(e.body) }));
 ---
 <BaseLayout title="文章 · 归来">
   <h1>文章</h1>
