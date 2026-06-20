@@ -10,7 +10,13 @@ const links = [
 ];
 ---
 <header class="site-header">
-  <a href="/" class="logo">归来<span class="dot">.</span></a>
+  <a href="/" class="brand" aria-label="归来 首页">
+    <svg class="hui" viewBox="0 0 56 56" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M18 6 H50 V50 H6 V18 H38 V38 H22 V28 H28" />
+      <rect x="25" y="25" width="6" height="6" stroke="none" style="fill:var(--seal)" />
+    </svg>
+    <span class="gl">GUILAI</span>
+  </a>
   <nav class="site-nav" aria-label="主导航">
     {links.map((l) => (
       <a href={l.href} aria-current={active(l.href) ? 'page' : undefined}>{l.label}</a>
