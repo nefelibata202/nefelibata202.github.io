@@ -59,6 +59,7 @@ body {
   font-family: var(--zh);
   line-height: 1.7;
   text-wrap: pretty;
+  overflow-x: clip; /* 容纳 full-bleed 元素，又不破坏 sticky */
 }
 
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
@@ -68,8 +69,8 @@ a { color: var(--ink); text-decoration: none; }
 
 :focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 
-/* full-bleed 工具（在居中 wrap 内打破宽度） */
-.bleed { position: relative; left: 50%; right: 50%; width: 100vw; margin-left: -50vw; margin-right: -50vw; }
+/* full-bleed 工具（在居中 wrap 内打破宽度）。用 calc 边距，避免被后续 margin 简写覆盖 */
+.bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
 
 /* ---------- 页眉 / 导航 ---------- */
 .site-header {
@@ -130,7 +131,8 @@ a { color: var(--ink); text-decoration: none; }
 /* ---------- 跑马灯（首页，full-bleed） ---------- */
 .ticker {
   border-top: 3px solid var(--line); border-bottom: 3px solid var(--line);
-  background: var(--gold); color: var(--on-gold); overflow: hidden; white-space: nowrap; margin: 8px 0 34px;
+  background: var(--gold); color: var(--on-gold); overflow: hidden; white-space: nowrap;
+  margin-top: 8px; margin-bottom: 34px; /* 仅设上下，左右留给 .bleed */
 }
 .ticker .track {
   display: inline-block; padding: 8px 0; animation: ticker-scroll 32s linear infinite;
