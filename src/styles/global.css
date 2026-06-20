@@ -25,6 +25,7 @@
 
   --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --zh:   "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  --read: "LXGW WenKai GB Screen", "Songti SC", "Noto Serif SC", serif; /* 文章正文阅读字 */
   --lat:  "Archivo", "Smiley Sans Oblique", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 }
@@ -263,7 +264,7 @@ main > h1 {
 .post > .meta .tag { margin-left: 6px; }
 .post.is-article > .meta { border-left: 8px solid var(--seal); }
 
-.post { font-family: var(--zh); line-height: 1.85; }
+.post { font-family: var(--read); font-size: 1.06rem; line-height: 1.95; letter-spacing: .01em; }
 .post p { margin: 0 0 1.4em; }
 .post.is-article > p:first-of-type::first-letter {
   font-family: var(--disp); font-size: 3rem; line-height: .82; font-weight: 700;
