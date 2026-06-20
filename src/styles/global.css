@@ -201,6 +201,8 @@ main > h1 {
 
 /* ---------- 文章流：粗野卡片 ---------- */
 .feed { display: flex; flex-direction: column; gap: 22px; margin: 0; padding: 0; list-style: none; }
+/* 文章列表页：两栏并列（仅作用于 .article-grid 包裹的 PostList） */
+.article-grid .feed { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
 .card {
   border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow);
   transition: transform .14s, box-shadow .14s;
@@ -400,6 +402,7 @@ main > h1 {
 @media (max-width: 760px) {
   .home-grid { grid-template-columns: 1fr; gap: 0; margin-top: 30px; }
   .home-side { position: static; margin-top: 30px; }
+  .article-grid .feed { grid-template-columns: 1fr; }
   .ledger .row { grid-template-columns: 1fr auto; gap: 6px 14px; }
   .ledger .date { order: 1; }
   .ledger .kind { order: 2; justify-self: end; padding: 1px 8px; }

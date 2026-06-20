@@ -9,7 +9,9 @@ const items = (await getCollection('articles', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .map((e) => ({ url: `/articles/${e.id}`, title: e.data.title, meta: fmt(e.data.date), summary: e.data.summary, tag: e.data.tags[0], read: readTime(e.body) }));
 ---
-<BaseLayout title="文章 · 归来">
+<BaseLayout title="文章 · 归来" wide>
   <h1>文章</h1>
-  <PostList items={items} />
+  <div class="article-grid">
+    <PostList items={items} />
+  </div>
 </BaseLayout>
