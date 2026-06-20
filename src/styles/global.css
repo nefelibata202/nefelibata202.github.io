@@ -330,15 +330,21 @@ main > h1 {
 }
 .tag:hover { background: var(--gold); color: var(--on-gold); transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--line); }
 
-/* ---------- 收藏页（书籍 / 影视） ---------- */
-.post-list { list-style: none; padding: 0; margin: 0 0 10px; }
-.post-list li {
-  border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow-sm);
-  padding: 14px 18px; margin-bottom: 14px;
+/* ---------- 书影页：筛选式媒体库 ---------- */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.media-card {
+  border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow);
+  padding: 18px 20px 18px; display: flex; flex-direction: column;
+  transition: transform .14s, box-shadow .14s;
 }
-.post-list strong { font-family: var(--disp); font-weight: 700; font-size: 1.1rem; }
-.post-list .meta { font-family: var(--mono); font-size: .76rem; color: var(--muted); letter-spacing: .02em; }
-.post-list li > .meta { display: block; margin-top: 6px; }
+.media-card:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+.mc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.stars { margin-left: auto; font-size: .94rem; letter-spacing: 1px; line-height: 1; white-space: nowrap; }
+.stars span { color: var(--hair); }
+.stars span.on { color: var(--gold); }
+.mc-title { font-family: var(--disp); font-weight: 700; font-size: 1.35rem; line-height: 1.2; margin: 0 0 6px; letter-spacing: .01em; }
+.mc-by { font-family: var(--mono); font-weight: 500; font-size: .76rem; color: var(--ink); letter-spacing: .02em; }
+.mc-note { font-family: var(--zh); font-size: .9rem; color: var(--muted); line-height: 1.6; margin: 12px 0 0; }
 
 /* ---------- 文章 / 花园正文 ---------- */
 .post { padding-top: 14px; max-width: 680px; }

@@ -4,30 +4,78 @@ import { loadFavorites } from '../lib/favorites';
 import raw from '../data/favorites.json';
 
 const favorites = loadFavorites(raw);
-const stars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
-const books = favorites.filter((f) => f.type === 'book');
-const movies = favorites.filter((f) => f.type === 'movie');
+// 默认按时间倒序（媒体筛选库的入库顺序）
+const items = [...favorites].sort((a, b) => b.date.localeCompare(a.date));
+const label = (t: string) => (t === 'book' ? '书籍' : '影视');
+const counts = {
+  all: items.length,
+  book: items.filter((f) => f.type === 'book').length,
+  movie: items.filter((f) => f.type === 'movie').length,
+};
 ---
-<BaseLayout title="收藏 · 归来" description="读过的书与看过的影视">
-  <h1>收藏</h1>
+<BaseLayout title="书影 · 归来" description="读过的书与看过的影视 · 一份筛选过的媒体库" wide>
+  <h1>书影</h1>
+  <p class="lead">读过的书、看过的影视——一份筛选过的媒体库，按类型与时间 / 评分查阅。</p>
 
-  <h2>书籍</h2>
-  <ul class="post-list">
-    {books.map((b) => (
-      <li>
-        <strong>{b.title}</strong> <span class="meta">— {b.creator} · {stars(b.rating)} · {b.date}</span>
-        {b.note && <div class="meta">{b.note}</div>}
-      </li>
-    ))}
-  </ul>
+  <div class="filters">
+    <div class="frow" role="group" aria-label="按类型筛选">
+      <span class="flabel">类型</span>
+      <button type="button" class="fchip is-on" data-type="*">全部 · {counts.all}</button>
+      <button type="button" class="fchip" data-type="book">书籍 · {counts.book}</button>
+      <button type="button" class="fchip" data-type="movie">影视 · {counts.movie}</button>
+    </div>
+    <div class="frow" role="group" aria-label="排序">
+      <span class="flabel">排序</span>
+      <button type="button" class="fchip is-on" data-sort="new">最新优先</button>
+      <button type="button" class="fchip" data-sort="rating">评分优先</button>
+    </div>
+  </div>
 
-  <h2>影视</h2>
-  <ul class="post-list">
-    {movies.map((m) => (
-      <li>
-        <strong>{m.title}</strong> <span class="meta">— {m.creator} · {stars(m.rating)} · {m.date}</span>
-        {m.note && <div class="meta">{m.note}</div>}
-      </li>
-    ))}
-  </ul>
+  <div class="media-lib">
+    <div class="media-grid">
+      {items.map((f) => (
+        <article class="media-card" data-type={f.type} data-date={f.date} data-rating={f.rating}>
+          <div class="mc-head">
+            <span class={f.type === 'book' ? 'cat' : 'cat cat--hot'}>{label(f.type)}</span>
+            <span class="stars" aria-label={`${f.rating} / 5`}>
+              {Array.from({ length: 5 }).map((_, i) => <span class={i < f.rating ? 'on' : undefined}>★</span>)}
+            </span>
+          </div>
+          <h3 class="mc-title">{f.title}</h3>
+          <div class="mc-by">{f.creator} · {f.date}</div>
+          {f.note && <p class="mc-note">{f.note}</p>}
+        </article>
+      ))}
+    </div>
+    <p class="noresult" hidden>这一类暂时还是空的。</p>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const grid = document.querySelector('.media-grid');
+      if (!grid) return;
+      const cards = Array.from(grid.children);
+      const empty = document.querySelector('.media-lib .noresult');
+      let type = '*', sort = 'new';
+      const apply = () => {
+        cards.forEach((c) => { c.hidden = !(type === '*' || c.dataset.type === type); });
+        const vis = cards.filter((c) => !c.hidden);
+        vis.sort((a, b) => sort === 'rating'
+          ? (b.dataset.rating - a.dataset.rating) || b.dataset.date.localeCompare(a.dataset.date)
+          : b.dataset.date.localeCompare(a.dataset.date));
+        vis.forEach((c) => grid.appendChild(c));
+        if (empty) empty.hidden = vis.length > 0;
+      };
+      document.querySelectorAll('[data-type]').forEach((btn) => btn.addEventListener('click', () => {
+        type = btn.dataset.type;
+        document.querySelectorAll('[data-type]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        apply();
+      }));
+      document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
+        sort = btn.dataset.sort;
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        apply();
+      }));
+    })();
+  </script>
 </BaseLayout>
