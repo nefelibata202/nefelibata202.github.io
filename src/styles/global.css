@@ -263,6 +263,7 @@ main > h1 {
 .profile .stats3 .l { font-family: var(--mono); font-weight: 700; font-size: .58rem; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
 .profile .ptitle { font-family: var(--mono); font-weight: 700; font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; }
 .profile .ptags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.profile .psep { border: none; border-top: 1px solid var(--hair); margin: 0 0 14px; }
 .profile .psocial { display: flex; gap: 9px; }
 .profile .psocial a { width: 38px; height: 38px; border: 2.5px solid var(--line); display: flex; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); transition: .12s; }
 .profile .psocial a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
