@@ -15,8 +15,10 @@ interface Props {
   title: string;
   description?: string;
   wide?: boolean;
+  /** woff2 URLs to preload (e.g. above-the-fold display-font subsets) */
+  preload?: string[];
 }
-const { title, description, wide = false } = Astro.props;
+const { title, description, wide = false, preload = [] } = Astro.props;
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -30,6 +32,9 @@ const { title, description, wide = false } = Astro.props;
     </script>
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {preload.map((href) => (
+      <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+    ))}
   </head>
   <body>
     <div class:list={['wrap', wide && 'wrap--wide']}>

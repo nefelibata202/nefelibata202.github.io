@@ -1,6 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+// 首屏 LCP 是「归来」展示字标题；预加载这两个字所在的字体子集，
+// 让最大文字尽早以得意黑渲染（归 U+5F52 / 来 U+6765 分属不同子集）。
+import subsetGui from 'cn-fontsource-smiley-sans-oblique-regular/L1_5e37_192.woff2?url';
+import subsetLai from 'cn-fontsource-smiley-sans-oblique-regular/L1_65b1_192.woff2?url';
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '·');
 // 中文阅读时长（约 350 字/分钟），结构编码真实信息
@@ -18,7 +22,7 @@ const rest = recent.slice(1);
 const allTags = [...new Set([...allArticles, ...allGarden].flatMap((e) => e.data.tags))];
 const stats = { articles: allArticles.length, garden: allGarden.length, tags: allTags.length };
 ---
-<BaseLayout title="归来" description="Evan 的个人写作博客与数字花园" wide>
+<BaseLayout title="归来" description="Evan 的个人写作博客与数字花园" wide preload={[subsetGui, subsetLai]}>
   <section class="hero">
     <p class="kicker">写作博客 · 数字花园</p>
     <h1>归<span class="ret">来</span></h1>
