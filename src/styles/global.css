@@ -302,6 +302,16 @@ main > h1 {
 .profile .psocial a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
 .profile .psocial svg { width: 17px; height: 17px; }
 
+/* ---------- 碎片时间提醒卡 ---------- */
+.fragments { border: 3px solid var(--line); background: var(--paper); box-shadow: var(--shadow); margin-top: 28px; }
+.fragments .frag-head { background: var(--gold); border-bottom: 3px solid var(--line); padding: 14px 18px; display: flex; align-items: center; gap: 8px; font-family: var(--disp); font-weight: 700; font-size: 1rem; color: var(--on-gold); }
+.fragments .frag-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; color: var(--ink); text-decoration: none; }
+.fragments .frag-item + .frag-item { border-top: 1px solid var(--hair); }
+.fragments a.frag-item { transition: .12s; }
+.fragments a.frag-item:hover { background: var(--soft); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--line); }
+.fragments .frag-ico { font-size: 1.2rem; flex: 0 0 auto; line-height: 1; }
+.fragments .frag-lbl { font-size: .9rem; line-height: 1.4; }
+
 /* ---------- 首页区块标题（标题 + 右侧说明链接） ---------- */
 .section { display: flex; align-items: baseline; gap: 14px; margin: 46px 0 18px; }
 .section h2 {

@@ -1,0 +1,8 @@
+[
+  { "emoji": "📺", "label": "哔哩哔哩看喜欢的 UP 主视频", "url": "https://www.bilibili.com" },
+  { "emoji": "✍️", "label": "归来网站文章浏览 & 知识库缺口汇总", "url": "https://nefelibata202.github.io" },
+  { "emoji": "🎬", "label": "豆瓣挖掘想看的影视、书籍资源", "url": "https://www.douban.com" },
+  { "emoji": "📖", "label": "微信读书阅读书籍" },
+  { "emoji": "📰", "label": "浏览高质量的信息源" },
+  { "emoji": "💬", "label": "ChatGPT 询问感兴趣的问题", "url": "https://chat.openai.com" }
+]
