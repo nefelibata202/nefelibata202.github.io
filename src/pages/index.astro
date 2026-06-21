@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 // 让最大文字尽早以得意黑渲染（归 U+5F52 / 来 U+6765 分属不同子集）。
 import subsetGui from 'cn-fontsource-smiley-sans-oblique-regular/L1_5e37_192.woff2?url';
 import subsetLai from 'cn-fontsource-smiley-sans-oblique-regular/L1_65b1_192.woff2?url';
+import fragments from '../data/fragments.json';
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '·');
 // 中文阅读时长（约 350 字/分钟），结构编码真实信息
@@ -84,6 +85,21 @@ const stats = { articles: allArticles.length, garden: allGarden.length, tags: al
           ))}
         </div>
       )}
+
+      <div class="fragments">
+        <div class="frag-head"><span>⚡</span> 碎片时间可以做的事</div>
+        {fragments.map((f) =>
+          f.url
+            ? <a class="frag-item" href={f.url} target="_blank" rel="noopener noreferrer">
+                <span class="frag-ico">{f.emoji}</span>
+                <span class="frag-lbl">{f.label}</span>
+              </a>
+            : <div class="frag-item">
+                <span class="frag-ico">{f.emoji}</span>
+                <span class="frag-lbl">{f.label}</span>
+              </div>
+        )}
+      </div>
     </div>
 
     <aside class="home-side">
