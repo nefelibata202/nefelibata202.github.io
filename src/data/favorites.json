@@ -203,7 +203,7 @@
     "score": 9.6,
     "year": "2006",
     "date": "2006-01-02",
-    "cover": null,
+    "cover": "/covers/武林外传.webp",
     "categories": [
       "古装",
       "喜剧",
@@ -234,7 +234,7 @@
     "score": 9.6,
     "year": "1957",
     "date": "1957-12-17",
-    "cover": null,
+    "cover": "/covers/控方证人.webp",
     "categories": [
       "剧情",
       "悬疑",
@@ -379,7 +379,7 @@
     "score": 9.4,
     "year": "2018",
     "date": "2018-03-01",
-    "cover": null,
+    "cover": "/covers/跨越边界的社区.jpg",
     "categories": [],
     "status": false
   },
@@ -498,7 +498,7 @@
     "score": 9.3,
     "year": "1991",
     "date": "1991-01-07",
-    "cover": null,
+    "cover": "/covers/东京爱情故事.webp",
     "categories": [
       "爱情"
     ],
@@ -597,7 +597,7 @@
     "score": 9.2,
     "year": "2016",
     "date": "2016-03-04",
-    "cover": null,
+    "cover": "/covers/疯狂动物城.webp",
     "categories": [
       "冒险",
       "动画",
@@ -638,7 +638,7 @@
     "score": 9.2,
     "year": "1994",
     "date": "1994-05-13",
-    "cover": null,
+    "cover": "/covers/饮食男女.webp",
     "categories": [
       "剧情",
       "家庭"
@@ -689,7 +689,7 @@
     "score": 9.1,
     "year": "2021",
     "date": "2021-04-17",
-    "cover": null,
+    "cover": "/covers/短剧开始啦.webp",
     "categories": [
       "喜剧",
       "日剧TV",
@@ -717,7 +717,7 @@
     "score": 9.1,
     "year": "2017",
     "date": "2017-11-22",
-    "cover": null,
+    "cover": "/covers/寻梦环游记.webp",
     "categories": [
       "动画",
       "喜剧",
@@ -783,7 +783,7 @@
     "score": 9,
     "year": "2023",
     "date": "2023-10-15",
-    "cover": null,
+    "cover": "/covers/万神殿第二季.webp",
     "categories": [
       "剧情",
       "动作",
@@ -901,7 +901,7 @@
     "score": 8.9,
     "year": "2024",
     "date": "2024-11-13",
-    "cover": null,
+    "cover": "/covers/好东西.webp",
     "categories": [
       "剧情",
       "爱情"
@@ -1132,7 +1132,7 @@
     "score": 8.7,
     "year": "1954",
     "date": "1954-08-01",
-    "cover": null,
+    "cover": "/covers/后窗.webp",
     "categories": [
       "悬疑",
       "惊悚"
@@ -1218,7 +1218,7 @@
     "score": 8.6,
     "year": "2013",
     "date": "2013-12-25",
-    "cover": null,
+    "cover": "/covers/白日梦想家.webp",
     "categories": [
       "冒险",
       "剧情",
@@ -1275,7 +1275,7 @@
     "score": 8.5,
     "year": "2023",
     "date": "2023-01-14",
-    "cover": null,
+    "cover": "/covers/狂飙.webp",
     "categories": [
       "剧情",
       "犯罪"
@@ -1311,7 +1311,7 @@
     "score": 8.5,
     "year": "2016",
     "date": "2016-08-26",
-    "cover": null,
+    "cover": "/covers/你的名字.webp",
     "categories": [
       "剧情",
       "动画",
@@ -1472,7 +1472,7 @@
     "score": 8.3,
     "year": "1980",
     "date": "1980-05-23",
-    "cover": null,
+    "cover": "/covers/闪灵.webp",
     "categories": [
       "恐怖"
     ],
@@ -1510,7 +1510,7 @@
     "score": 7.8,
     "year": "2025",
     "date": "2025-04-11",
-    "cover": null,
+    "cover": "/covers/Sable.jpg",
     "categories": [
       "流行"
     ],
