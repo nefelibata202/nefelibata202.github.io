@@ -246,6 +246,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         const totalPages = Math.max(1, Math.ceil(cards.filter((c) => visible(c)).length / PAGE_SIZE));
         if (state.page < totalPages - 1) { state.page++; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       });
+      apply();
     })();
   </script>
 </BaseLayout>
