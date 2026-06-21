@@ -518,7 +518,6 @@ const panels = await Promise.all(
   .guide-panels {
     flex: 0 0 0%;
     overflow: hidden;
-    border-left: 3px solid var(--ink);
     background: var(--paper);
     transition: flex-basis 0.35s ease-out;
     position: relative;
@@ -526,6 +525,7 @@ const panels = await Promise.all(
   .guide-container.panel-open .guide-panels {
     flex: 0 0 42%;
     overflow-y: auto;
+    border-left: 3px solid var(--ink);
   }
   .guide-panel {
     padding: 40px 28px 48px;
