@@ -9,8 +9,30 @@ const { items, page, activeTag = null } = Astro.props;
 const allTags = [...new Set(
   (await getCollection('articles', ({ data }) => !data.draft)).flatMap((e) => e.data.tags)
 )];
-const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
 const tagUrl = (t: string) => `/articles/tag/${t}/`;
+
+// 分类微图标（极抽象线条 motif，作卡片淡水印）：viewBox 0 0 48 48
+const ICON: Record<string, string> = {
+  beer: '<path d="M24 46V13"/><path d="M24 23c-6-1-10-6-11-13"/><path d="M24 23c6-1 10-6 11-13"/><path d="M24 33c-6-1-10-6-11-13"/><path d="M24 33c6-1 10-6 11-13"/>', // 麦穗
+  geo:  '<circle cx="19" cy="24" r="11"/><circle cx="31" cy="24" r="11"/>',                                                   // 几何交叉
+  mind: '<circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="13"/><circle cx="24" cy="24" r="20"/>',                     // 同心
+  net:  '<circle cx="13" cy="15" r="3"/><circle cx="35" cy="19" r="3"/><circle cx="22" cy="36" r="3"/><path d="M13 15l22 4M35 19 22 36M22 36 13 15"/>', // 节点网络
+  pen:  '<path d="M7 37C18 11 30 39 41 13"/>',                                                                                 // 笔触
+  ring: '<circle cx="24" cy="24" r="16"/>',
+};
+const TAG2ICON: Record<string, string> = {
+  精酿: 'beer', 故事: 'beer',
+  思维模型: 'geo', 问题解决: 'geo', 决策: 'geo',
+  心理: 'mind', 思考: 'mind',
+  社会观察: 'net', 职场: 'net',
+  随笔: 'pen',
+};
+const motif = (tag?: string) =>
+  `<svg class="motif" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[TAG2ICON[tag ?? ''] ?? 'ring']}</svg>`;
+
+// 两列显式错位：右列整体下沉，左右永不对齐 → 真正错落
+const colA = items.filter((_, i) => i % 2 === 0);
+const colB = items.filter((_, i) => i % 2 === 1);
 ---
 <div class="filters">
   <div class="frow" role="group" aria-label="按标签筛选">
@@ -22,22 +44,22 @@ const tagUrl = (t: string) => `/articles/tag/${t}/`;
   </div>
 </div>
 
-<div class="article-grid">
-  <ul class="feed">
-    {items.map((it, i) => (
-      <li class="card">
-        <a class="card-link" href={it.url}>
-          <div class="card-head">
-            {it.tags[0] && <span class={catClass[i % 3]}>{it.tags[0]}</span>}
-            <span class="read">{it.read}</span>
+<div class="masonry">
+  {[colA, colB].map((col, ci) => (
+    <div class:list={['mcol', { 'mcol--offset': ci === 1 }]}>
+      {col.map((it) => (
+        <a class="mcard" href={it.url}>
+          <Fragment set:html={motif(it.tags[0])} />
+          <div class="head">
+            {it.tags[0] && <span class="k">{it.tags[0]}</span>}
+            <span class="date">{it.date} · {it.read}</span>
           </div>
-          <h3 class="card-title">{it.title}</h3>
-          {it.summary && <p class="card-sum">{it.summary}</p>}
-          <div class="card-meta">{it.date}</div>
+          <h3 class="t">{it.title}</h3>
+          {it.summary && <p class="s">{it.summary}</p>}
         </a>
-      </li>
-    ))}
-  </ul>
+      ))}
+    </div>
+  ))}
 </div>
 
 {page.lastPage > 1 && (

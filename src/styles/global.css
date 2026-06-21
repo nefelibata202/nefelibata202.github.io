@@ -715,7 +715,17 @@ main > h1 {
   display: grid; grid-template-columns: 1fr 1.05fr; gap: 60px; align-items: stretch;
 }
 .sy-left { display: flex; flex-direction: column; justify-content: space-between; }
-.sy-mast { display: flex; align-items: flex-start; gap: 24px; }
+.sy-mast { display: flex; align-items: flex-start; gap: 24px; position: relative; }
+
+/* 辅助纹样：回形纹（回字本形 = 双重方框）半透明衬底，藏在「归来」大字背后 */
+.sy-lattice {
+  position: absolute; z-index: 0; left: -14px; top: -8px; bottom: -8px; width: 168px; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C8362B' stroke-width='1.4'%3E%3Crect x='3' y='3' width='34' height='34'/%3E%3Crect x='13.5' y='13.5' width='13' height='13'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 40px 40px; opacity: .1;
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 55%, transparent 100%);
+}
+.sy-big, .sy-seal { position: relative; z-index: 1; }
 .sy-big {
   font-family: var(--read); font-weight: 700; font-size: 8.4rem; line-height: .96; letter-spacing: .05em;
   writing-mode: vertical-rl; text-orientation: upright; color: var(--ink);
@@ -728,7 +738,14 @@ main > h1 {
   transform: rotate(-4deg); box-shadow: 0 3px 12px rgba(178,58,46,.28);
 }
 .sy-seal span { transform: rotate(4deg); }
-.sy-intro { margin-top: 30px; }
+.sy-intro { margin-top: 30px; position: relative; }
+.sy-intro > p { position: relative; z-index: 1; }
+/* 半透明书法「家」字：叠在英文句与中文描述之间，呼应「归来 / Home」 */
+.sy-jia {
+  position: absolute; z-index: 0; right: 4%; top: 32%; pointer-events: none;
+  font-family: var(--read); font-weight: 700; font-size: 7.2rem; line-height: 1;
+  color: var(--seal); opacity: .055; user-select: none;
+}
 .sy-intro .sy-kick { font-style: italic; font-size: 1.02rem; color: var(--muted); margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; }
 .sy-intro .sy-lat { font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; line-height: 1.4; margin: 0 0 14px; color: var(--ink); }
 .sy-intro .sy-tag { font-size: .9rem; letter-spacing: .42em; color: var(--seal); margin: 0 0 18px; }
@@ -746,6 +763,9 @@ main > h1 {
 .sy-feat p { font-family: var(--read); color: var(--muted); font-size: 1.04rem; line-height: 1.9; max-width: 26em; margin: 0 0 22px; }
 .sy-feat .sy-go { color: var(--seal); font-size: .95rem; letter-spacing: .1em; border-bottom: 1px solid var(--seal); padding-bottom: 3px; align-self: flex-start; }
 .sy-feat:hover h2 { color: var(--seal); }
+
+/* 钢笔尖：hero 左下角的微妙写作细节 */
+.sy-nib { position: absolute; left: 0; bottom: 4px; width: 24px; height: 24px; color: var(--muted); opacity: .45; pointer-events: none; }
 
 .sy-rule { height: 1px; background: var(--hair); margin: 14px 0 48px; }
 
@@ -792,5 +812,119 @@ main > h1 {
 }
 @media (max-width: 560px) {
   .sy-big { font-size: 4.8rem; }
+}
+
+/* ---------- 正文页（文章 / 花园）宋韵化 ---------- */
+/* 标题：得意黑 → 霞鹜文楷，去金黄粗下划线，改细线/朱砂 */
+.post h1 { font-family: var(--read); letter-spacing: .03em; }
+.post h2 {
+  font-family: var(--read); display: block; border-bottom: 1px solid var(--hair);
+  padding-bottom: .3em; font-size: 1.45rem;
+}
+.post h3 { font-family: var(--read); }
+.post.is-article > p:first-of-type::first-letter { font-family: var(--read); }
+
+/* meta：去框去底，改一条底部细线 */
+.post > .meta {
+  font-family: var(--mono); border: none; background: none;
+  padding: 0 0 12px; margin: 0 0 2em; border-bottom: 1px solid var(--hair); color: var(--muted);
+}
+.post.is-article > .meta { border-left: none; }
+
+/* 引用：去框去投影，朱砂细竖线 + 暖灰 */
+.post blockquote {
+  border: none; border-left: 2px solid var(--seal); background: none; box-shadow: none;
+  padding: 2px 0 2px 20px; margin: 1.6em 0; color: var(--muted);
+}
+
+/* 分隔线 / 行内代码 / 代码块 / 图片 / 流程图：硬框 → 细线，去硬投影 */
+.post hr { border-top: 1px solid var(--hair); }
+.post :not(pre) > code { border: 1px solid var(--hair); background: var(--soft); }
+.post pre { border: 1px solid var(--hair); box-shadow: none; }
+.post img { border: 1px solid var(--hair); box-shadow: none; }
+.mermaid-wrap { border: 1px solid var(--hair); box-shadow: none; }
+
+/* wikilink：hover 去金黄，保留朱砂 */
+.post a.wikilink:hover, a.wikilink:hover { background: none; color: var(--seal); border-bottom-style: solid; }
+
+/* 标签 chip：硬框 → 细线 + 文楷，hover 朱砂 */
+.tag { border: 1px solid var(--hair); font-family: var(--read); font-weight: 400; }
+.tag:hover { background: none; color: var(--seal); border-color: var(--seal); transform: none; box-shadow: none; }
+
+/* 反向链接：去框去投影，改细线列表 */
+.backlinks { border-top: 1px solid var(--hair); }
+.bl-card {
+  background: none; border: none; box-shadow: none; padding: 11px 0;
+  font-family: var(--read); font-weight: 400; border-bottom: 1px solid var(--hair);
+}
+.bl-card:hover { transform: none; box-shadow: none; color: var(--seal); }
+
+/* 翻页按钮（列表/分页）：硬框金黄 → 细线朱砂 */
+.pager-btn { border: 1px solid var(--hair); background: none; font-family: var(--read); font-weight: 500; }
+.pager-btn:hover { background: none; color: var(--seal); border-color: var(--seal); transform: none; box-shadow: none; }
+
+/* ---------- 列表页（文章 / 花园）宋韵化 ---------- */
+/* 页面大标题：得意黑 → 霞鹜文楷 */
+main > h1 { font-family: var(--read); letter-spacing: .04em; }
+
+/* 花园副标题（曾误用粗野 .lead 卡片）：还原为暖灰文楷段落 */
+.lead {
+  position: static; border: none; background: none; box-shadow: none; padding: 0;
+  font-family: var(--read); color: var(--muted);
+}
+
+/* 文章卡片：3px 硬框 + 偏移投影 → 1px 细线，hover 朱砂 */
+.card { border: 1px solid var(--hair); box-shadow: none; }
+.card:hover { transform: none; box-shadow: none; border-color: var(--seal); }
+.card:active { transform: none; box-shadow: none; }
+.card-title { font-family: var(--read); }
+.card-sum { font-family: var(--read); }
+
+/* 分类角标：金黄旋转贴纸 → 朱砂小字 */
+.cat, .cat--alt, .cat--hot {
+  background: none; border: none; box-shadow: none; transform: none; padding: 0; color: var(--seal);
+}
+
+/* 标签筛选 chip：硬框金黄 → 细线，hover/选中 朱砂 */
+.fchip { border: 1px solid var(--hair); font-family: var(--read); font-weight: 400; }
+.fchip:hover { background: none; color: var(--seal); border-color: var(--seal); transform: none; box-shadow: none; }
+.fchip.is-on { background: var(--seal); color: #F6F1E4; border-color: var(--seal); }
+
+/* 花园列表：2.5px 粗线 → 1px 细线，标题文楷 */
+.gindex { border-top: 1px solid var(--hair); }
+.grow { border-bottom: 1px solid var(--hair); }
+.grow-title { font-family: var(--read); }
+.grow-link:hover { background: none; }
+
+/* 文章列表 · 错落瀑布流（两列显式错位 + 字号对撞 + 丝滑悬浮 + 去框 + 分类水印） */
+.masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 0 34px; align-items: start; margin-top: 8px; }
+.masonry .mcol { display: flex; flex-direction: column; gap: 26px; }
+.masonry .mcol--offset { margin-top: 56px; }  /* 右列下沉，左右永不对齐 */
+
+.masonry .mcard {
+  position: relative; display: block; padding: 24px 26px;
+  border: 1px solid transparent; border-radius: 6px; color: var(--ink); overflow: hidden;
+  transition: transform .22s cubic-bezier(.2,.7,.2,1), background .22s, border-color .22s, box-shadow .22s;
+}
+.masonry .mcard .head { position: relative; z-index: 1; display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+.masonry .mcard .k { font-family: var(--read); font-size: .8rem; color: var(--seal); letter-spacing: .08em; transition: color .22s; }
+.masonry .mcard .date { font-family: var(--mono); font-size: .74rem; color: var(--muted); margin-left: auto; letter-spacing: .02em; }
+/* 字号对撞：标题重黑 / 摘要轻疏 */
+.masonry .mcard .t { position: relative; z-index: 1; font-family: var(--read); font-weight: 700; font-size: 1.6rem; line-height: 1.3; letter-spacing: .005em; margin: 0; }
+.masonry .mcard .s { position: relative; z-index: 1; font-family: var(--read); font-weight: 300; font-size: .95rem; line-height: 1.85; color: var(--muted); margin: 11px 0 0; }
+/* 分类微图标水印：右下淡衬底，hover 浮起变朱砂 */
+.masonry .mcard .motif { position: absolute; right: 14px; bottom: 12px; width: 90px; height: 90px; color: var(--ink); opacity: .06; pointer-events: none; transition: opacity .22s, color .22s, transform .22s; }
+.masonry .mcard:hover .motif { opacity: .15; color: var(--seal); transform: translateY(-3px) rotate(-3deg); }
+/* 丝滑悬浮：微浮 + 去框→浮现纸底 + 朱砂反馈 */
+.masonry .mcard:hover { transform: translateY(-3px); background: var(--paper); border-color: var(--hair); box-shadow: 0 10px 30px -16px rgba(22,20,15,.35); }
+.masonry .mcard:hover .t, .masonry .mcard:hover .k { color: var(--seal); }
+@media (max-width: 760px) {
+  .masonry { grid-template-columns: 1fr; }
+  .masonry .mcol--offset { margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .masonry .mcard, .masonry .mcard .motif { transition: none; }
+  .masonry .mcard:hover { transform: none; }
+  .masonry .mcard:hover .motif { transform: none; }
 }
 /* ===== 宋韵 end ===== */

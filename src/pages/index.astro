@@ -30,16 +30,23 @@ const stats = { articles: allArticles.length, garden: allGarden.length, tags: al
     <header class="sy-hero">
       <div class="sy-left">
         <div class="sy-mast">
+          <div class="sy-lattice" aria-hidden="true"></div>
           <div class="sy-big" aria-label="归来">归来</div>
           <div class="sy-seal" aria-hidden="true"><span>归</span></div>
         </div>
         <div class="sy-intro">
+          <span class="sy-jia" aria-hidden="true">家</span>
           <p class="sy-kick">写作博客 · 数字花园</p>
           <p class="sy-lat">A Place Where Words Come Home</p>
           <p class="sy-tag">记 录 · 思 考 · 与 归 处</p>
           <p class="sy-desc">写长一点的东西，把想清楚的留下来。让每一个念头，都找到它的归处。</p>
         </div>
       </div>
+      <svg class="sy-nib" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2.5c0 0 6.5 12 6.5 15.2L12 14.6 5.5 17.7C5.5 14.5 12 2.5 12 2.5Z" />
+        <line x1="12" y1="9.5" x2="12" y2="14.6" />
+        <circle cx="12" cy="8" r="1" />
+      </svg>
 
       {featured && (
         <a class="sy-feat" href={`/articles/${featured.id}`}>
