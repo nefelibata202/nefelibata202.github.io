@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ArticleList from '../../../../components/ArticleList.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const f = (d: Date) => d.toISOString().slice(0, 10);
+  const rt = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
+  const all = (await getCollection('articles', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const tags = [...new Set(all.flatMap((e) => e.data.tags))];
+
+  return tags.flatMap((tag) => {
+    const items = all
+      .filter((e) => e.data.tags.includes(tag))
+      .map((e) => ({
+        url: `/articles/${e.id}`,
+        title: e.data.title,
+        date: f(e.data.date),
+        summary: e.data.summary,
+        tags: e.data.tags,
+        read: rt(e.body),
+      }));
+    return paginate(items, { params: { tag }, pageSize: 8 });
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { tag } = Astro.params;
+---
+<BaseLayout title={`文章 · ${tag} · 归来`} wide>
+  <h1>文章 · {tag}</h1>
+  <ArticleList items={page.data} page={page} activeTag={tag} />
+</BaseLayout>

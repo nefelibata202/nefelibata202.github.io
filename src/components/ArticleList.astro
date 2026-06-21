@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Item { url: string; title: string; date: string; summary: string; tags: string[]; read: string; }
+interface Props { items: Item[]; page: any; activeTag?: string | null; }
+const { items, page, activeTag = null } = Astro.props;
+
+// 标签全集取自全量文章，保证每个分页/分标签页的筛选栏一致
+const allTags = [...new Set(
+  (await getCollection('articles', ({ data }) => !data.draft)).flatMap((e) => e.data.tags)
+)];
+const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
+const tagUrl = (t: string) => `/articles/tag/${t}/`;
+---
+<div class="filters">
+  <div class="frow" role="group" aria-label="按标签筛选">
+    <span class="flabel">标签</span>
+    <a class:list={['fchip', { 'is-on': activeTag === null }]} href="/articles">全部</a>
+    {allTags.map((t) => (
+      <a class:list={['fchip', { 'is-on': activeTag === t }]} href={tagUrl(t)}>{t}</a>
+    ))}
+  </div>
+</div>
+
+<div class="article-grid">
+  <ul class="feed">
+    {items.map((it, i) => (
+      <li class="card">
+        <a class="card-link" href={it.url}>
+          <div class="card-head">
+            {it.tags[0] && <span class={catClass[i % 3]}>{it.tags[0]}</span>}
+            <span class="read">{it.read}</span>
+          </div>
+          <h3 class="card-title">{it.title}</h3>
+          {it.summary && <p class="card-sum">{it.summary}</p>}
+          <div class="card-meta">{it.date}</div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+{page.lastPage > 1 && (
+  <nav class="pager" aria-label="分页">
+    {page.url.prev
+      ? <a class="pager-btn" href={page.url.prev}>‹ 上一页</a>
+      : <span class="pager-btn is-off">‹ 上一页</span>}
+    <span class="pager-num">{page.currentPage} / {page.lastPage}</span>
+    {page.url.next
+      ? <a class="pager-btn" href={page.url.next}>下一页 ›</a>
+      : <span class="pager-btn is-off">下一页 ›</span>}
+  </nav>
+)}

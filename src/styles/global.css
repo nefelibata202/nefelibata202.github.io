@@ -212,7 +212,7 @@ main > h1 {
 .filters { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 26px; }
 .frow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .frow .flabel { font-family: var(--mono); font-weight: 700; font-size: .66rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); width: 40px; flex: 0 0 auto; }
-.fchip { font-family: var(--mono); font-weight: 700; font-size: .76rem; color: var(--ink); background: var(--paper); border: 2.5px solid var(--line); padding: 5px 12px; cursor: pointer; transition: background .12s, color .12s, transform .12s, box-shadow .12s; }
+.fchip { display: inline-block; text-decoration: none; font-family: var(--mono); font-weight: 700; font-size: .76rem; color: var(--ink); background: var(--paper); border: 2.5px solid var(--line); padding: 5px 12px; cursor: pointer; transition: background .12s, color .12s, transform .12s, box-shadow .12s; }
 .fchip:hover { background: var(--gold); color: var(--on-gold); transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--line); }
 .fchip.is-on { background: var(--ink); color: var(--bg); }
 .noresult { font-family: var(--mono); color: var(--muted); font-size: .9rem; padding: 18px 0; }
