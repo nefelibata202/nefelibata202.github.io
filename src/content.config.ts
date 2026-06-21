@@ -21,4 +21,13 @@ const garden = defineCollection({
   }),
 });
 
-export const collections = { articles, garden };
+const guide = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/guide' }),
+  schema: z.object({
+    title: z.string(),
+    island: z.string(),
+    placeholder: z.boolean().default(false),
+  }),
+});
+
+export const collections = { articles, garden, guide };
