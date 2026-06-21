@@ -25,6 +25,7 @@ const panels = await Promise.all(
           viewBox="0 0 900 520"
           xmlns="http://www.w3.org/2000/svg"
           role="application"
+          aria-label="归图 个人导览"
         >
           <!-- Sea background -->
           <rect width="900" height="520" fill="#C4B99A" />
@@ -277,6 +278,7 @@ const panels = await Promise.all(
   let activeIsland = null;    // currently open island id
   let animating = false;
   const wakePoints = [];      // accumulated wake trail
+  let hideTimer = null;
 
   /* ── DOM refs ── */
   const boat       = document.getElementById('boat');
@@ -356,6 +358,7 @@ const panels = await Promise.all(
 
   /* ── Panel open/close ── */
   function showPanel(islandId) {
+    clearTimeout(hideTimer);
     // on mobile, ensure panels container is visible
     if (window.innerWidth < 768) {
       panels.style.display = '';
@@ -383,7 +386,7 @@ const panels = await Promise.all(
       panels.style.display = 'none';
     }
     // wait for CSS transition before hiding individual panels
-    setTimeout(() => {
+    hideTimer = setTimeout(() => {
       document.querySelectorAll('.guide-panel').forEach((el) => {
         el.hidden = true;
       });
