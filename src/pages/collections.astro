@@ -119,6 +119,12 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
     <button type="button" class="mreset" id="mreset">清除筛选</button>
   </div>
 
+  <div class="mpager" id="mpager" hidden>
+    <button type="button" class="mpager-btn" id="mprev" aria-label="上一页">← 上一页</button>
+    <span class="mpager-info" id="mpinfo">第 1 / 1 页</span>
+    <button type="button" class="mpager-btn" id="mnext" aria-label="下一页">下一页 →</button>
+  </div>
+
   <div class="mlib">
     <div class="pgrid" id="pgrid">
       {items.map((it) => (
@@ -160,7 +166,12 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       const none = document.getElementById('mnone');
       const count = document.getElementById('mcount');
       const search = document.getElementById('msearch');
-      const state = { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score' };
+      const pager = document.getElementById('mpager');
+      const pprev = document.getElementById('mprev');
+      const pnext = document.getElementById('mnext');
+      const pinfo = document.getElementById('mpinfo');
+      const PAGE_SIZE = 30;
+      const state = { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score', page: 0 };
 
       const scoreOk = (s, band) => {
         s = parseFloat(s) || 0;
@@ -181,40 +192,59 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         return true;
       };
       const apply = () => {
-        cards.forEach((c) => { c.hidden = !visible(c); });
-        const vis = cards.filter((c) => !c.hidden);
+        const vis = cards.filter((c) => visible(c));
         vis.sort((a, b) => {
           if (state.sort === 'score') return (b.dataset.score - a.dataset.score) || b.dataset.year.localeCompare(a.dataset.year);
           if (state.sort === 'year') return (b.dataset.year || '').localeCompare(a.dataset.year || '') || (b.dataset.score - a.dataset.score);
           return a.querySelector('.pt').textContent.localeCompare(b.querySelector('.pt').textContent, 'zh');
         });
-        vis.forEach((c) => grid.appendChild(c));
+        const totalPages = Math.max(1, Math.ceil(vis.length / PAGE_SIZE));
+        if (state.page >= totalPages) state.page = totalPages - 1;
+        const start = state.page * PAGE_SIZE;
+        const pageItems = new Set(vis.slice(start, start + PAGE_SIZE));
+        cards.forEach((c) => { c.hidden = !pageItems.has(c); });
+        vis.slice(start, start + PAGE_SIZE).forEach((c) => grid.appendChild(c));
         if (count) count.textContent = vis.length;
         if (none) none.hidden = vis.length > 0;
+        if (pager) {
+          pager.hidden = totalPages <= 1;
+          if (pprev) pprev.disabled = state.page === 0;
+          if (pnext) pnext.disabled = state.page === totalPages - 1;
+          if (pinfo) pinfo.textContent = `第 ${state.page + 1} / ${totalPages} 页`;
+        }
       };
 
       document.querySelectorAll('[data-facet]').forEach((btn) => btn.addEventListener('click', () => {
         const f = btn.dataset.facet;
         state[f] = btn.dataset.val;
         document.querySelectorAll(`[data-facet="${f}"]`).forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
         apply();
       }));
       document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
         state.sort = btn.dataset.sort;
         document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
         apply();
       }));
       let t;
       search?.addEventListener('input', (e) => {
         clearTimeout(t);
-        t = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); apply(); }, 120);
+        t = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); state.page = 0; apply(); }, 120);
       });
       document.getElementById('mreset')?.addEventListener('click', () => {
-        Object.assign(state, { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score' });
+        Object.assign(state, { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score', page: 0 });
         if (search) search.value = '';
         document.querySelectorAll('[data-facet]').forEach((b) => b.classList.toggle('is-on', b.dataset.val === '*'));
         document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b.dataset.sort === 'score'));
         apply();
+      });
+      pprev?.addEventListener('click', () => {
+        if (state.page > 0) { state.page--; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+      pnext?.addEventListener('click', () => {
+        const totalPages = Math.max(1, Math.ceil(cards.filter((c) => visible(c)).length / PAGE_SIZE));
+        if (state.page < totalPages - 1) { state.page++; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       });
     })();
   </script>
