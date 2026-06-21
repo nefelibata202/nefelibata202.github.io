@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归图 · 个人导览 · v2 视觉稿</title>
+<style>
+:root {
+  --bg:    #F1EBDB;
+  --paper: #FCF8EE;
+  --ink:   #16140F;
+  --muted: #6E685A;
+  --gold:  #F2B312;
+  --seal:  #C8362B;
+  --sea:   #C4B99A;
+  --shadow-sm: 3px 3px 0 #16140F;
+  --shadow-lg: 9px 9px 0 #16140F;
+  --disp: "PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --zh:   "PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --mono: "JetBrains Mono","Fira Code",monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--zh);
+  min-height: 100vh;
+}
+
+/* ── Page shell ── */
+.guide-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 28px 72px;
+}
+
+.guide-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.guide-title {
+  font-family: var(--disp);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.guide-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+}
+
+/* ── Container ── */
+.guide-container {
+  display: flex;
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  background: var(--paper);
+  min-height: 360px;
+}
+
+/* ── Map ── */
+.map-wrapper {
+  flex: 1 1 100%;
+  min-width: 0;
+  transition: flex-basis 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.guide-container.panel-open .map-wrapper {
+  flex-basis: 58%;
+}
+
+#map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Islands ── */
+.island-group {
+  cursor: pointer;
+  transition: filter 0.25s ease;
+}
+
+.island-group:hover {
+  filter: drop-shadow(0 0 11px rgba(242,179,18,0.60));
+}
+
+.island-group.active {
+  filter: drop-shadow(0 0 16px rgba(242,179,18,0.80));
+}
+
+.island-group:focus { outline: none; }
+
+.island-group:focus-visible {
+  filter: drop-shadow(0 0 10px rgba(200,54,43,0.75));
+}
+
+.island-label {
+  font-family: var(--disp);
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--ink);
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Boat animations ── */
+@keyframes idle-bob {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-2.5px) rotate(1.5deg); }
+  75%      { transform: translateY(-1px)   rotate(-1deg); }
+}
+
+@keyframes boat-arrive {
+  0%,100% { transform: translateY(0); }
+  40%     { transform: translateY(-5px); }
+  70%     { transform: translateY(-1px); }
+}
+
+#boat-inner.idle {
+  animation: idle-bob 3.4s ease-in-out infinite;
+  transform-origin: 0 4px;
+}
+
+#boat-inner.arriving {
+  animation: boat-arrive 480ms ease-out;
+  transform-origin: 0 4px;
+}
+
+/* ── Panels ── */
+.guide-panels {
+  flex: 0 0 0%;
+  overflow: hidden;
+  background: var(--paper);
+  transition: flex-basis 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.guide-container.panel-open .guide-panels {
+  flex: 0 0 42%;
+  overflow-y: auto;
+  border-left: 3px solid var(--ink);
+}
+
+.panel-close {
+  position: sticky;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--ink);
+  background: var(--bg);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+  margin: 12px 12px 0 auto;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.panel-close:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.panel-close svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.guide-panel {
+  padding: 0 28px 48px;
+  animation: panel-in 0.32s ease-out;
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Accent bar across the top of each panel */
+.panel-accent {
+  height: 5px;
+  margin: 0 -28px 28px;
+  background: var(--gold);
+}
+.panel-accent.seal { background: var(--seal); }
+.panel-accent.ink  { background: var(--ink); }
+
+.panel-title {
+  font-family: var(--disp);
+  font-size: 1.45rem;
+  font-weight: 800;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.panel-body h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 20px 0 8px;
+}
+
+.panel-body p {
+  margin: 0 0 10px;
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.panel-body ol {
+  padding-left: 1.5em;
+  margin: 0 0 10px;
+  line-height: 1.85;
+  font-size: 0.95rem;
+}
+
+.panel-body ol li { margin-bottom: 4px; }
+.panel-body strong { font-weight: 700; }
+
+.panel-placeholder {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-top: 16px;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .map-wrapper, .guide-panels { transition: none; }
+  #boat-inner.idle, #boat-inner.arriving { animation: none; }
+  .guide-panel { animation: none; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .guide-container {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .guide-container.panel-open .map-wrapper { flex-basis: auto; }
+
+  .guide-panels {
+    border-left: none !important;
+    border-top: 3px solid var(--ink);
+    max-height: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .guide-container.panel-open .guide-panels {
+    flex: none;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+}
+
+/* ── Debug label ── */
+.v2-badge {
+  display: inline-block;
+  background: var(--seal);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  letter-spacing: 0.08em;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+<div class="guide-page">
+  <header class="guide-header">
+    <h1 class="guide-title">归图</h1>
+    <span class="v2-badge">v2 视觉稿</span>
+    <p class="guide-sub">个人导览 · 点击岛屿探索</p>
+  </header>
+
+  <div id="guide-container" class="guide-container">
+
+    <!-- ═══════════════ MAP ═══════════════ -->
+    <div id="map-wrapper" class="map-wrapper">
+      <svg id="map-svg" viewBox="0 0 900 520"
+           xmlns="http://www.w3.org/2000/svg"
+           role="application" aria-label="归图 个人导览地图">
+        <defs>
+          <!-- Animated sea wave pattern -->
+          <pattern id="sea-waves" x="0" y="0" width="80" height="22"
+                   patternUnits="userSpaceOnUse">
+            <path d="M0,11 Q20,5 40,11 Q60,17 80,11"
+                  fill="none" stroke="rgba(22,20,15,0.065)" stroke-width="1.2"/>
+            <animateTransform attributeName="patternTransform"
+              type="translate" from="0 0" to="80 0"
+              dur="5.5s" repeatCount="indefinite"/>
+          </pattern>
+
+          <!-- Nautical chart grid -->
+          <pattern id="sea-grid" x="0" y="0" width="90" height="90"
+                   patternUnits="userSpaceOnUse">
+            <line x1="90" y1="0" x2="90" y2="90"
+                  stroke="rgba(22,20,15,0.038)" stroke-width="0.7"/>
+            <line x1="0" y1="90" x2="90" y2="90"
+                  stroke="rgba(22,20,15,0.038)" stroke-width="0.7"/>
+          </pattern>
+
+          <!-- Island elevation shadow -->
+          <filter id="island-depth" x="-20%" y="-20%" width="150%" height="150%">
+            <feDropShadow dx="3" dy="4" stdDeviation="4"
+              flood-color="#16140F" flood-opacity="0.18"/>
+          </filter>
+        </defs>
+
+        <!-- ── Sea ── -->
+        <rect width="900" height="520" fill="#C4B99A"/>
+        <rect width="900" height="520" fill="url(#sea-grid)"/>
+        <rect width="900" height="520" fill="url(#sea-waves)"/>
+
+        <!-- Scattered depth markers (·) -->
+        <g opacity="0.16" fill="#16140F" font-size="9" text-anchor="middle"
+           font-family="Georgia,serif">
+          <text x="195" y="158">·</text>
+          <text x="380" y="176">·</text>
+          <text x="432" y="126">·</text>
+          <text x="560" y="205">·</text>
+          <text x="498" y="342">·</text>
+          <text x="582" y="462">·</text>
+          <text x="720" y="196">·</text>
+          <text x="726" y="448">·</text>
+          <text x="862" y="128">·</text>
+          <text x="854" y="376">·</text>
+          <text x="136" y="362">·</text>
+          <text x="202" y="444">·</text>
+          <text x="402" y="418">·</text>
+          <text x="330" y="140">·</text>
+          <text x="488" y="440">·</text>
+        </g>
+
+        <!-- ── Wake trail (accumulated, starts empty) ── -->
+        <polyline
+          id="wake"
+          points=""
+          fill="none"
+          stroke="#C8362B"
+          stroke-width="2.8"
+          stroke-dasharray="3.5 9"
+          stroke-linecap="round"
+          opacity="0.72"
+        />
+
+        <!-- ════════════ ISLANDS ════════════ -->
+
+        <!-- ① 喜欢的人物  (cx≈111, cy≈93)  — gold tint -->
+        <g id="island-people" class="island-group" data-island="people"
+           role="button" tabindex="0" aria-label="喜欢的人物">
+          <g filter="url(#island-depth)">
+            <!-- Main body -->
+            <path d="M70,70 Q95,59 152,64 Q162,76 157,92 Q152,116 118,124 Q90,128 66,114 Q58,98 70,70 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <!-- Inner contour (elevation ring) -->
+            <path d="M82,80 Q105,72 145,77 Q151,89 146,104 Q126,112 96,110 Q76,102 76,90 Q76,82 82,80 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <!-- Gold tint overlay -->
+            <path d="M70,70 Q95,59 152,64 Q162,76 157,92 Q152,116 118,124 Q90,128 66,114 Q58,98 70,70 Z"
+                  fill="rgba(242,179,18,0.17)"/>
+            <!-- Topographic dots -->
+            <circle cx="104" cy="88" r="2.5" fill="#16140F" opacity="0.28"/>
+            <circle cx="124" cy="81" r="2"   fill="#16140F" opacity="0.22"/>
+            <circle cx="140" cy="91" r="1.8" fill="#16140F" opacity="0.18"/>
+            <!-- "Tree" marks (tiny cross) -->
+            <g opacity="0.2" stroke="#16140F" stroke-width="1.2" stroke-linecap="round">
+              <line x1="90" y1="98" x2="90" y2="104"/>
+              <line x1="87" y1="101" x2="93" y2="101"/>
+            </g>
+          </g>
+          <text x="111" y="142" text-anchor="middle" class="island-label">喜欢的人物</text>
+        </g>
+
+        <!-- ② 人生哲学  (cx≈305, cy≈83) -->
+        <g id="island-philosophy" class="island-group" data-island="philosophy"
+           role="button" tabindex="0" aria-label="人生哲学">
+          <g filter="url(#island-depth)">
+            <path d="M250,80 Q260,57 308,55 Q355,57 366,74 Q370,92 360,108 Q337,118 294,116 Q256,112 247,93 Q244,85 250,80 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M263,86 Q274,68 308,65 Q344,68 354,82 Q358,96 346,106 Q322,113 290,110 Q265,104 260,92 Q257,87 263,86 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <circle cx="296" cy="84"  r="3"   fill="#16140F" opacity="0.26"/>
+            <circle cx="320" cy="78"  r="2"   fill="#16140F" opacity="0.20"/>
+            <circle cx="275" cy="90"  r="1.8" fill="#16140F" opacity="0.18"/>
+          </g>
+          <text x="308" y="134" text-anchor="middle" class="island-label">人生哲学</text>
+        </g>
+
+        <!-- ③ 个人兴趣  (cx≈115, cy≈240) -->
+        <g id="island-interests" class="island-group" data-island="interests"
+           role="button" tabindex="0" aria-label="个人兴趣">
+          <g filter="url(#island-depth)">
+            <path d="M60,237 Q67,214 116,212 Q166,214 174,233 Q177,252 166,266 Q141,274 100,271 Q63,265 56,250 Q54,242 60,237 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M72,243 Q80,224 116,222 Q154,224 161,239 Q163,253 151,262 Q129,268 97,265 Q74,258 70,246 Q68,244 72,243 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <circle cx="108" cy="241" r="2.5" fill="#16140F" opacity="0.26"/>
+            <circle cx="132" cy="234" r="2"   fill="#16140F" opacity="0.20"/>
+          </g>
+          <text x="116" y="290" text-anchor="middle" class="island-label">个人兴趣</text>
+        </g>
+
+        <!-- ④ 旅行计划  (cx≈296, cy≈229)  — gold tint -->
+        <g id="island-travel" class="island-group" data-island="travel"
+           role="button" tabindex="0" aria-label="旅行计划">
+          <g filter="url(#island-depth)">
+            <path d="M240,223 Q248,200 298,198 Q350,200 360,221 Q364,243 352,257 Q326,266 286,264 Q244,257 237,240 Q234,229 240,223 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M252,229 Q262,211 298,208 Q336,211 346,227 Q349,244 337,254 Q314,260 280,257 Q253,249 249,237 Q246,231 252,229 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <!-- Gold tint -->
+            <path d="M240,223 Q248,200 298,198 Q350,200 360,221 Q364,243 352,257 Q326,266 286,264 Q244,257 237,240 Q234,229 240,223 Z"
+                  fill="rgba(242,179,18,0.17)"/>
+            <circle cx="286" cy="229" r="3"   fill="#16140F" opacity="0.26"/>
+            <circle cx="310" cy="222" r="2"   fill="#16140F" opacity="0.20"/>
+            <circle cx="266" cy="235" r="1.8" fill="#16140F" opacity="0.18"/>
+          </g>
+          <text x="298" y="282" text-anchor="middle" class="island-label">旅行计划</text>
+        </g>
+
+        <!-- ⑤ 高质量的信息源  (cx≈647, cy≈136) -->
+        <g id="island-info-sources" class="island-group" data-island="info-sources"
+           role="button" tabindex="0" aria-label="高质量的信息源">
+          <g filter="url(#island-depth)">
+            <path d="M594,141 Q598,110 648,108 Q700,110 710,129 Q714,150 704,164 Q674,172 636,168 Q596,161 590,148 Q588,144 594,141 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M608,143 Q614,121 648,118 Q685,121 695,135 Q698,150 688,158 Q666,164 638,161 Q611,154 605,145 Q603,143 608,143 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <circle cx="642" cy="138" r="2.5" fill="#16140F" opacity="0.26"/>
+            <circle cx="664" cy="131" r="2"   fill="#16140F" opacity="0.20"/>
+          </g>
+          <text x="648" y="188" text-anchor="middle" class="island-label">信息源</text>
+        </g>
+
+        <!-- ⑥ 知识库缺口  (cx≈791, cy≈259) -->
+        <g id="island-knowledge-gaps" class="island-group" data-island="knowledge-gaps"
+           role="button" tabindex="0" aria-label="知识库缺口">
+          <g filter="url(#island-depth)">
+            <path d="M744,253 Q751,229 792,226 Q837,229 849,250 Q853,272 840,286 Q812,296 776,292 Q742,281 736,265 Q733,257 744,253 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M756,259 Q764,239 792,236 Q823,239 833,255 Q836,270 826,280 Q806,287 778,284 Q755,275 751,263 Q748,259 756,259 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <circle cx="787" cy="258" r="2.5" fill="#16140F" opacity="0.26"/>
+          </g>
+          <text x="793" y="312" text-anchor="middle" class="island-label">知识缺口</text>
+        </g>
+
+        <!-- ⑦ 碎片时间  (cx≈663, cy≈396) -->
+        <g id="island-fragmented-time" class="island-group" data-island="fragmented-time"
+           role="button" tabindex="0" aria-label="碎片时间能做的事">
+          <g filter="url(#island-depth)">
+            <path d="M608,412 Q604,378 663,366 Q719,368 728,389 Q732,412 721,426 Q697,436 656,432 Q614,425 608,414 Q606,412 608,412 Z"
+                  fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+            <path d="M621,412 Q618,387 663,376 Q706,378 714,395 Q716,412 707,422 Q686,430 653,426 Q625,418 620,413 Z"
+                  fill="none" stroke="#16140F" stroke-width="0.6" opacity="0.22"/>
+            <circle cx="656" cy="396" r="2.5" fill="#16140F" opacity="0.26"/>
+            <circle cx="678" cy="389" r="2"   fill="#16140F" opacity="0.20"/>
+          </g>
+          <text x="664" y="450" text-anchor="middle" class="island-label">碎片时间</text>
+        </g>
+
+        <!-- ── Home port ── -->
+        <g id="home-port">
+          <!-- Dashed radius ring -->
+          <circle cx="470" cy="270" r="16" fill="none"
+                  stroke="#16140F" stroke-width="1"
+                  stroke-dasharray="3.5 3.5" opacity="0.35"/>
+          <circle cx="470" cy="270" r="5" fill="#16140F" opacity="0.65"/>
+          <!-- Anchor symbol -->
+          <g transform="translate(470,261)" opacity="0.32">
+            <line x1="0" y1="-7" x2="0" y2="7"
+                  stroke="#16140F" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="-5.5" y1="-5" x2="5.5" y2="-5"
+                  stroke="#16140F" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M-5,7 Q0,10 5,7"
+                  fill="none" stroke="#16140F" stroke-width="1.3" stroke-linecap="round"/>
+          </g>
+        </g>
+
+        <!-- ── Boat (starts at home port, facing east) ── -->
+        <g id="boat" transform="translate(470,270)">
+          <g id="boat-inner" class="idle">
+            <!-- Keel curve (below waterline) -->
+            <path d="M-22,5 Q-7,13 7,13 Q19,11 24,5"
+                  fill="none" stroke="#16140F" stroke-width="2.2" stroke-linecap="round"/>
+            <!-- Hull body (above keel up to deck) -->
+            <path d="M-22,5 L-20,-5 L20,-5 Q26,-4 24,5 Q19,11 7,13 Q-7,13 -22,5 Z"
+                  fill="#16140F"/>
+            <!-- Cabin / bulwark detail -->
+            <rect x="-14" y="-5" width="10" height="3.5" rx="0.5"
+                  fill="rgba(255,255,255,0.12)"/>
+            <!-- Mast -->
+            <line x1="0" y1="-28" x2="0" y2="-5"
+                  stroke="#16140F" stroke-width="2.6" stroke-linecap="round"/>
+            <!-- Yard arm -->
+            <line x1="0" y1="-21" x2="20" y2="-21"
+                  stroke="#16140F" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- Main sail (billowing, gold) — tight to mast, flares aft -->
+            <path d="M0,-26 Q24,-16 22,-5 L0,-5 Z"
+                  fill="#F2B312" stroke="#16140F" stroke-width="0.9"/>
+            <!-- Sail highlight (inner lighter zone) -->
+            <path d="M2,-22 Q16,-14 14,-7 L2,-7 Z"
+                  fill="rgba(255,255,255,0.22)"/>
+            <!-- Pennant at masthead (seal red) -->
+            <polygon points="0,-28 7,-24 0,-20" fill="#C8362B"/>
+            <!-- Immediate wake ripple (near hull) -->
+            <path d="M-22,4 Q-26,6 -30,4"
+                  fill="none" stroke="#C8362B" stroke-width="1.2"
+                  stroke-linecap="round" opacity="0.45"/>
+          </g>
+        </g>
+
+        <!-- ── 8-Point Compass Rose (bottom-right) ── -->
+        <g transform="translate(856,474)">
+          <!-- Outer decorative ring -->
+          <circle r="24" fill="rgba(252,248,238,0.5)" stroke="#16140F"
+                  stroke-width="0.8" opacity="0.4"/>
+          <circle r="17" fill="none" stroke="#16140F"
+                  stroke-width="0.5" opacity="0.25"/>
+          <!-- Intercardinal points (smaller, ink) -->
+          <polygon points="0,-23  3,-12  0,-9 -3,-12"  fill="#F2B312"/> <!-- N gold -->
+          <polygon points="0, 23  3, 12  0, 9 -3, 12"  fill="#16140F" opacity="0.55"/> <!-- S -->
+          <polygon points="23, 0  12, 3  9, 0 12,-3"   fill="#F2B312"/> <!-- E gold -->
+          <polygon points="-23,0 -12, 3 -9, 0 -12,-3"  fill="#16140F" opacity="0.55"/> <!-- W -->
+          <!-- NE / SE / SW / NW (8-pt) -->
+          <polygon points="15,-15  8,-7  6,-9"  fill="#16140F" opacity="0.28"/>
+          <polygon points="15, 15  8, 7  6, 9"  fill="#16140F" opacity="0.28"/>
+          <polygon points="-15,15 -8, 7 -6, 9"  fill="#16140F" opacity="0.28"/>
+          <polygon points="-15,-15 -8,-7 -6,-9" fill="#16140F" opacity="0.28"/>
+          <!-- Centre hub -->
+          <circle r="3.5" fill="#F2B312" stroke="#16140F" stroke-width="1.2"/>
+          <!-- Cardinal labels -->
+          <text x="0" y="-28" text-anchor="middle" font-size="8.5"
+                fill="#16140F" opacity="0.45"
+                font-family="Georgia,serif" font-style="italic">N</text>
+          <text x="0"  y="38" text-anchor="middle" font-size="7"
+                fill="#16140F" opacity="0.3"
+                font-family="Georgia,serif" font-style="italic">S</text>
+          <text x="30" y="3" text-anchor="middle" font-size="7"
+                fill="#16140F" opacity="0.3"
+                font-family="Georgia,serif" font-style="italic">E</text>
+          <text x="-30" y="3" text-anchor="middle" font-size="7"
+                fill="#16140F" opacity="0.3"
+                font-family="Georgia,serif" font-style="italic">W</text>
+        </g>
+
+        <!-- ── Map title plate (bottom-left) ── -->
+        <g transform="translate(14,452)">
+          <!-- Plate body -->
+          <rect x="0" y="0" width="188" height="56"
+                fill="#FCF8EE" stroke="#16140F" stroke-width="2.2"/>
+          <!-- Gold left accent bar -->
+          <rect x="0" y="0" width="5" height="56" fill="#F2B312"/>
+          <!-- Title -->
+          <text x="16" y="24"
+                font-family="PingFang SC,Noto Sans SC,sans-serif"
+                font-size="20" font-weight="800" fill="#16140F">归图</text>
+          <!-- Sub -->
+          <text x="16" y="42"
+                font-family="PingFang SC,Noto Sans SC,sans-serif"
+                font-size="10" fill="#6E685A" letter-spacing="0.08em">个人导览 · MMXXVI</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ═══════════════ PANELS ═══════════════ -->
+    <div id="guide-panels" class="guide-panels" aria-live="polite">
+      <button id="panel-close" class="panel-close" aria-label="关闭面板">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <!-- 喜欢的人物 -->
+      <div class="guide-panel" data-island="people" hidden
+           role="region" aria-label="喜欢的人物">
+        <div class="panel-accent"></div><!-- gold -->
+        <h2 class="panel-title">喜欢的人物</h2>
+        <div class="panel-body">
+          <h3>演员</h3>
+          <p><strong>艾德里安·布罗迪</strong> · <strong>罗伯特·德尼罗</strong> · <strong>菅田将晖</strong></p>
+          <h3>作家</h3>
+          <p><strong>刘震云</strong> · <strong>东野圭吾</strong> · <strong>马伯庸</strong></p>
+          <h3>创作者</h3>
+          <p><strong>梁文道</strong> · <strong>孟岩</strong></p>
+        </div>
+      </div>
+
+      <!-- 个人兴趣 -->
+      <div class="guide-panel" data-island="interests" hidden
+           role="region" aria-label="个人兴趣">
+        <div class="panel-accent seal"></div>
+        <h2 class="panel-title">个人兴趣</h2>
+        <div class="panel-body">
+          <p>历史故事 · 悬疑犯罪 · 知识管理<br>精酿啤酒 · 英语学习 · 运动锻炼</p>
+        </div>
+      </div>
+
+      <!-- 人生哲学 -->
+      <div class="guide-panel" data-island="philosophy" hidden
+           role="region" aria-label="人生哲学">
+        <div class="panel-accent ink"></div>
+        <h2 class="panel-title">人生哲学</h2>
+        <div class="panel-body">
+          <ol>
+            <li>接受自己是一个普通人</li>
+            <li>以我为主，为我所用</li>
+            <li>实践出真知</li>
+            <li>动态系统理论 &amp; 优化心态</li>
+            <li>需求导向</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- 旅行计划 -->
+      <div class="guide-panel" data-island="travel" hidden
+           role="region" aria-label="旅行计划">
+        <div class="panel-accent"></div><!-- gold -->
+        <h2 class="panel-title">旅行计划</h2>
+        <div class="panel-body">
+          <h3>福冈</h3>
+          <p>深度放松之旅</p>
+          <h3>Fuji 音乐节</h3>
+          <p>音乐之旅</p>
+          <h3>新疆</h3>
+          <p>探索之旅</p>
+        </div>
+      </div>
+
+      <!-- 高质量的信息源 -->
+      <div class="guide-panel" data-island="info-sources" hidden
+           role="region" aria-label="高质量的信息源">
+        <div class="panel-accent ink"></div>
+        <h2 class="panel-title">高质量的信息源</h2>
+        <div class="panel-body">
+          <p class="panel-placeholder">内容整理中……</p>
+        </div>
+      </div>
+
+      <!-- 碎片时间 -->
+      <div class="guide-panel" data-island="fragmented-time" hidden
+           role="region" aria-label="碎片时间能做的事">
+        <div class="panel-accent ink"></div>
+        <h2 class="panel-title">碎片时间能做的事</h2>
+        <div class="panel-body">
+          <p class="panel-placeholder">内容整理中……</p>
+        </div>
+      </div>
+
+      <!-- 知识库缺口 -->
+      <div class="guide-panel" data-island="knowledge-gaps" hidden
+           role="region" aria-label="知识库缺口">
+        <div class="panel-accent ink"></div>
+        <h2 class="panel-title">知识库缺口</h2>
+        <div class="panel-body">
+          <p class="panel-placeholder">内容整理中……</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /guide-container -->
+</div><!-- /guide-page -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── island destinations ── */
+  const HOME = { x: 470, y: 270 };
+  const CENTERS = {
+    'people':           { x: 111, y:  93 },
+    'philosophy':       { x: 308, y:  83 },
+    'interests':        { x: 116, y: 240 },
+    'travel':           { x: 298, y: 229 },
+    'info-sources':     { x: 648, y: 136 },
+    'knowledge-gaps':   { x: 792, y: 259 },
+    'fragmented-time':  { x: 663, y: 396 },
+  };
+
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let pos         = { ...HOME };
+  let activeIsland = null;
+  let animating    = false;
+  const wakePoints = [];
+  let hideTimer    = null;
+  let animId       = null;
+
+  const boat      = document.getElementById('boat');
+  const boatInner = document.getElementById('boat-inner');
+  const wake      = document.getElementById('wake');
+  const container = document.getElementById('guide-container');
+  const panels    = document.getElementById('guide-panels');
+  const closeBtn  = document.getElementById('panel-close');
+
+  /* ── easing ── */
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  /* ── quadratic Bézier ── */
+  function quadBez(p0, cp, p1, t) {
+    const u = 1 - t;
+    return {
+      x: u*u*p0.x + 2*u*t*cp.x + t*t*p1.x,
+      y: u*u*p0.y + 2*u*t*cp.y + t*t*p1.y,
+    };
+  }
+
+  function controlPoint(a, b) {
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const off = Math.min(110, len * 0.28);
+    return { x: mx - (dy / len) * off, y: my + (dx / len) * off };
+  }
+
+  function sailDuration(a, b) {
+    return Math.max(900, Math.min(1600, Math.hypot(b.x - a.x, b.y - a.y) * 2.4));
+  }
+
+  /* ── boat transform ── */
+  function setBoat(p, angleDeg) {
+    boat.setAttribute('transform',
+      `translate(${p.x.toFixed(2)},${p.y.toFixed(2)}) rotate(${angleDeg.toFixed(1)})`);
+  }
+
+  /* ── idle ── */
+  function startIdle() {
+    boatInner.classList.remove('arriving');
+    boatInner.classList.add('idle');
+  }
+
+  function stopIdle() {
+    boatInner.classList.remove('idle');
+  }
+
+  /* ── active island glow ── */
+  function setActiveIsland(id) {
+    document.querySelectorAll('.island-group').forEach(el => el.classList.remove('active'));
+    if (id) {
+      const el = document.getElementById(`island-${id}`);
+      if (el) el.classList.add('active');
+    }
+  }
+
+  /* ── sail animation ── */
+  function sail(from, to, done) {
+    if (REDUCED) {
+      pos = { ...to };
+      setBoat(to, 0);
+      done();
+      return;
+    }
+
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    stopIdle();
+    animating = true;
+
+    const cp  = controlPoint(from, to);
+    const dur = sailDuration(from, to);
+    const t0  = performance.now();
+
+    function tick(now) {
+      const rawT = Math.min((now - t0) / dur, 1);
+      const t    = easeInOutCubic(rawT);
+
+      const p   = quadBez(from, cp, to, t);
+      /* look slightly ahead along the curve for direction */
+      const pf  = quadBez(from, cp, to, Math.min(t + 0.012, 1));
+      const dir = Math.atan2(pf.y - p.y, pf.x - p.x) * (180 / Math.PI);
+
+      /* gentle rocking — fades in/out with sinusoidal envelope */
+      const rock = Math.sin(rawT * Math.PI * 8) * 5 * Math.sin(rawT * Math.PI);
+
+      boat.setAttribute('transform',
+        `translate(${p.x.toFixed(2)},${p.y.toFixed(2)}) rotate(${(dir + rock).toFixed(1)})`);
+
+      wakePoints.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+      wake.setAttribute('points', wakePoints.join(' '));
+
+      if (rawT < 1) {
+        animId = requestAnimationFrame(tick);
+      } else {
+        animId = null;
+        pos = { ...to };
+        animating = false;
+        boat.setAttribute('transform', `translate(${to.x},${to.y}) rotate(0)`);
+        done();
+      }
+    }
+
+    animId = requestAnimationFrame(tick);
+  }
+
+  /* ── panel show / hide ── */
+  function showPanel(islandId) {
+    clearTimeout(hideTimer);
+
+    if (window.innerWidth < 768) panels.style.display = '';
+
+    document.querySelectorAll('.guide-panel').forEach(el => { el.hidden = true; });
+
+    const target = panels.querySelector(`.guide-panel[data-island="${islandId}"]`);
+    if (target) {
+      target.hidden = false;
+      /* Re-trigger slide-in animation */
+      target.style.animation = 'none';
+      target.offsetHeight;         /* force reflow */
+      target.style.animation = '';
+    }
+
+    container.classList.add('panel-open');
+
+    if (window.innerWidth < 768) {
+      setTimeout(() => panels.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+    }
+  }
+
+  function hidePanel() {
+    container.classList.remove('panel-open');
+    setActiveIsland(null);
+    if (window.innerWidth < 768) panels.style.display = 'none';
+
+    hideTimer = setTimeout(() => {
+      document.querySelectorAll('.guide-panel').forEach(el => { el.hidden = true; });
+    }, 440);
+  }
+
+  /* ── island click handler ── */
+  function handleIslandClick(islandId) {
+    if (animating) return;
+
+    /* Toggle: click active island again → return home */
+    if (activeIsland === islandId) {
+      activeIsland = null;
+      hidePanel();
+      sail(pos, HOME, () => startIdle());
+      return;
+    }
+
+    activeIsland = islandId;
+    setActiveIsland(islandId);
+
+    const target = CENTERS[islandId];
+    if (!target) return;
+
+    sail(pos, target, () => {
+      /* Arrival animation */
+      boatInner.classList.remove('idle');
+      boatInner.classList.add('arriving');
+      setTimeout(() => {
+        boatInner.classList.remove('arriving');
+        startIdle();
+      }, 520);
+      showPanel(islandId);
+    });
+  }
+
+  /* ── Close button ── */
+  closeBtn?.addEventListener('click', () => {
+    if (animating) return;
+    activeIsland = null;
+    hidePanel();
+    sail(pos, HOME, () => startIdle());
+  });
+
+  /* ── Wire up all island groups ── */
+  document.querySelectorAll('.island-group[data-island]').forEach(el => {
+    const id = el.dataset.island;
+    el.addEventListener('click', () => handleIslandClick(id));
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleIslandClick(id);
+      }
+    });
+  });
+
+  /* Start idling at home port */
+  startIdle();
+
+})();
+</script>
+</body>
+</html>

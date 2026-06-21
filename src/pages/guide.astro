@@ -1,6 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import 'cn-fontsource-smiley-sans-oblique-regular/font.css';
+import 'cn-fontsource-lxgw-wen-kai-gb-screen/font.css';
+import '@fontsource/archivo/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '../styles/global.css';
 
 const entries = await getCollection('guide');
 const panels = await Promise.all(
@@ -11,626 +15,948 @@ const panels = await Promise.all(
 );
 ---
 
-<BaseLayout title="归图 · 个人导览">
-  <div class="guide-page wrap">
-    <header class="guide-header">
-      <h1 class="guide-title">归图</h1>
-      <p class="guide-sub">个人导览 · 点击岛屿探索</p>
-    </header>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="归图 · 个人导览 — 驾船游历七座岛屿" />
+  <script is:inline>
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <title>归图 · 个人导览</title>
+</head>
+<body>
 
-    <div id="guide-container" class="guide-container">
-      <div id="map-wrapper" class="map-wrapper">
-        <svg
-          id="map-svg"
-          viewBox="0 0 900 520"
-          xmlns="http://www.w3.org/2000/svg"
-          role="application"
-          aria-label="归图 个人导览"
-        >
-          <!-- Sea background -->
-          <rect width="900" height="520" fill="#C4B99A" />
+<canvas id="map-canvas" aria-hidden="true"></canvas>
 
-          <!-- Wake trail (accumulated; starts empty) -->
-          <polyline
-            id="wake"
-            points=""
-            fill="none"
-            stroke="var(--seal)"
-            stroke-width="2"
-            stroke-dasharray="4 6"
-            stroke-linecap="round"
-          />
+<!-- Minimal overlay nav -->
+<nav id="back-nav">
+  <a href="/" class="back-btn" aria-label="返回归来首页">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    归来
+  </a>
+  <span class="page-heading">归图</span>
+</nav>
 
-          <!-- ── Left cluster: personal islands ── -->
+<p id="hint" aria-live="polite">点击岛屿探索</p>
 
-          <!-- 喜欢的人物 (cx=110, cy=90) — gold tint -->
-          <g
-            id="island-people"
-            class="island-group"
-            data-island="people"
-            role="button"
-            tabindex="0"
-            aria-label="喜欢的人物"
-          >
-            <polygon
-              points="68,67 155,63 152,85 145,115 102,120 70,108"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <polygon
-              points="68,67 155,63 152,85 145,115 102,120 70,108"
-              fill="rgba(242,179,18,0.18)"
-            />
-            <text x="111" y="136" text-anchor="middle" class="island-label">喜欢的人物</text>
-          </g>
-
-          <!-- 人生哲学 (cx=300, cy=80) -->
-          <g
-            id="island-philosophy"
-            class="island-group"
-            data-island="philosophy"
-            role="button"
-            tabindex="0"
-            aria-label="人生哲学"
-          >
-            <polygon
-              points="250,58 358,55 362,72 355,105 295,110 255,98 248,75"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="303" y="126" text-anchor="middle" class="island-label">人生哲学</text>
-          </g>
-
-          <!-- 个人兴趣 (cx=115, cy=240) -->
-          <g
-            id="island-interests"
-            class="island-group"
-            data-island="interests"
-            role="button"
-            tabindex="0"
-            aria-label="个人兴趣"
-          >
-            <polygon
-              points="65,220 168,215 172,235 165,262 108,268 62,252 58,232"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="115" y="284" text-anchor="middle" class="island-label">个人兴趣</text>
-          </g>
-
-          <!-- 旅行计划 (cx=295, cy=228) — gold tint -->
-          <g
-            id="island-travel"
-            class="island-group"
-            data-island="travel"
-            role="button"
-            tabindex="0"
-            aria-label="旅行计划"
-          >
-            <polygon
-              points="245,208 350,203 355,222 348,252 288,258 242,242 238,220"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <polygon
-              points="245,208 350,203 355,222 348,252 288,258 242,242 238,220"
-              fill="rgba(242,179,18,0.18)"
-            />
-            <text x="295" y="274" text-anchor="middle" class="island-label">旅行计划</text>
-          </g>
-
-          <!-- ── Right cluster: info islands ── -->
-
-          <!-- 高质量的信息源 (cx=645, cy=133) -->
-          <g
-            id="island-info-sources"
-            class="island-group"
-            data-island="info-sources"
-            role="button"
-            tabindex="0"
-            aria-label="高质量的信息源"
-          >
-            <polygon
-              points="592,112 700,108 706,128 698,158 638,164 590,148"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="647" y="180" text-anchor="middle" class="island-label">信息源</text>
-          </g>
-
-          <!-- 知识库缺口 (cx=790, cy=258) -->
-          <g
-            id="island-knowledge-gaps"
-            class="island-group"
-            data-island="knowledge-gaps"
-            role="button"
-            tabindex="0"
-            aria-label="知识库缺口"
-          >
-            <polygon
-              points="748,234 838,229 844,250 836,280 782,287 745,270 740,247"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="792" y="303" text-anchor="middle" class="island-label">知识缺口</text>
-          </g>
-
-          <!-- 碎片时间 (cx=660, cy=393) -->
-          <g
-            id="island-fragmented-time"
-            class="island-group"
-            data-island="fragmented-time"
-            role="button"
-            tabindex="0"
-            aria-label="碎片时间能做的事"
-          >
-            <polygon
-              points="608,370 718,365 724,384 716,418 652,424 606,408"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="662" y="440" text-anchor="middle" class="island-label">碎片时间</text>
-          </g>
-
-          <!-- ── Home port (center: 470, 270) ── -->
-          <g id="home-port">
-            <circle cx="470" cy="270" r="5" fill="var(--ink)" />
-            <circle
-              cx="470"
-              cy="270"
-              r="10"
-              fill="none"
-              stroke="var(--ink)"
-              stroke-width="1.5"
-              stroke-dasharray="3 3"
-            />
-          </g>
-
-          <!-- ── Boat (starts at home port, facing east) ── -->
-          <g id="boat" transform="translate(470,270)">
-            <g id="boat-inner">
-              <!-- hull: trapezoid wider at stern, bow points east -->
-              <polygon points="-12,-6 10,-4 10,4 -12,6" fill="var(--ink)" />
-              <!-- mast -->
-              <line x1="-2" y1="-14" x2="-2" y2="6" stroke="var(--ink)" stroke-width="1.5" />
-              <!-- sail (gold triangle, points east) -->
-              <polygon points="-2,-14 -2,4 10,-4" fill="var(--gold)" />
-            </g>
-          </g>
-
-          <!-- ── Compass rose (bottom-right, decorative) ── -->
-          <g transform="translate(848,468)">
-            <line x1="0" y1="-18" x2="0" y2="18" stroke="var(--gold)" stroke-width="2" />
-            <line x1="-18" y1="0" x2="18" y2="0" stroke="var(--gold)" stroke-width="2" />
-            <polygon points="0,-18 3,-8 0,-5 -3,-8" fill="var(--gold)" />
-            <polygon points="0,18 3,8 0,5 -3,8" fill="var(--ink)" />
-            <polygon points="-18,0 -8,3 -5,0 -8,-3" fill="var(--ink)" />
-            <polygon points="18,0 8,3 5,0 8,-3" fill="var(--gold)" />
-            <circle cx="0" cy="0" r="3" fill="var(--ink)" />
-          </g>
-
-          <!-- ── Map title plate (bottom-left) ── -->
-          <g transform="translate(16,454)">
-            <rect
-              x="0" y="0" width="172" height="52"
-              fill="var(--paper)"
-              stroke="var(--ink)"
-              stroke-width="2"
-            />
-            <text x="10" y="22" class="plate-title">归图</text>
-            <text x="10" y="42" class="plate-sub">个人导览 · 2026</text>
-          </g>
-        </svg>
-      </div><!-- /map-wrapper -->
-
-      <div id="guide-panels" class="guide-panels" aria-live="polite">
-        <button id="panel-close" class="panel-close" aria-label="关闭面板">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-        </button>
-        {panels.map(({ data, Content }) => (
-          <div
-            class="guide-panel"
-            data-island={data.island}
-            hidden
-            role="region"
-            aria-label={data.title}
-          >
-            <h2 class="panel-title">{data.title}</h2>
-            {data.placeholder && (
-              <p class="panel-placeholder">内容整理中……</p>
-            )}
-            <div class="panel-body">
-              <Content />
-            </div>
-          </div>
-        ))}
+<!-- Content panel (slides from right; bottom sheet on mobile) -->
+<div id="guide-panel" role="dialog" aria-modal="true" aria-hidden="true" aria-label="岛屿内容">
+  <div class="panel-accent" id="panel-accent-bar"></div>
+  <button class="panel-close" id="panel-close" aria-label="关闭面板">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+  </button>
+  <div id="panel-inner">
+    {panels.map(({ data, Content }) => (
+      <div class="panel-content" data-island={data.island} hidden>
+        <h2 class="panel-title">{data.title}</h2>
+        {data.placeholder
+          ? <p class="panel-placeholder">内容整理中……</p>
+          : <div class="panel-body"><Content /></div>
+        }
       </div>
-    </div><!-- /guide-container -->
+    ))}
   </div>
-</BaseLayout>
+</div>
 
 <script is:inline>
 (function () {
-  /* ── Constants ── */
-  const HOME = { x: 470, y: 270 };
-  const CENTERS = {
-    'people':           { x: 111,  y: 90  },
-    'philosophy':       { x: 303,  y: 80  },
-    'interests':        { x: 115,  y: 240 },
-    'travel':           { x: 295,  y: 228 },
-    'info-sources':     { x: 647,  y: 133 },
-    'knowledge-gaps':   { x: 792,  y: 258 },
-    'fragmented-time':  { x: 662,  y: 393 },
+'use strict';
+
+/* ════════════════════════════════════════
+   PALETTE (matches site design tokens)
+════════════════════════════════════════ */
+const PAPER = '#FCF8EE';
+const INK   = '#16140F';
+const GOLD  = '#F2B312';
+const SEAL  = '#C8362B';
+const MUTED = '#6E685A';
+const SEA   = '#C4B99A';
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ════════════════════════════════════════
+   CANVAS
+════════════════════════════════════════ */
+const canvas = document.getElementById('map-canvas');
+const ctx    = canvas.getContext('2d');
+const dpr    = window.devicePixelRatio || 1;
+let W, H;
+
+function resize() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  buildPaths();
+  homePos = { x: W * HOME_F.fx, y: H * HOME_F.fy };
+  if (!animating && !activeIsland) boatPos = { ...homePos };
+}
+
+/* ════════════════════════════════════════
+   ISLAND DEFINITIONS
+   fx/fy  = center as fraction of W/H
+   rx/ry  = half-extent as fraction of W/H
+   pts    = Catmull-Rom control offsets (±1 units relative to rx/ry)
+   accent = panel top-bar color class
+════════════════════════════════════════ */
+const HOME_F = { fx: 0.52, fy: 0.52 };
+
+const ISLAND_DEFS = {
+  'people': {
+    fx:0.12, fy:0.19, rx:0.085, ry:0.115, gold:true, accent:'gold',
+    pts:[[-0.9,-0.5],[-0.2,-1.0],[0.8,-0.9],[1.1,-0.1],[0.9,0.8],[-0.1,1.1],[-1.0,0.7]],
+  },
+  'philosophy': {
+    fx:0.34, fy:0.17, rx:0.115, ry:0.10, gold:false, accent:'ink',
+    pts:[[-1.0,-0.3],[-0.6,-1.0],[0.4,-1.0],[1.1,-0.5],[1.0,0.4],[0.3,1.0],[-0.7,0.9],[-1.1,0.2]],
+  },
+  'interests': {
+    fx:0.13, fy:0.46, rx:0.09, ry:0.11, gold:false, accent:'seal',
+    pts:[[-0.9,-0.6],[0.0,-1.1],[0.9,-0.7],[1.0,0.1],[0.7,0.9],[-0.2,1.1],[-1.0,0.6]],
+  },
+  'travel': {
+    fx:0.33, fy:0.44, rx:0.115, ry:0.105, gold:true, accent:'gold',
+    pts:[[-1.0,-0.4],[-0.5,-1.0],[0.5,-1.0],[1.1,-0.3],[0.9,0.6],[0.1,1.1],[-0.8,0.8],[-1.1,0.1]],
+  },
+  'info-sources': {
+    fx:0.72, fy:0.26, rx:0.10, ry:0.095, gold:false, accent:'ink',
+    pts:[[-0.8,-0.7],[-0.1,-1.1],[0.9,-0.8],[1.1,-0.1],[0.8,0.7],[0.0,1.0],[-0.9,0.7]],
+  },
+  'knowledge-gaps': {
+    fx:0.87, fy:0.50, rx:0.095, ry:0.105, gold:false, accent:'ink',
+    pts:[[-0.7,-0.8],[0.1,-1.1],[0.9,-0.6],[1.1,0.2],[0.8,0.9],[-0.1,1.1],[-0.9,0.6],[-1.1,-0.1]],
+  },
+  'fragmented-time': {
+    fx:0.73, fy:0.76, rx:0.105, ry:0.10, gold:false, accent:'ink',
+    pts:[[-1.0,-0.3],[-0.4,-1.0],[0.6,-0.9],[1.1,-0.2],[0.8,0.7],[0.0,1.1],[-0.8,0.8]],
+  },
+};
+
+const ISLAND_LABELS = {
+  'people':          '喜欢的人物',
+  'philosophy':      '人生哲学',
+  'interests':       '个人兴趣',
+  'travel':          '旅行计划',
+  'info-sources':    '信息源',
+  'knowledge-gaps':  '知识缺口',
+  'fragmented-time': '碎片时间',
+};
+
+/* ════════════════════════════════════════
+   ISLAND PATHS (rebuilt on resize)
+════════════════════════════════════════ */
+let islandPaths   = {};
+let islandCenters = {};
+let homePos       = { x: 0, y: 0 };
+
+function catmullToBezier(pts) {
+  const n = pts.length;
+  const path = new Path2D();
+  path.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n];
+    const p1 = pts[i];
+    const p2 = pts[(i + 1) % n];
+    const p3 = pts[(i + 2) % n];
+    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+    path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2[0], p2[1]);
+  }
+  path.closePath();
+  return path;
+}
+
+function buildPaths() {
+  islandPaths   = {};
+  islandCenters = {};
+  for (const [id, def] of Object.entries(ISLAND_DEFS)) {
+    const cx = W * def.fx;
+    const cy = H * def.fy;
+    const rx = W * def.rx;
+    const ry = H * def.ry;
+    islandCenters[id] = { x: cx, y: cy };
+    const pts = def.pts.map(([px, py]) => [cx + px * rx, cy + py * ry]);
+    islandPaths[id] = catmullToBezier(pts);
+  }
+}
+
+/* ════════════════════════════════════════
+   BUTTERFLIES
+════════════════════════════════════════ */
+const BFY_COLORS = [GOLD, SEAL, '#E8A010', '#D44030'];
+
+function Butterfly() {
+  const self = {
+    x: 0, y: 0, vx: 0, vy: 0,
+    size: 0, phase: 0, wingSpeed: 0,
+    color: '', alpha: 0, fadeIn: false,
+    wanderX: 0, wanderY: 0, angle: 0,
   };
-  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ── State ── */
-  let pos = { ...HOME };      // current boat position in SVG coords
-  let activeIsland = null;    // currently open island id
-  let animating = false;
-  const wakePoints = [];      // accumulated wake trail
-  let hideTimer = null;
-
-  /* ── DOM refs ── */
-  const boat       = document.getElementById('boat');
-  const boatInner  = document.getElementById('boat-inner');
-  const wake       = document.getElementById('wake');
-  const container  = document.getElementById('guide-container');
-  const panels     = document.getElementById('guide-panels');
-  const closeBtn   = document.getElementById('panel-close');
-
-  /* ── Bézier helpers ── */
-  function quadBez(p0, cp, p1, t) {
-    const u = 1 - t;
-    return {
-      x: u * u * p0.x + 2 * u * t * cp.x + t * t * p1.x,
-      y: u * u * p0.y + 2 * u * t * cp.y + t * t * p1.y,
-    };
-  }
-
-  function controlPoint(from, to) {
-    const mx = (from.x + to.x) / 2;
-    const my = (from.y + to.y) / 2;
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const offset = Math.min(90, len * 0.28);
-    return { x: mx - (dy / len) * offset, y: my + (dx / len) * offset };
-  }
-
-  function duration(from, to) {
-    return Math.max(900, Math.min(1400, Math.hypot(to.x - from.x, to.y - from.y) * 2));
-  }
-
-  /* ── Boat transform ── */
-  function setBoat(p, angle) {
-    boat.setAttribute(
-      'transform',
-      `translate(${p.x.toFixed(2)},${p.y.toFixed(2)}) rotate(${angle.toFixed(1)})`
-    );
-  }
-
-  /* ── Animate boat from `from` to `to` then call `done()` ── */
-  function sail(from, to, done) {
-    if (REDUCED) {
-      pos = { ...to };
-      setBoat(to, 0);
-      done();
-      return;
+  self.reset = function (initial) {
+    self.x         = W * (0.06 + Math.random() * 0.83);
+    self.y         = H * (0.06 + Math.random() * 0.58);
+    self.size      = 7 + Math.random() * 5;
+    self.phase     = Math.random() * Math.PI * 2;
+    self.vx        = (Math.random() - 0.5) * 0.7;
+    self.vy        = (Math.random() - 0.5) * 0.35;
+    self.color     = BFY_COLORS[Math.floor(Math.random() * BFY_COLORS.length)];
+    self.wingSpeed = 6 + Math.random() * 4;
+    self.wanderX   = Math.random() * Math.PI * 2;
+    self.wanderY   = Math.random() * Math.PI * 2;
+    self.alpha     = initial ? Math.random() : 0;
+    self.fadeIn    = !initial;
+    self.angle     = 0;
+  };
+  self.update = function (dt) {
+    if (self.fadeIn) {
+      self.alpha = Math.min(1, self.alpha + dt * 0.5);
+      if (self.alpha >= 1) self.fadeIn = false;
     }
-    animating = true;
-    const cp = controlPoint(from, to);
-    const dur = duration(from, to);
-    const start = performance.now();
+    self.wanderX += dt * 0.8;
+    self.wanderY += dt * 0.6;
+    const wx = Math.sin(self.wanderX + self.phase) * 0.4;
+    const wy = Math.cos(self.wanderY + self.phase) * 0.25;
+    self.x += (self.vx + wx) * dt * 40;
+    self.y += (self.vy + wy) * dt * 40;
+    const margin = 60;
+    if (self.x < margin)          self.vx += 0.02;
+    if (self.x > W - margin)      self.vx -= 0.02;
+    if (self.y < margin)          self.vy += 0.02;
+    if (self.y > H * 0.82 - margin) self.vy -= 0.02;
+    self.vx   *= 0.992;
+    self.vy   *= 0.992;
+    self.angle = Math.atan2(self.vy, self.vx);
+  };
+  self.draw = function (t) {
+    const wo = (Math.sin(t * self.wingSpeed + self.phase) + 1) * 0.5;
+    const s  = self.size;
+    ctx.save();
+    ctx.translate(self.x, self.y);
+    ctx.rotate(self.angle);
+    ctx.globalAlpha = self.alpha * 0.82;
+    ctx.fillStyle   = self.color;
+    function wing(xSign) {
+      // Upper lobe
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(xSign*s*1.2*wo, -s*0.6, xSign*s*1.8*wo, -s*1.6, xSign*s*0.1, -s*1.4);
+      ctx.bezierCurveTo(xSign*-s*0.3, -s*1.2, xSign*-s*0.1, -s*0.4, 0, 0);
+      ctx.fill();
+      // Lower lobe
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(xSign*s*0.9*wo, s*0.3, xSign*s*1.3*wo, s*1.2, xSign*s*0.2, s*1.1);
+      ctx.bezierCurveTo(xSign*-s*0.2, s*1.0, xSign*-s*0.1, s*0.5, 0, 0);
+      ctx.fill();
+    }
+    wing(-1); wing(1);
+    // Body
+    ctx.globalAlpha = self.alpha;
+    ctx.fillStyle   = INK;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, s*0.18, s*0.7, 0, 0, Math.PI*2);
+    ctx.fill();
+    // Antennae
+    ctx.strokeStyle = INK; ctx.lineWidth = 0.8; ctx.lineCap = 'round';
+    ctx.globalAlpha = self.alpha * 0.7;
+    [-1, 1].forEach(sign => {
+      ctx.beginPath();
+      ctx.moveTo(0, -s*0.6);
+      ctx.quadraticCurveTo(sign*s*0.6, -s*1.8, sign*s*0.4, -s*2.2);
+      ctx.stroke();
+    });
+    ctx.restore();
+  };
+  self.reset(true);
+  return self;
+}
 
-    function tick(now) {
-      const t = Math.min((now - start) / dur, 1);
-      const p = quadBez(from, cp, to, t);
+const butterflies = Array.from({ length: 9 }, () => Butterfly());
 
-      // rotation: point boat toward next position
-      const ahead = quadBez(from, cp, to, Math.min(t + 0.02, 1));
-      const angle = Math.atan2(ahead.y - p.y, ahead.x - p.x) * (180 / Math.PI);
+/* ════════════════════════════════════════
+   BOAT STATE
+════════════════════════════════════════ */
+let boatPos      = { x: 0, y: 0 };
+let boatAngle    = 0;
+let boatBob      = 0;
+let idlePhase    = 0;
+let animating    = false;
+let wakePoints   = [];
+let activeIsland = null;
+let panelTimer   = null;
 
-      setBoat(p, angle);
+// Sailing state
+let sailFrom, sailTo, sailCP, sailDur, sailStart, sailDone;
 
-      wakePoints.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
-      wake.setAttribute('points', wakePoints.join(' '));
+/* ════════════════════════════════════════
+   BOAT DRAWING
+════════════════════════════════════════ */
+function drawBoat(cx, cy, angleDeg, bob) {
+  const s = Math.max(0.55, Math.min(1.25, W / 960));
+  ctx.save();
+  ctx.translate(cx, cy + bob);
+  ctx.rotate(angleDeg * Math.PI / 180);
 
-      if (t < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        pos = { ...to };
-        animating = false;
-        done();
+  // Keel curve
+  ctx.beginPath();
+  ctx.moveTo(-22*s, 5*s);
+  ctx.quadraticCurveTo(-7*s, 13*s, 7*s, 13*s);
+  ctx.quadraticCurveTo(18*s, 11*s, 24*s, 5*s);
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.5*s; ctx.lineCap = 'round'; ctx.stroke();
+
+  // Hull body
+  ctx.beginPath();
+  ctx.moveTo(-22*s, 5*s);
+  ctx.lineTo(-20*s, -5*s);
+  ctx.lineTo(20*s, -5*s);
+  ctx.quadraticCurveTo(26*s, -4*s, 24*s, 5*s);
+  ctx.quadraticCurveTo(18*s, 11*s, 7*s, 13*s);
+  ctx.quadraticCurveTo(-7*s, 13*s, -22*s, 5*s);
+  ctx.closePath();
+  ctx.fillStyle = INK; ctx.fill();
+
+  // Cabin highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.10)';
+  ctx.fillRect(-14*s, -5*s, 10*s, 3.5*s);
+
+  // Mast
+  ctx.beginPath(); ctx.moveTo(0, -30*s); ctx.lineTo(0, -5*s);
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.8*s; ctx.stroke();
+
+  // Yard arm
+  ctx.beginPath(); ctx.moveTo(0, -22*s); ctx.lineTo(22*s, -22*s);
+  ctx.lineWidth = 1.8*s; ctx.stroke();
+
+  // Sail (gold, billowing)
+  ctx.beginPath();
+  ctx.moveTo(0, -28*s);
+  ctx.quadraticCurveTo(26*s, -18*s, 24*s, -5*s);
+  ctx.lineTo(0, -5*s); ctx.closePath();
+  ctx.fillStyle = GOLD; ctx.fill();
+  ctx.strokeStyle = INK; ctx.lineWidth = 0.9*s; ctx.stroke();
+
+  // Sail highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.20)';
+  ctx.beginPath();
+  ctx.moveTo(2*s, -24*s);
+  ctx.quadraticCurveTo(17*s, -15*s, 15*s, -7*s);
+  ctx.lineTo(2*s, -7*s); ctx.closePath(); ctx.fill();
+
+  // Pennant
+  ctx.beginPath();
+  ctx.moveTo(0, -30*s); ctx.lineTo(8*s, -26*s); ctx.lineTo(0, -22*s);
+  ctx.closePath(); ctx.fillStyle = SEAL; ctx.fill();
+
+  // Immediate wake ripples
+  ctx.globalAlpha = 0.35; ctx.strokeStyle = SEAL; ctx.lineWidth = 1.2*s;
+  ctx.beginPath();
+  ctx.moveTo(-22*s, 4*s); ctx.quadraticCurveTo(-28*s, 6*s, -34*s, 3*s); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-22*s, 7*s); ctx.quadraticCurveTo(-27*s, 9*s, -32*s, 7*s); ctx.stroke();
+
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════
+   SEA DRAWING
+════════════════════════════════════════ */
+function drawSea(t) {
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#B5AA8A');
+  grad.addColorStop(0.4, SEA);
+  grad.addColorStop(1, '#CAC0A8');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Faint chart grid
+  ctx.strokeStyle = 'rgba(22,20,15,0.04)'; ctx.lineWidth = 0.6;
+  const g = Math.max(W, H) / 10;
+  for (let x = 0; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Wave layers
+  const layers = [
+    { yF:0.30, amp:H*0.006, freq:0.008, speed:0.22, alpha:0.10 },
+    { yF:0.42, amp:H*0.009, freq:0.011, speed:0.34, alpha:0.12 },
+    { yF:0.56, amp:H*0.012, freq:0.014, speed:0.46, alpha:0.10 },
+    { yF:0.70, amp:H*0.010, freq:0.018, speed:0.55, alpha:0.08 },
+    { yF:0.84, amp:H*0.008, freq:0.022, speed:0.62, alpha:0.06 },
+  ];
+  layers.forEach(({ yF, amp, freq, speed, alpha }) => {
+    const y0 = H * yF;
+    ctx.beginPath(); ctx.moveTo(-2, y0);
+    for (let x = 0; x <= W + 2; x += 3) {
+      ctx.lineTo(x, y0
+        + Math.sin(x * freq + t * speed) * amp
+        + Math.sin(x * freq * 1.6 + t * speed * 0.8 + 1.2) * amp * 0.4);
+    }
+    ctx.lineTo(W+2, H); ctx.lineTo(-2, H); ctx.closePath();
+    ctx.fillStyle = `rgba(22,20,15,${alpha})`; ctx.fill();
+
+    // Foam flecks at crests
+    ctx.fillStyle = `rgba(252,248,238,${alpha * 1.4})`;
+    for (let x = 10; x < W; x += 70 + Math.sin(x * 0.03) * 20) {
+      const crest = Math.sin(x * freq + t * speed);
+      if (crest > 0.55) {
+        const sz = (crest - 0.55) * 6;
+        ctx.beginPath();
+        ctx.arc(x + Math.sin(t + x * 0.1) * 4,
+                y0 + Math.sin(x * freq + t * speed) * amp - 1, sz, 0, Math.PI*2);
+        ctx.fill();
       }
     }
-    requestAnimationFrame(tick);
+  });
+
+  // Depth markers
+  ctx.fillStyle = 'rgba(22,20,15,0.13)';
+  ctx.font = `${Math.max(8, W * 0.009)}px Georgia,serif`;
+  ctx.textAlign = 'left';
+  [[0.19,0.30],[0.40,0.17],[0.45,0.27],[0.60,0.20],[0.55,0.38],
+   [0.62,0.52],[0.75,0.20],[0.76,0.45],[0.92,0.13],[0.88,0.36],
+   [0.14,0.37],[0.22,0.46],[0.43,0.42],[0.08,0.58],[0.50,0.48]
+  ].forEach(([fx, fy]) => ctx.fillText('·', W*fx, H*fy));
+}
+
+/* ════════════════════════════════════════
+   ISLANDS DRAWING
+════════════════════════════════════════ */
+function drawIslands(hoveredId) {
+  for (const [id, def] of Object.entries(ISLAND_DEFS)) {
+    const path     = islandPaths[id];
+    const isHover  = id === hoveredId;
+    const isActive = id === activeIsland;
+
+    ctx.save();
+    if (isHover || isActive) {
+      ctx.shadowColor = isActive ? 'rgba(242,179,18,0.78)' : 'rgba(242,179,18,0.52)';
+      ctx.shadowBlur  = isActive ? 24 : 15;
+    } else {
+      ctx.shadowColor   = 'rgba(22,20,15,0.20)';
+      ctx.shadowBlur    = 8;
+      ctx.shadowOffsetX = 3;
+      ctx.shadowOffsetY = 4;
+    }
+    ctx.fillStyle = PAPER; ctx.fill(path);
+    ctx.restore();
+
+    if (def.gold) { ctx.fillStyle = 'rgba(242,179,18,0.16)'; ctx.fill(path); }
+
+    // Inner contour
+    const c  = islandCenters[id];
+    ctx.save(); ctx.clip(path);
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, W*def.rx*0.7, H*def.ry*0.7, 0, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(22,20,15,0.14)'; ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.restore();
+
+    // Border
+    ctx.strokeStyle = INK; ctx.lineWidth = (isHover || isActive) ? 2.8 : 2.0;
+    ctx.stroke(path);
+
+    // Topo dots
+    ctx.fillStyle = 'rgba(22,20,15,0.25)';
+    ctx.beginPath(); ctx.arc(c.x, c.y, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(c.x + W*def.rx*0.4, c.y - H*def.ry*0.3, 1.8, 0, Math.PI*2); ctx.fill();
+
+    // Label
+    const labelSize = Math.max(11, W * 0.012);
+    ctx.fillStyle = (isHover || isActive) ? INK : MUTED;
+    ctx.font = `${isActive ? 700 : 600} ${labelSize}px "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(ISLAND_LABELS[id] || id, W * def.fx, H * def.fy + H * def.ry * 1.22 + 14);
+    ctx.textAlign = 'left';
+  }
+}
+
+/* ════════════════════════════════════════
+   HOME PORT
+════════════════════════════════════════ */
+function drawHomePort() {
+  const { x, y } = homePos;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x, y, 18, 0, Math.PI*2);
+  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.setLineDash([3.5,3.5]);
+  ctx.globalAlpha = 0.35; ctx.stroke(); ctx.setLineDash([]);
+  ctx.globalAlpha = 0.65;
+  ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
+  ctx.fillStyle = INK; ctx.fill();
+  // Anchor
+  ctx.globalAlpha = 0.30; ctx.strokeStyle = INK; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+  const ay = y - 10;
+  ctx.beginPath(); ctx.moveTo(x, ay-7); ctx.lineTo(x, ay+7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x-5.5, ay-5); ctx.lineTo(x+5.5, ay-5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, ay+7, 5, 0, Math.PI); ctx.stroke();
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════
+   WAKE TRAIL
+════════════════════════════════════════ */
+function drawWake() {
+  if (wakePoints.length < 2) return;
+  ctx.save();
+  ctx.strokeStyle = SEAL; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
+  ctx.setLineDash([4,10]); ctx.globalAlpha = 0.65;
+  ctx.beginPath();
+  ctx.moveTo(wakePoints[0].x, wakePoints[0].y);
+  wakePoints.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════
+   COMPASS ROSE
+════════════════════════════════════════ */
+function drawCompass() {
+  const cx = W - 58, cy = H - 62;
+  const r  = Math.max(22, Math.min(30, W * 0.028));
+  ctx.save(); ctx.translate(cx, cy);
+  ctx.beginPath(); ctx.arc(0, 0, r+4, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(252,248,238,0.45)'; ctx.fill();
+  ctx.strokeStyle = INK; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.35; ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  function arrowPt(ox, oy, tx, ty, col, alpha) {
+    ctx.globalAlpha = alpha; ctx.fillStyle = col;
+    const hw = r * 0.22, len = Math.hypot(tx-ox, ty-oy) || 1;
+    const px = -(ty-oy)/len*hw, py = (tx-ox)/len*hw;
+    ctx.beginPath();
+    ctx.moveTo(tx, ty); ctx.lineTo(ox+px, oy+py); ctx.lineTo(ox, oy); ctx.lineTo(ox-px, oy-py);
+    ctx.closePath(); ctx.fill();
   }
 
-  /* ── Panel open/close ── */
-  function showPanel(islandId) {
-    clearTimeout(hideTimer);
-    // on mobile, ensure panels container is visible
-    if (window.innerWidth < 768) {
-      panels.style.display = '';
+  arrowPt(0, r*0.4, 0, -r, GOLD, 1);
+  arrowPt(0, -r*0.4, 0, r, INK, 0.5);
+  arrowPt(-r*0.4, 0, r, 0, GOLD, 0.85);
+  arrowPt(r*0.4, 0, -r, 0, INK, 0.4);
+  const d = r * 0.68;
+  [[-d,-d],[d,-d],[d,d],[-d,d]].forEach(([tx,ty]) => arrowPt(tx*0.35, ty*0.35, tx, ty, INK, 0.25));
+
+  ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.arc(0, 0, r*0.2, 0, Math.PI*2);
+  ctx.fillStyle = GOLD; ctx.fill();
+  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
+
+  ctx.globalAlpha = 0.45; ctx.fillStyle = INK;
+  ctx.font = `italic ${r*0.5}px Georgia,serif`; ctx.textAlign = 'center';
+  ctx.fillText('N', 0, -r-5);
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════
+   TITLE PLATE
+════════════════════════════════════════ */
+function drawTitlePlate() {
+  const x = 16, y = H - 74, pw = 192, ph = 54;
+  ctx.save();
+  ctx.fillStyle = PAPER; ctx.fillRect(x, y, pw, ph);
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.strokeRect(x, y, pw, ph);
+  ctx.fillStyle = GOLD; ctx.fillRect(x, y, 5, ph);
+  ctx.fillStyle = INK;
+  ctx.font = `800 ${Math.max(16, W*0.018)}px "Smiley Sans Oblique","PingFang SC",sans-serif`;
+  ctx.textAlign = 'left'; ctx.fillText('归图', x+14, y+26);
+  ctx.font = `${Math.max(9, W*0.010)}px "PingFang SC","Noto Sans SC",sans-serif`;
+  ctx.fillStyle = MUTED; ctx.fillText('个人导览 · MMXXVI', x+14, y+44);
+  ctx.restore();
+}
+
+/* ════════════════════════════════════════
+   SAILING HELPERS
+════════════════════════════════════════ */
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+}
+
+function quadBez(p0, cp, p1, t) {
+  const u = 1-t;
+  return { x: u*u*p0.x + 2*u*t*cp.x + t*t*p1.x, y: u*u*p0.y + 2*u*t*cp.y + t*t*p1.y };
+}
+
+function controlPoint(a, b) {
+  const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+  const dx = b.x-a.x, dy = b.y-a.y, len = Math.hypot(dx,dy)||1;
+  const off = Math.min(Math.max(W,H)*0.12, len*0.3);
+  return { x: mx-(dy/len)*off, y: my+(dx/len)*off };
+}
+
+function startSail(from, to, onDone) {
+  if (REDUCED) {
+    boatPos = { ...to }; boatAngle = 0; onDone && onDone(); return;
+  }
+  animating = true;
+  sailFrom  = { ...from };
+  sailTo    = { ...to };
+  sailCP    = controlPoint(from, to);
+  const dist = Math.hypot(to.x-from.x, to.y-from.y);
+  sailDur   = Math.max(900, Math.min(1800, dist * 2.5));
+  sailStart = null;
+  sailDone  = onDone;
+}
+
+/* ════════════════════════════════════════
+   ANIMATION LOOP
+════════════════════════════════════════ */
+let animTime = 0, lastT = 0;
+let hoveredIsland = null;
+
+function loop(ts) {
+  if (animating && sailStart === null) sailStart = ts;
+  const dt  = Math.min((ts - lastT) / 1000, 0.05);
+  lastT = ts;
+  if (!REDUCED) animTime += dt;
+  const t = animTime;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  // 1. Sea
+  drawSea(t);
+
+  // 2. Boat update
+  if (animating && sailStart !== null) {
+    const rawT = Math.min((ts - sailStart) / sailDur, 1);
+    const et   = easeInOutCubic(rawT);
+    const p    = quadBez(sailFrom, sailCP, sailTo, et);
+    const pf   = quadBez(sailFrom, sailCP, sailTo, Math.min(et+0.015, 1));
+    boatAngle  = Math.atan2(pf.y-p.y, pf.x-p.x) * 180/Math.PI;
+    boatAngle += Math.sin(rawT * Math.PI * 9) * 6 * Math.sin(rawT * Math.PI);
+    boatPos    = p;
+    wakePoints.push({ x: p.x, y: p.y });
+    if (rawT >= 1) {
+      animating = false;
+      boatPos   = { ...sailTo };
+      boatAngle = 0;
+      sailDone && sailDone();
     }
-
-    // hide all panels, show the target
-    document.querySelectorAll('.guide-panel').forEach((el) => {
-      el.hidden = true;
-    });
-    const target = panels.querySelector(`.guide-panel[data-island="${islandId}"]`);
-    if (target) target.hidden = false;
-
-    container.classList.add('panel-open');
-
-    // on mobile, scroll panel into view
-    if (window.innerWidth < 768) {
-      setTimeout(() => panels.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-    }
+  } else {
+    idlePhase += dt;
+    boatBob    = Math.sin(idlePhase * 1.6) * 3.5 + Math.sin(idlePhase * 2.5 + 0.8) * 1.5;
+    boatAngle  = boatAngle + (Math.sin(idlePhase * 1.2) * 2.5 - boatAngle) * 0.05;
   }
 
-  function hidePanel() {
-    container.classList.remove('panel-open');
-    // on mobile, immediately hide the panels container
-    if (window.innerWidth < 768) {
-      panels.style.display = 'none';
-    }
-    // wait for CSS transition before hiding individual panels
-    hideTimer = setTimeout(() => {
-      document.querySelectorAll('.guide-panel').forEach((el) => {
-        el.hidden = true;
-      });
-    }, 380);
+  // 3. Wake
+  drawWake();
+
+  // 4. Islands
+  drawIslands(hoveredIsland);
+
+  // 5. Home port
+  drawHomePort();
+
+  // 6. Boat
+  drawBoat(boatPos.x, boatPos.y, boatAngle, boatBob);
+
+  // 7. Butterflies
+  butterflies.forEach(b => { b.update(dt); b.draw(t); });
+
+  // 8. UI overlays
+  drawCompass();
+  drawTitlePlate();
+
+  requestAnimationFrame(loop);
+}
+
+/* ════════════════════════════════════════
+   INTERACTION
+════════════════════════════════════════ */
+function islandAt(mx, my) {
+  for (const [id, path] of Object.entries(islandPaths)) {
+    if (ctx.isPointInPath(path, mx, my)) return id;
   }
+  return null;
+}
 
-  /* ── Island click ── */
-  function handleIslandClick(islandId) {
-    if (animating) return;
-    if (activeIsland === islandId) {
-      // second click on same island → close
-      activeIsland = null;
-      hidePanel();
-      sail(pos, HOME, () => {});
-      return;
-    }
-    activeIsland = islandId;
-    const target = CENTERS[islandId];
-    if (!target) return;
+function toCanvas(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
 
-    sail(pos, target, () => {
-      // bob animation — uses boatInner so scoped CSS selector matches
-      boatInner.classList.add('bobbing');
-      setTimeout(() => boatInner.classList.remove('bobbing'), 600);
-      showPanel(islandId);
-    });
-  }
+canvas.addEventListener('mousemove', e => {
+  const { x, y } = toCanvas(e);
+  const id = islandAt(x, y);
+  hoveredIsland = id;
+  canvas.style.cursor = id ? 'pointer' : 'default';
+});
 
-  /* ── Close button ── */
-  closeBtn?.addEventListener('click', () => {
-    if (animating) return;
+canvas.addEventListener('mouseleave', () => {
+  hoveredIsland = null;
+  canvas.style.cursor = 'default';
+});
+
+canvas.addEventListener('click', e => {
+  if (animating) return;
+  const { x, y } = toCanvas(e);
+  const id = islandAt(x, y);
+  if (id) handleIslandClick(id);
+});
+
+canvas.addEventListener('touchend', e => {
+  if (animating) return;
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  const { x, y } = toCanvas(t);
+  const id = islandAt(x, y);
+  if (id) handleIslandClick(id);
+}, { passive: false });
+
+function handleIslandClick(id) {
+  document.getElementById('hint').classList.add('hidden');
+  if (activeIsland === id) {
     activeIsland = null;
-    hidePanel();
-    sail(pos, HOME, () => {});
-  });
+    closePanel();
+    startSail(boatPos, homePos, null);
+    return;
+  }
+  activeIsland = id;
+  startSail(boatPos, islandCenters[id], () => showPanel(id));
+}
 
-  /* ── Wire up islands ── */
-  document.querySelectorAll('.island-group[data-island]').forEach((el) => {
-    const id = el.dataset.island;
-    el.addEventListener('click', () => handleIslandClick(id));
-    el.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleIslandClick(id);
-      }
-    });
-  });
+/* ════════════════════════════════════════
+   PANEL
+════════════════════════════════════════ */
+const panel      = document.getElementById('guide-panel');
+const accentBar  = document.getElementById('panel-accent-bar');
+
+function showPanel(id) {
+  // Show matching content, hide others
+  document.querySelectorAll('.panel-content').forEach(el => { el.hidden = true; });
+  const target = document.querySelector(`.panel-content[data-island="${id}"]`);
+  if (target) target.hidden = false;
+
+  const accent = ISLAND_DEFS[id]?.accent || 'gold';
+  accentBar.className = 'panel-accent' + (accent !== 'gold' ? ' ' + accent : '');
+
+  clearTimeout(panelTimer);
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  panelTimer = setTimeout(() => {
+    document.querySelectorAll('.panel-content').forEach(el => { el.hidden = true; });
+  }, 460);
+}
+
+document.getElementById('panel-close').addEventListener('click', () => {
+  if (animating) return;
+  activeIsland = null;
+  closePanel();
+  startSail(boatPos, homePos, null);
+});
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+window.addEventListener('resize', resize);
+resize();
+homePos = { x: W * HOME_F.fx, y: H * HOME_F.fy };
+boatPos = { ...homePos };
+
+// Stagger butterfly fade-in
+butterflies.forEach((b, i) => {
+  b.alpha  = 0;
+  b.fadeIn = false;
+  b.x = W * (0.06 + Math.random() * 0.83);
+  b.y = H * (0.06 + Math.random() * 0.55);
+  setTimeout(() => { b.fadeIn = true; }, i * 280 + 500);
+});
+
+lastT = performance.now();
+requestAnimationFrame(loop);
+
 })();
 </script>
 
-<style>
-  /* ── Page ── */
-  .guide-page {
-    padding-top: 32px;
-    padding-bottom: 64px;
-  }
-  .guide-header {
-    margin-bottom: 24px;
-  }
-  .guide-title {
-    font-family: var(--disp);
-    font-size: 2rem;
-    margin: 0 0 4px;
-  }
-  .guide-sub {
-    color: var(--muted);
-    margin: 0;
-    font-size: 0.9rem;
-  }
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── Container ── */
-  .guide-container {
-    display: flex;
-    border: 3px solid var(--ink);
-    box-shadow: var(--shadow-lg);
+  html, body {
+    width: 100%; height: 100%;
     overflow: hidden;
-    background: var(--paper);
-    min-height: 360px;
+    background: #C4B99A;
+    font-family: var(--zh, "PingFang SC","Noto Sans SC",sans-serif);
+    color: var(--ink, #16140F);
   }
 
-  /* ── Map ── */
-  .map-wrapper {
-    flex: 1 1 100%;
-    min-width: 0;
-    transition: flex-basis 0.4s ease;
-  }
-  .guide-container.panel-open .map-wrapper {
-    flex-basis: 58%;
-  }
-  #map-svg {
-    width: 100%;
-    height: auto;
+  #map-canvas {
+    position: fixed;
+    inset: 0;
     display: block;
-  }
-
-  /* ── Island interactive ── */
-  .island-group {
-    cursor: pointer;
-  }
-  .island-group:hover > polygon:first-child,
-  .island-group:focus > polygon:first-child {
-    stroke-width: 3.5px;
-  }
-  .island-group:focus {
-    outline: none;
-  }
-
-  /* ── SVG text ── */
-  .island-label {
-    font-family: var(--disp);
-    font-size: 13px;
-    fill: var(--ink);
-    letter-spacing: 0.04em;
-    pointer-events: none;
-    user-select: none;
-  }
-  .plate-title {
-    font-family: var(--disp);
-    font-size: 18px;
-    fill: var(--ink);
-  }
-  .plate-sub {
-    font-family: var(--lat);
-    font-size: 11px;
-    fill: var(--muted);
-  }
-
-  /* ── Panels ── */
-  .guide-panels {
-    flex: 0 0 0%;
-    overflow: hidden;
-    background: var(--paper);
-    transition: flex-basis 0.35s ease-out;
-    position: relative;
-  }
-  .guide-container.panel-open .guide-panels {
-    flex: 0 0 42%;
-    overflow-y: auto;
-    border-left: 3px solid var(--ink);
-  }
-  .guide-panel {
-    padding: 40px 28px 48px;
-  }
-  .panel-close {
-    position: sticky;
-    top: 12px;
-    left: calc(100% - 44px);
-    display: block;
-    width: 32px;
-    height: 32px;
-    border: 2px solid var(--ink);
-    background: var(--bg);
-    cursor: pointer;
-    padding: 4px;
-    box-shadow: var(--shadow-sm);
-    color: var(--ink);
-    margin: 12px 12px 0 auto;
-  }
-  .panel-close:hover {
-    background: var(--ink);
-    color: var(--paper);
-  }
-  .panel-close svg {
     width: 100%;
     height: 100%;
   }
-  .panel-title {
-    font-family: var(--disp);
-    font-size: 1.6rem;
-    margin: 0 0 20px;
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 12px;
-  }
-  .panel-placeholder {
-    color: var(--muted);
-    font-style: italic;
+
+  /* ── Back nav ── */
+  #back-nav {
+    position: fixed;
+    top: 20px; left: 24px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
-  /* panel body: markdown content (use :global for rendered HTML) */
-  .guide-panel :global(.panel-body h2) {
-    font-family: var(--disp);
-    font-size: 1rem;
-    margin: 20px 0 8px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-  .guide-panel :global(.panel-body p) {
-    margin: 0 0 12px;
-    line-height: 1.7;
-  }
-  .guide-panel :global(.panel-body ol),
-  .guide-panel :global(.panel-body ul) {
-    padding-left: 1.4em;
-    margin: 0 0 12px;
-    line-height: 1.8;
-  }
-  .guide-panel :global(.panel-body strong) {
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper, #FCF8EE);
+    border: 2px solid var(--ink, #16140F);
+    padding: 6px 14px;
+    font-size: 0.82rem;
     font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--ink, #16140F);
+    box-shadow: 3px 3px 0 var(--ink, #16140F);
+    letter-spacing: 0.04em;
+    transition: background 0.12s, color 0.12s;
+  }
+  .back-btn:hover { background: var(--ink, #16140F); color: var(--paper, #FCF8EE); }
+
+  .page-heading {
+    font-family: var(--disp, "PingFang SC",sans-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ink, #16140F);
+    text-shadow: 2px 2px 0 rgba(252,248,238,0.35);
+    letter-spacing: -0.01em;
+    pointer-events: none;
   }
 
-  /* ── Boat bob ── */
-  @keyframes boat-bob {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-4px); }
+  /* ── Hint ── */
+  #hint {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: var(--ink, #16140F);
+    opacity: 0.4;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+    transition: opacity 0.6s;
+    white-space: nowrap;
+    z-index: 10;
   }
-  #boat-inner.bobbing {
-    animation: boat-bob 300ms ease-in-out;
+  #hint.hidden { opacity: 0; }
+
+  /* ── Panel ── */
+  #guide-panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(420px, 100vw);
+    height: 100%;
+    background: var(--paper, #FCF8EE);
+    border-left: 3px solid var(--ink, #16140F);
+    box-shadow: -9px 0 0 var(--ink, #16140F);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+  #guide-panel.open { transform: translateX(0); }
+
+  .panel-accent {
+    height: 5px;
+    flex-shrink: 0;
+    background: var(--gold, #F2B312);
+  }
+  .panel-accent.seal { background: var(--seal, #C8362B); }
+  .panel-accent.ink  { background: var(--ink,  #16140F); }
+
+  .panel-close {
+    position: sticky;
+    top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border: 2px solid var(--ink, #16140F);
+    background: var(--bg, #F1EBDB);
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink, #16140F);
+    color: var(--ink, #16140F);
+    margin: 12px 12px 0 auto;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+  }
+  .panel-close:hover { background: var(--ink, #16140F); color: var(--paper, #FCF8EE); }
+  .panel-close svg { width: 16px; height: 16px; }
+
+  #panel-inner { flex: 1; overflow-y: auto; }
+
+  .panel-content { padding: 24px 32px 56px; }
+
+  .panel-title {
+    font-family: var(--disp, "PingFang SC",sans-serif);
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--ink, #16140F);
+    letter-spacing: -0.01em;
   }
 
-  /* ── Mobile ── */
-  @media (max-width: 767px) {
-    .guide-container {
-      flex-direction: column;
-      min-height: auto;
-    }
-    .guide-container.panel-open .map-wrapper {
-      flex-basis: auto;
-    }
-    .guide-panels {
+  .panel-placeholder {
+    color: var(--muted, #6E685A);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  .panel-body h2 {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--muted, #6E685A);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+  }
+  .panel-body p {
+    margin: 0 0 10px;
+    line-height: 1.85;
+    font-size: 0.95rem;
+  }
+  .panel-body ol, .panel-body ul {
+    padding-left: 1.5em;
+    line-height: 1.85;
+    font-size: 0.95rem;
+  }
+  .panel-body ol li { margin-bottom: 4px; }
+  .panel-body strong { font-weight: 700; }
+
+  /* ── Mobile: bottom sheet ── */
+  @media (max-width: 640px) {
+    #guide-panel {
+      top: auto; right: 0; bottom: 0; left: 0;
+      width: 100%; height: 68vh;
       border-left: none;
-      border-top: 3px solid var(--ink);
-      max-height: 65vh;
-      transition: max-height 0.35s ease-out;
-      overflow-y: auto;
+      border-top: 3px solid var(--ink, #16140F);
+      box-shadow: 0 -9px 0 var(--ink, #16140F);
+      transform: translateY(100%);
     }
-    .guide-container.panel-open .guide-panels {
-      flex: none;
-      max-height: 65vh;
-      overflow-y: auto;
-    }
-    .panel-close {
-      position: sticky;
-      top: 8px;
-    }
+    #guide-panel.open { transform: translateY(0); }
   }
 
-  /* ── Reduced motion ── */
   @media (prefers-reduced-motion: reduce) {
-    .map-wrapper,
-    .guide-panels {
-      transition: none;
-    }
-    #boat-inner.bobbing {
-      animation: none;
-    }
+    #guide-panel { transition: none; }
   }
 </style>
+</body>
+</html>
