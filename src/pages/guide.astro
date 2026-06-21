@@ -24,8 +24,7 @@ const panels = await Promise.all(
           id="map-svg"
           viewBox="0 0 900 520"
           xmlns="http://www.w3.org/2000/svg"
-          aria-label="归图 — 个人导览地图"
-          role="img"
+          role="application"
         >
           <!-- Sea background -->
           <rect width="900" height="520" fill="#C4B99A" />
@@ -257,6 +256,183 @@ const panels = await Promise.all(
     </div><!-- /guide-container -->
   </div>
 </BaseLayout>
+
+<script is:inline>
+(function () {
+  /* ── Constants ── */
+  const HOME = { x: 470, y: 270 };
+  const CENTERS = {
+    'people':           { x: 111,  y: 90  },
+    'philosophy':       { x: 303,  y: 80  },
+    'interests':        { x: 115,  y: 240 },
+    'travel':           { x: 295,  y: 228 },
+    'info-sources':     { x: 647,  y: 133 },
+    'knowledge-gaps':   { x: 792,  y: 258 },
+    'fragmented-time':  { x: 662,  y: 393 },
+  };
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── State ── */
+  let pos = { ...HOME };      // current boat position in SVG coords
+  let activeIsland = null;    // currently open island id
+  let animating = false;
+  const wakePoints = [];      // accumulated wake trail
+
+  /* ── DOM refs ── */
+  const boat       = document.getElementById('boat');
+  const boatInner  = document.getElementById('boat-inner');
+  const wake       = document.getElementById('wake');
+  const container  = document.getElementById('guide-container');
+  const panels     = document.getElementById('guide-panels');
+  const closeBtn   = document.getElementById('panel-close');
+
+  /* ── Bézier helpers ── */
+  function quadBez(p0, cp, p1, t) {
+    const u = 1 - t;
+    return {
+      x: u * u * p0.x + 2 * u * t * cp.x + t * t * p1.x,
+      y: u * u * p0.y + 2 * u * t * cp.y + t * t * p1.y,
+    };
+  }
+
+  function controlPoint(from, to) {
+    const mx = (from.x + to.x) / 2;
+    const my = (from.y + to.y) / 2;
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const offset = Math.min(90, len * 0.28);
+    return { x: mx - (dy / len) * offset, y: my + (dx / len) * offset };
+  }
+
+  function duration(from, to) {
+    return Math.max(900, Math.min(1400, Math.hypot(to.x - from.x, to.y - from.y) * 2));
+  }
+
+  /* ── Boat transform ── */
+  function setBoat(p, angle) {
+    boat.setAttribute(
+      'transform',
+      `translate(${p.x.toFixed(2)},${p.y.toFixed(2)}) rotate(${angle.toFixed(1)})`
+    );
+  }
+
+  /* ── Animate boat from `from` to `to` then call `done()` ── */
+  function sail(from, to, done) {
+    if (REDUCED) {
+      pos = { ...to };
+      setBoat(to, 0);
+      done();
+      return;
+    }
+    animating = true;
+    const cp = controlPoint(from, to);
+    const dur = duration(from, to);
+    const start = performance.now();
+
+    function tick(now) {
+      const t = Math.min((now - start) / dur, 1);
+      const p = quadBez(from, cp, to, t);
+
+      // rotation: point boat toward next position
+      const ahead = quadBez(from, cp, to, Math.min(t + 0.02, 1));
+      const angle = Math.atan2(ahead.y - p.y, ahead.x - p.x) * (180 / Math.PI);
+
+      setBoat(p, angle);
+
+      wakePoints.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+      wake.setAttribute('points', wakePoints.join(' '));
+
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        pos = { ...to };
+        animating = false;
+        done();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ── Panel open/close ── */
+  function showPanel(islandId) {
+    // on mobile, ensure panels container is visible
+    if (window.innerWidth < 768) {
+      panels.style.display = '';
+    }
+
+    // hide all panels, show the target
+    document.querySelectorAll('.guide-panel').forEach((el) => {
+      el.hidden = true;
+    });
+    const target = panels.querySelector(`.guide-panel[data-island="${islandId}"]`);
+    if (target) target.hidden = false;
+
+    container.classList.add('panel-open');
+
+    // on mobile, scroll panel into view
+    if (window.innerWidth < 768) {
+      setTimeout(() => panels.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
+
+  function hidePanel() {
+    container.classList.remove('panel-open');
+    // on mobile, immediately hide the panels container
+    if (window.innerWidth < 768) {
+      panels.style.display = 'none';
+    }
+    // wait for CSS transition before hiding individual panels
+    setTimeout(() => {
+      document.querySelectorAll('.guide-panel').forEach((el) => {
+        el.hidden = true;
+      });
+    }, 380);
+  }
+
+  /* ── Island click ── */
+  function handleIslandClick(islandId) {
+    if (animating) return;
+    if (activeIsland === islandId) {
+      // second click on same island → close
+      activeIsland = null;
+      hidePanel();
+      sail(pos, HOME, () => {});
+      return;
+    }
+    activeIsland = islandId;
+    const target = CENTERS[islandId];
+    if (!target) return;
+
+    sail(pos, target, () => {
+      // bob animation — uses boatInner so scoped CSS selector matches
+      boatInner.classList.add('bobbing');
+      setTimeout(() => boatInner.classList.remove('bobbing'), 600);
+      showPanel(islandId);
+    });
+  }
+
+  /* ── Close button ── */
+  closeBtn?.addEventListener('click', () => {
+    if (animating) return;
+    activeIsland = null;
+    hidePanel();
+    sail(pos, HOME, () => {});
+  });
+
+  /* ── Wire up islands ── */
+  document.querySelectorAll('.island-group[data-island]').forEach((el) => {
+    const id = el.dataset.island;
+    el.addEventListener('click', () => handleIslandClick(id));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleIslandClick(id);
+      }
+    });
+  });
+})();
+</script>
 
 <style>
   /* ── Page ── */
