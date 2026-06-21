@@ -119,12 +119,6 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
     <button type="button" class="mreset" id="mreset">清除筛选</button>
   </div>
 
-  <div class="mpager" id="mpager" hidden>
-    <button type="button" class="mpager-btn" id="mprev" aria-label="上一页">← 上一页</button>
-    <span class="mpager-info" id="mpinfo">第 1 / 1 页</span>
-    <button type="button" class="mpager-btn" id="mnext" aria-label="下一页">下一页 →</button>
-  </div>
-
   <div class="mlib">
     <div class="pgrid" id="pgrid">
       {items.map((it) => (
@@ -156,6 +150,12 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       ))}
     </div>
     <p class="noresult" id="mnone" hidden>没有藏品符合当前条件——试着放宽筛选。</p>
+  </div>
+
+  <div class="mpager" id="mpager" hidden>
+    <button type="button" class="mpager-btn" id="mprev" aria-label="上一页">← 上一页</button>
+    <span class="mpager-info" id="mpinfo">第 1 / 1 页</span>
+    <button type="button" class="mpager-btn" id="mnext" aria-label="下一页">下一页 →</button>
   </div>
 
   <script is:inline>

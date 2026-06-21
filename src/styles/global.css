@@ -416,7 +416,7 @@ main > h1 {
 .mlib-meta .mcount b { font-family: var(--disp); font-weight: 700; font-size: 1.05rem; color: var(--seal); }
 .mreset { font-family: var(--mono); font-weight: 700; font-size: .74rem; color: var(--muted); background: none; border: none; cursor: pointer; border-bottom: 2px dashed var(--muted); padding: 0 0 1px; transition: color .12s, border-color .12s; }
 .mreset:hover { color: var(--seal); border-color: var(--seal); }
-.mpager { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; }
+.mpager { display: flex; align-items: center; gap: 12px; margin: 20px 0 0; }
 .mpager-btn { font-family: var(--mono); font-size: .82rem; font-weight: 600; background: none; border: 2px solid var(--line); padding: 5px 14px; cursor: pointer; color: var(--ink); transition: background .12s, color .12s; }
 .mpager-btn:hover:not(:disabled) { background: var(--seal); color: #fff; border-color: var(--seal); }
 .mpager-btn:disabled { opacity: .35; cursor: default; }
