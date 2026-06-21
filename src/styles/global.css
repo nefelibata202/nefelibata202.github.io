@@ -350,6 +350,7 @@ main > h1 {
 
 /* ---------- 书影：硬框海报墙媒体库 ---------- */
 .mlib-head { padding: 8px 0 0; }
+.mlib-head-inner { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
 .mlib-head .kicker {
   font-family: var(--mono); font-weight: 700; font-size: .76rem; letter-spacing: .16em;
   text-transform: uppercase; color: var(--muted); margin: 0 0 12px; display: flex; align-items: center; gap: 12px;
@@ -357,8 +358,32 @@ main > h1 {
 .mlib-head .kicker::before { content: ""; width: 40px; height: 3px; background: var(--seal); flex: 0 0 auto; }
 .mlib-head h1 { font-family: var(--disp); font-weight: 700; font-size: clamp(2.4rem, 7vw, 3.4rem); letter-spacing: .02em; margin: 0; line-height: 1; }
 .mlib-lede { font-family: var(--zh); color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 60ch; margin: 14px 0 0; }
-.mlib-stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 20px 0 0; font-family: var(--mono); font-weight: 500; font-size: .8rem; color: var(--muted); letter-spacing: .02em; }
-.mlib-stats b { font-family: var(--disp); font-weight: 700; font-size: 1.1rem; color: var(--ink); margin-right: 3px; }
+
+/* statsmap: B3 区块地图 */
+.statsmap { border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); width: 220px; flex: 0 0 220px; }
+.statsmap-track { display: flex; height: 90px; border-bottom: 2.5px solid var(--ink); overflow: hidden; }
+.statsmap-seg {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-right: 2px solid var(--ink); overflow: hidden; cursor: default;
+}
+.statsmap-seg:last-child { border-right: none; }
+.statsmap-seg-num { font-family: var(--mono); font-weight: 700; font-size: 1.15rem; line-height: 1; }
+.statsmap-seg-lab { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.05em; opacity: .7; margin-top: 3px; }
+.statsmap-seg--movie    { background: var(--ink); color: var(--paper); }
+.statsmap-seg--teleplay { background: var(--gold); color: var(--on-gold); }
+.statsmap-seg--book     { background: #c8bfaf; color: var(--on-gold); }
+.statsmap-seg--music    { background: var(--seal); color: var(--paper); }
+.statsmap-seg--music .statsmap-seg-num { writing-mode: vertical-rl; font-size: .65rem; }
+.statsmap-seg--music .statsmap-seg-lab { display: none; }
+.statsmap-footer { display: grid; grid-template-columns: repeat(3, 1fr); }
+.statsmap-foot { padding: 8px 10px; border-right: 2px solid var(--ink); text-align: center; }
+.statsmap-foot:last-child { border-right: none; }
+.smf-num { font-family: var(--mono); font-weight: 700; font-size: 1.15rem; line-height: 1; display: block; }
+.smf-lab { font-family: var(--mono); font-size: 0.5rem; color: var(--muted); letter-spacing: .06em; display: block; margin-top: 3px; }
+.statsmap-foot--total { background: var(--ink); }
+.statsmap-foot--total .smf-num { color: var(--paper); }
+.statsmap-foot--total .smf-lab { color: rgba(245,240,232,.5); }
+.smf-num--red { color: var(--seal); }
 
 /* 工具条：搜索 + 排序 */
 .mlib-bar { display: flex; align-items: center; gap: 16px 20px; flex-wrap: wrap; margin: 26px 0 0; padding: 18px 0 0; border-top: 3px solid var(--line); }
@@ -419,6 +444,8 @@ main > h1 {
 @media (max-width: 560px) {
   .pgrid { grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: 22px 14px; }
   .mlib-bar .frow { margin-left: 0; }
+  .mlib-head-inner { grid-template-columns: 1fr; }
+  .statsmap { width: 100%; }
 }
 
 /* ---------- 文章 / 花园正文 ---------- */

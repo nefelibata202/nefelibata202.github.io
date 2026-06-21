@@ -24,6 +24,7 @@ const stats = {
   avg: scored.length ? (scored.reduce((s, i) => s + i.score, 0) / scored.length).toFixed(1) : '—',
   done: items.filter((i) => i.status).length,
 };
+const segPct = (t: string) => ((typeCount(t) / stats.total) * 100).toFixed(2);
 
 const searchText = (i: typeof items[number]) =>
   [i.title, i.creator, i.year, ...i.categories].join(' ').toLowerCase();
@@ -31,14 +32,40 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
 <BaseLayout title="书影 · 归来" description="读过的书、看过的影视——一座私人媒体库，按类型、评分、品类、年代检索。" wide>
   <header class="mlib-head">
-    <p class="kicker">私人甄选 · 影 / 视 / 书 / 乐</p>
-    <h1>书影</h1>
-    <p class="mlib-lede">一座私人的媒体库。每一件都经手挑选、亲自评分——在此按类型、评分、品类与年代自由穿行。</p>
-    <div class="mlib-stats">
-      <span><b>{stats.total}</b> 件藏品</span>
-      {types.map((t) => <span><b>{typeCount(t)}</b> {TYPE_LABEL[t]}</span>)}
-      <span><b>{stats.avg}</b> 均分</span>
-      <span><b>{stats.done}</b> 已阅</span>
+    <div class="mlib-head-inner">
+      <div class="mlib-head-text">
+        <p class="kicker">私人甄选 · 影 / 视 / 书 / 乐</p>
+        <h1>书影</h1>
+        <p class="mlib-lede">一座私人的媒体库。每一件都经手挑选、亲自评分——在此按类型、评分、品类与年代自由穿行。</p>
+      </div>
+      <div class="statsmap" aria-label="藏品统计">
+        <div class="statsmap-track">
+          {types.map((t) => (
+            <div
+              class={`statsmap-seg statsmap-seg--${t}`}
+              style={`width:${segPct(t)}%`}
+              title={`${TYPE_LABEL[t]} · ${typeCount(t)}`}
+            >
+              <span class="statsmap-seg-num">{typeCount(t)}</span>
+              <span class="statsmap-seg-lab">{TYPE_LABEL[t]}</span>
+            </div>
+          ))}
+        </div>
+        <div class="statsmap-footer">
+          <div class="statsmap-foot statsmap-foot--total">
+            <span class="smf-num">{stats.total}</span>
+            <span class="smf-lab">件藏品</span>
+          </div>
+          <div class="statsmap-foot">
+            <span class="smf-num smf-num--red">{stats.avg}</span>
+            <span class="smf-lab">均分</span>
+          </div>
+          <div class="statsmap-foot">
+            <span class="smf-num">{stats.done}</span>
+            <span class="smf-lab">已阅</span>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
