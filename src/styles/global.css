@@ -426,7 +426,7 @@ main > h1 {
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 30px 20px; padding: 4px 0 60px; }
 .pcard { display: flex; flex-direction: column; }
 .poster {
-  position: relative; aspect-ratio: 2 / 3; border: 3px solid var(--line); background: var(--soft);
+  position: relative; width: 100%; aspect-ratio: 2 / 3; border: 3px solid var(--line); background: var(--soft);
   box-shadow: var(--shadow-sm); overflow: hidden; transition: transform .14s, box-shadow .14s;
 }
 .pcard:hover .poster { transform: translate(-4px, -4px); box-shadow: var(--shadow-lg); }
@@ -457,11 +457,33 @@ main > h1 {
 }
 .pcap .pm { font-family: var(--mono); font-weight: 500; font-size: .72rem; color: var(--muted); margin: 5px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* 筛选折叠开关（仅移动端可见） */
+.mlib-filter-toggle { display: none; }
+
 @media (max-width: 560px) {
   .pgrid { grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: 22px 14px; }
   .mlib-bar .frow { margin-left: 0; }
   .mlib-head-inner { grid-template-columns: 1fr; }
   .statsmap { width: 100%; }
+
+  /* 筛选折叠 */
+  .mlib-filter-toggle {
+    display: flex; align-items: center; gap: 8px; margin: 14px 0 0;
+    font-family: var(--mono); font-weight: 700; font-size: .78rem;
+    color: var(--ink); background: var(--paper); border: 2.5px solid var(--line);
+    padding: 7px 14px; cursor: pointer; transition: background .12s;
+  }
+  .mlib-filter-toggle:hover { background: var(--soft); }
+  .mft-badge {
+    background: var(--seal); color: #fff; border: 2px solid var(--line);
+    font-size: .64rem; padding: 0 5px; line-height: 1.6; letter-spacing: .02em;
+  }
+  .mft-arr { font-size: .68rem; }
+  .mlib-filters { display: none; margin-top: 8px; }
+  .mlib-filters.is-open { display: flex; }
+  /* 每行横向滚动，防止品类 chips 大量换行 */
+  .mlib-filters .frow { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .mlib-filters .frow .flabel { position: sticky; left: 0; background: var(--bg); z-index: 1; padding-right: 6px; flex-shrink: 0; }
 }
 
 /* ---------- 文章 / 花园正文 ---------- */

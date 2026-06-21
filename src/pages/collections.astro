@@ -82,7 +82,11 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
     </div>
   </div>
 
-  <div class="filters mlib-filters">
+  <button type="button" class="mlib-filter-toggle" id="mfiltertoggle" aria-expanded="false">
+    筛选<span class="mft-badge" id="mftbadge" hidden>0</span><span class="mft-arr" aria-hidden="true">▼</span>
+  </button>
+
+  <div class="filters mlib-filters" id="mlib-filters-panel">
     <div class="frow" role="group" aria-label="按类型筛选">
       <span class="flabel">类型</span>
       <button type="button" class="fchip is-on" data-facet="type" data-val="*">全部</button>
@@ -170,8 +174,22 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       const pprev = document.getElementById('mprev');
       const pnext = document.getElementById('mnext');
       const pinfo = document.getElementById('mpinfo');
+      const ftoggle = document.getElementById('mfiltertoggle');
+      const ftbadge = document.getElementById('mftbadge');
+      const filterPanel = document.getElementById('mlib-filters-panel');
       const PAGE_SIZE = 30;
       const state = { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score', page: 0 };
+
+      const updateBadge = () => {
+        const n = ['type', 'score', 'cat', 'decade', 'status'].filter(k => state[k] !== '*').length;
+        if (ftbadge) { ftbadge.textContent = n; ftbadge.hidden = n === 0; }
+      };
+      ftoggle?.addEventListener('click', () => {
+        const open = filterPanel.classList.toggle('is-open');
+        ftoggle.setAttribute('aria-expanded', String(open));
+        const arr = ftoggle.querySelector('.mft-arr');
+        if (arr) arr.textContent = open ? '▲' : '▼';
+      });
 
       const scoreOk = (s, band) => {
         s = parseFloat(s) || 0;
@@ -220,6 +238,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         document.querySelectorAll(`[data-facet="${f}"]`).forEach((b) => b.classList.toggle('is-on', b === btn));
         state.page = 0;
         apply();
+        updateBadge();
       }));
       document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
         state.sort = btn.dataset.sort;
@@ -238,6 +257,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         document.querySelectorAll('[data-facet]').forEach((b) => b.classList.toggle('is-on', b.dataset.val === '*'));
         document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b.dataset.sort === 'score'));
         apply();
+        updateBadge();
       });
       pprev?.addEventListener('click', () => {
         if (state.page > 0) { state.page--; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
