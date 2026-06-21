@@ -230,12 +230,36 @@ const panels = await Promise.all(
         </svg>
       </div><!-- /map-wrapper -->
 
-      <!-- Content panels injected in Task 3 -->
+      <div id="guide-panels" class="guide-panels" aria-live="polite">
+        <button id="panel-close" class="panel-close" aria-label="关闭面板">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+        {panels.map(({ data, Content }) => (
+          <div
+            class="guide-panel"
+            data-island={data.island}
+            hidden
+            role="region"
+            aria-label={data.title}
+          >
+            <h2 class="panel-title">{data.title}</h2>
+            {data.placeholder && (
+              <p class="panel-placeholder">内容整理中……</p>
+            )}
+            <div class="panel-body">
+              <Content />
+            </div>
+          </div>
+        ))}
+      </div>
     </div><!-- /guide-container -->
   </div>
 </BaseLayout>
 
 <style>
+  /* ── Page ── */
   .guide-page {
     padding-top: 32px;
     padding-bottom: 64px;
@@ -253,23 +277,33 @@ const panels = await Promise.all(
     margin: 0;
     font-size: 0.9rem;
   }
+
+  /* ── Container ── */
   .guide-container {
     display: flex;
     border: 3px solid var(--ink);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     background: var(--paper);
+    min-height: 360px;
   }
+
+  /* ── Map ── */
   .map-wrapper {
     flex: 1 1 100%;
     min-width: 0;
     transition: flex-basis 0.4s ease;
+  }
+  .guide-container.panel-open .map-wrapper {
+    flex-basis: 58%;
   }
   #map-svg {
     width: 100%;
     height: auto;
     display: block;
   }
+
+  /* ── Island interactive ── */
   .island-group {
     cursor: pointer;
   }
@@ -280,6 +314,8 @@ const panels = await Promise.all(
   .island-group:focus {
     outline: none;
   }
+
+  /* ── SVG text ── */
   .island-label {
     font-family: var(--disp);
     font-size: 13px;
@@ -297,5 +333,125 @@ const panels = await Promise.all(
     font-family: var(--lat);
     font-size: 11px;
     fill: var(--muted);
+  }
+
+  /* ── Panels ── */
+  .guide-panels {
+    flex: 0 0 0%;
+    overflow: hidden;
+    border-left: 3px solid var(--ink);
+    background: var(--paper);
+    transition: flex-basis 0.35s ease-out;
+    position: relative;
+  }
+  .guide-container.panel-open .guide-panels {
+    flex: 0 0 42%;
+    overflow-y: auto;
+  }
+  .guide-panel {
+    padding: 40px 28px 48px;
+  }
+  .panel-close {
+    position: sticky;
+    top: 12px;
+    left: calc(100% - 44px);
+    display: block;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--ink);
+    background: var(--bg);
+    cursor: pointer;
+    padding: 4px;
+    box-shadow: var(--shadow-sm);
+    color: var(--ink);
+    margin: 12px 12px 0 auto;
+  }
+  .panel-close:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .panel-close svg {
+    width: 100%;
+    height: 100%;
+  }
+  .panel-title {
+    font-family: var(--disp);
+    font-size: 1.6rem;
+    margin: 0 0 20px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+  }
+  .panel-placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* panel body: markdown content (use :global for rendered HTML) */
+  .guide-panel :global(.panel-body h2) {
+    font-family: var(--disp);
+    font-size: 1rem;
+    margin: 20px 0 8px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .guide-panel :global(.panel-body p) {
+    margin: 0 0 12px;
+    line-height: 1.7;
+  }
+  .guide-panel :global(.panel-body ol),
+  .guide-panel :global(.panel-body ul) {
+    padding-left: 1.4em;
+    margin: 0 0 12px;
+    line-height: 1.8;
+  }
+  .guide-panel :global(.panel-body strong) {
+    font-weight: 700;
+  }
+
+  /* ── Boat bob ── */
+  @keyframes boat-bob {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-4px); }
+  }
+  #boat-inner.bobbing {
+    animation: boat-bob 300ms ease-in-out;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 767px) {
+    .guide-container {
+      flex-direction: column;
+      min-height: auto;
+    }
+    .guide-container.panel-open .map-wrapper {
+      flex-basis: auto;
+    }
+    .guide-panels {
+      border-left: none;
+      border-top: 3px solid var(--ink);
+      max-height: 65vh;
+      transition: max-height 0.35s ease-out;
+      overflow-y: auto;
+    }
+    .guide-container.panel-open .guide-panels {
+      flex: none;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+    .panel-close {
+      position: sticky;
+      top: 8px;
+    }
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .map-wrapper,
+    .guide-panels {
+      transition: none;
+    }
+    #boat-inner.bobbing {
+      animation: none;
+    }
   }
 </style>
