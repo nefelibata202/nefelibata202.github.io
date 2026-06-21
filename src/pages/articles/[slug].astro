@@ -10,7 +10,8 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const meta = entry.data.date.toISOString().slice(0, 10);
+const hasMermaid = (entry.body ?? '').includes('```mermaid');
 ---
-<PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags}>
+<PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags} hasMermaid={hasMermaid}>
   <Content />
 </PostLayout>

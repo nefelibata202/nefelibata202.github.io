@@ -2,8 +2,8 @@
 import BaseLayout from './BaseLayout.astro';
 import TagChip from '../components/TagChip.astro';
 
-interface Props { title: string; meta: string; tags: string[]; kind?: 'article' | 'note'; }
-const { title, meta, tags, kind = 'article' } = Astro.props;
+interface Props { title: string; meta: string; tags: string[]; kind?: 'article' | 'note'; hasMermaid?: boolean; }
+const { title, meta, tags, kind = 'article', hasMermaid = false } = Astro.props;
 ---
 <BaseLayout title={title}>
   <article class:list={['post', kind === 'note' ? 'is-note' : 'is-article']} data-pagefind-body>
@@ -16,3 +16,37 @@ const { title, meta, tags, kind = 'article' } = Astro.props;
   </article>
   <slot name="after" />
 </BaseLayout>
+
+{hasMermaid && (
+  <script>
+    import mermaid from 'mermaid';
+    function renderDiagrams() {
+      const isDark =
+        document.documentElement.dataset.theme === 'dark' ||
+        (!document.documentElement.dataset.theme &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'neutral' });
+      // Astro/Shiki renders mermaid blocks as <pre data-language="mermaid">
+      document.querySelectorAll('pre[data-language="mermaid"]').forEach(async (pre) => {
+        const code = pre.querySelector('code');
+        if (!code) return;
+        const id = 'mmd-' + Math.random().toString(36).slice(2);
+        const text = (code.textContent ?? '').trim();
+        try {
+          const { svg } = await mermaid.render(id, text);
+          const wrap = document.createElement('div');
+          wrap.className = 'mermaid-wrap';
+          wrap.innerHTML = svg;
+          pre.replaceWith(wrap);
+        } catch (e) {
+          console.warn('Mermaid render error:', e);
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderDiagrams);
+    } else {
+      renderDiagrams();
+    }
+  </script>
+)}

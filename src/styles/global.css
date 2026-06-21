@@ -529,6 +529,10 @@ main > h1 {
 .post pre code { font-family: var(--mono); font-size: .82rem; background: none; border: none; padding: 0; color: inherit; }
 .post img { max-width: 100%; height: auto; border: 3px solid var(--line); box-shadow: var(--shadow); display: block; margin: 2em auto; }
 
+/* ---------- Mermaid 流程图 ---------- */
+.mermaid-wrap { border: 3px solid var(--line); box-shadow: var(--shadow); padding: 24px 16px; margin: 1.6em 0; overflow: auto; background: var(--paper); text-align: center; }
+.mermaid-wrap svg { max-width: 100%; height: auto; }
+
 /* wikilink — 朱砂虚线 */
 .post a.wikilink, a.wikilink { color: var(--seal); border-bottom: 2px dashed var(--seal); font-weight: 500; }
 .post a.wikilink:hover, a.wikilink:hover { border-bottom-style: solid; background: var(--gold); color: var(--on-gold); }

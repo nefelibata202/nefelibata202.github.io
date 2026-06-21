@@ -16,7 +16,8 @@
     "@astrojs/sitemap": "^3.0.0",
     "@fontsource/archivo": "^5.2.8",
     "astro": "^5.0.0",
-    "cn-fontsource-smiley-sans-oblique-regular": "^1.0.1"
+    "cn-fontsource-smiley-sans-oblique-regular": "^1.0.1",
+    "mermaid": "^11.15.0"
   },
   "devDependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
