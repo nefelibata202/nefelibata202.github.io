@@ -44,5 +44,38 @@ const { title, description, wide = false, preload = [] } = Astro.props;
       </main>
     </div>
     <Footer />
+    <button class="scroll-anchor" id="scroll-anchor" aria-label="跳至底部" data-dir="down" hidden>
+      <svg class="ico-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+      <svg class="ico-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15" /></svg>
+    </button>
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById('scroll-anchor');
+        function check() {
+          var dH = document.documentElement.scrollHeight;
+          var cH = document.documentElement.clientHeight;
+          if (dH <= cH + 40) { btn.hidden = true; return; }
+          btn.hidden = false;
+          var ratio = window.scrollY / (dH - cH);
+          var dir = ratio > 0.5 ? 'up' : 'down';
+          if (btn.dataset.dir !== dir) {
+            btn.dataset.dir = dir;
+            btn.setAttribute('aria-label', dir === 'up' ? '回到顶部' : '跳至底部');
+          }
+        }
+        window.addEventListener('scroll', check, { passive: true });
+        window.addEventListener('resize', check, { passive: true });
+        btn.addEventListener('click', function () {
+          var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var beh = reduced ? 'instant' : 'smooth';
+          if (btn.dataset.dir === 'up') {
+            window.scrollTo({ top: 0, behavior: beh });
+          } else {
+            window.scrollTo({ top: document.documentElement.scrollHeight, behavior: beh });
+          }
+        });
+        check();
+      })();
+    </script>
   </body>
 </html>
