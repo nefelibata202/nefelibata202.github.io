@@ -1,0 +1,301 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const entries = await getCollection('guide');
+const panels = await Promise.all(
+  entries.map(async (e) => {
+    const { Content } = await render(e);
+    return { data: e.data, Content };
+  })
+);
+---
+
+<BaseLayout title="归图 · 个人导览">
+  <div class="guide-page wrap">
+    <header class="guide-header">
+      <h1 class="guide-title">归图</h1>
+      <p class="guide-sub">个人导览 · 点击岛屿探索</p>
+    </header>
+
+    <div id="guide-container" class="guide-container">
+      <div id="map-wrapper" class="map-wrapper">
+        <svg
+          id="map-svg"
+          viewBox="0 0 900 520"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-label="归图 — 个人导览地图"
+          role="img"
+        >
+          <!-- Sea background -->
+          <rect width="900" height="520" fill="#C4B99A" />
+
+          <!-- Wake trail (accumulated; starts empty) -->
+          <polyline
+            id="wake"
+            points=""
+            fill="none"
+            stroke="var(--seal)"
+            stroke-width="2"
+            stroke-dasharray="4 6"
+            stroke-linecap="round"
+          />
+
+          <!-- ── Left cluster: personal islands ── -->
+
+          <!-- 喜欢的人物 (cx=110, cy=90) — gold tint -->
+          <g
+            id="island-people"
+            class="island-group"
+            data-island="people"
+            role="button"
+            tabindex="0"
+            aria-label="喜欢的人物"
+          >
+            <polygon
+              points="68,67 155,63 152,85 145,115 102,120 70,108"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <polygon
+              points="68,67 155,63 152,85 145,115 102,120 70,108"
+              fill="rgba(242,179,18,0.18)"
+            />
+            <text x="111" y="136" text-anchor="middle" class="island-label">喜欢的人物</text>
+          </g>
+
+          <!-- 人生哲学 (cx=300, cy=80) -->
+          <g
+            id="island-philosophy"
+            class="island-group"
+            data-island="philosophy"
+            role="button"
+            tabindex="0"
+            aria-label="人生哲学"
+          >
+            <polygon
+              points="250,58 358,55 362,72 355,105 295,110 255,98 248,75"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="303" y="126" text-anchor="middle" class="island-label">人生哲学</text>
+          </g>
+
+          <!-- 个人兴趣 (cx=115, cy=240) -->
+          <g
+            id="island-interests"
+            class="island-group"
+            data-island="interests"
+            role="button"
+            tabindex="0"
+            aria-label="个人兴趣"
+          >
+            <polygon
+              points="65,220 168,215 172,235 165,262 108,268 62,252 58,232"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="115" y="284" text-anchor="middle" class="island-label">个人兴趣</text>
+          </g>
+
+          <!-- 旅行计划 (cx=295, cy=228) — gold tint -->
+          <g
+            id="island-travel"
+            class="island-group"
+            data-island="travel"
+            role="button"
+            tabindex="0"
+            aria-label="旅行计划"
+          >
+            <polygon
+              points="245,208 350,203 355,222 348,252 288,258 242,242 238,220"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <polygon
+              points="245,208 350,203 355,222 348,252 288,258 242,242 238,220"
+              fill="rgba(242,179,18,0.18)"
+            />
+            <text x="295" y="274" text-anchor="middle" class="island-label">旅行计划</text>
+          </g>
+
+          <!-- ── Right cluster: info islands ── -->
+
+          <!-- 高质量的信息源 (cx=645, cy=133) -->
+          <g
+            id="island-info-sources"
+            class="island-group"
+            data-island="info-sources"
+            role="button"
+            tabindex="0"
+            aria-label="高质量的信息源"
+          >
+            <polygon
+              points="592,112 700,108 706,128 698,158 638,164 590,148"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="647" y="180" text-anchor="middle" class="island-label">信息源</text>
+          </g>
+
+          <!-- 知识库缺口 (cx=790, cy=258) -->
+          <g
+            id="island-knowledge-gaps"
+            class="island-group"
+            data-island="knowledge-gaps"
+            role="button"
+            tabindex="0"
+            aria-label="知识库缺口"
+          >
+            <polygon
+              points="748,234 838,229 844,250 836,280 782,287 745,270 740,247"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="792" y="303" text-anchor="middle" class="island-label">知识缺口</text>
+          </g>
+
+          <!-- 碎片时间 (cx=660, cy=393) -->
+          <g
+            id="island-fragmented-time"
+            class="island-group"
+            data-island="fragmented-time"
+            role="button"
+            tabindex="0"
+            aria-label="碎片时间能做的事"
+          >
+            <polygon
+              points="608,370 718,365 724,384 716,418 652,424 606,408"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="662" y="440" text-anchor="middle" class="island-label">碎片时间</text>
+          </g>
+
+          <!-- ── Home port (center: 470, 270) ── -->
+          <g id="home-port">
+            <circle cx="470" cy="270" r="5" fill="var(--ink)" />
+            <circle
+              cx="470"
+              cy="270"
+              r="10"
+              fill="none"
+              stroke="var(--ink)"
+              stroke-width="1.5"
+              stroke-dasharray="3 3"
+            />
+          </g>
+
+          <!-- ── Boat (starts at home port, facing east) ── -->
+          <g id="boat" transform="translate(470,270)">
+            <g id="boat-inner">
+              <!-- hull: trapezoid wider at stern, bow points east -->
+              <polygon points="-12,-6 10,-4 10,4 -12,6" fill="var(--ink)" />
+              <!-- mast -->
+              <line x1="-2" y1="-14" x2="-2" y2="6" stroke="var(--ink)" stroke-width="1.5" />
+              <!-- sail (gold triangle, points east) -->
+              <polygon points="-2,-14 -2,4 10,-4" fill="var(--gold)" />
+            </g>
+          </g>
+
+          <!-- ── Compass rose (bottom-right, decorative) ── -->
+          <g transform="translate(848,468)">
+            <line x1="0" y1="-18" x2="0" y2="18" stroke="var(--gold)" stroke-width="2" />
+            <line x1="-18" y1="0" x2="18" y2="0" stroke="var(--gold)" stroke-width="2" />
+            <polygon points="0,-18 3,-8 0,-5 -3,-8" fill="var(--gold)" />
+            <polygon points="0,18 3,8 0,5 -3,8" fill="var(--ink)" />
+            <polygon points="-18,0 -8,3 -5,0 -8,-3" fill="var(--ink)" />
+            <polygon points="18,0 8,3 5,0 8,-3" fill="var(--gold)" />
+            <circle cx="0" cy="0" r="3" fill="var(--ink)" />
+          </g>
+
+          <!-- ── Map title plate (bottom-left) ── -->
+          <g transform="translate(16,454)">
+            <rect
+              x="0" y="0" width="172" height="52"
+              fill="var(--paper)"
+              stroke="var(--ink)"
+              stroke-width="2"
+            />
+            <text x="10" y="22" class="plate-title">归图</text>
+            <text x="10" y="42" class="plate-sub">个人导览 · 2026</text>
+          </g>
+        </svg>
+      </div><!-- /map-wrapper -->
+
+      <!-- Content panels injected in Task 3 -->
+    </div><!-- /guide-container -->
+  </div>
+</BaseLayout>
+
+<style>
+  .guide-page {
+    padding-top: 32px;
+    padding-bottom: 64px;
+  }
+  .guide-header {
+    margin-bottom: 24px;
+  }
+  .guide-title {
+    font-family: var(--disp);
+    font-size: 2rem;
+    margin: 0 0 4px;
+  }
+  .guide-sub {
+    color: var(--muted);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .guide-container {
+    display: flex;
+    border: 3px solid var(--ink);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .map-wrapper {
+    flex: 1 1 100%;
+    min-width: 0;
+    transition: flex-basis 0.4s ease;
+  }
+  #map-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .island-group {
+    cursor: pointer;
+  }
+  .island-group:hover > polygon:first-child,
+  .island-group:focus > polygon:first-child {
+    stroke-width: 3.5px;
+  }
+  .island-group:focus {
+    outline: none;
+  }
+  .island-label {
+    font-family: var(--disp);
+    font-size: 13px;
+    fill: var(--ink);
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    user-select: none;
+  }
+  .plate-title {
+    font-family: var(--disp);
+    font-size: 18px;
+    fill: var(--ink);
+  }
+  .plate-sub {
+    font-family: var(--lat);
+    font-size: 11px;
+    fill: var(--muted);
+  }
+</style>

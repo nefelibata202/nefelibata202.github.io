@@ -4,9 +4,10 @@ const active = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 const links = [
   { href: '/articles', label: '文章' },
-  { href: '/garden', label: '花园' },
+  { href: '/garden',   label: '花园' },
+  { href: '/guide',    label: '归图' },
   { href: '/collections', label: '书影' },
-  { href: '/about', label: '关于' },
+  { href: '/about',    label: '关于' },
 ];
 ---
 <header class="site-header">
