@@ -1,5 +1,1559 @@
 [
-  { "type": "book", "title": "瓦尔登湖", "creator": "梭罗", "rating": 5, "date": "2026-05", "note": "独处与简朴的力量。" },
-  { "type": "book", "title": "深度工作", "creator": "Cal Newport", "rating": 4, "date": "2026-04", "note": "" },
-  { "type": "movie", "title": "心灵奇旅", "creator": "彼特·道格特", "rating": 5, "date": "2026-03", "note": "关于活着本身。" }
+  {
+    "type": "teleplay",
+    "title": "进击的巨人第三季Part.2",
+    "creator": "荒木哲郎，肥冢正史",
+    "score": 9.8,
+    "year": "2019",
+    "date": "2019-04-28",
+    "cover": "/covers/p2537467060.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "动画",
+      "科幻"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "大明王朝1566",
+    "creator": "张黎",
+    "score": 9.8,
+    "year": "2007",
+    "date": "2007-01-08",
+    "cover": "/covers/p2444453078.webp",
+    "categories": [
+      "剧情",
+      "历史",
+      "古装"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "是，首相第一季",
+    "creator": "彼得·惠特莫尔，西德尼·洛特比",
+    "score": 9.8,
+    "year": "1986",
+    "date": "1986-01-09",
+    "cover": "/covers/p2187836471.webp",
+    "categories": [
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "music",
+    "title": "Abbey Road",
+    "creator": "The Beatles",
+    "score": 9.8,
+    "year": "1969",
+    "date": "1969-09-26",
+    "cover": "/covers/s29514563.jpg",
+    "categories": [
+      "摇滚"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "大世界之旅第五季",
+    "creator": "菲尔·查沃德",
+    "score": 9.7,
+    "year": "2022",
+    "date": "2022-09-16",
+    "cover": "/covers/p2880932568.webp",
+    "categories": [
+      "喜剧",
+      "真人秀",
+      "脱口秀",
+      "运动"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "大世界之旅第三季",
+    "creator": "凯特·林奇·罗宾森，菲尔·查沃德",
+    "score": 9.7,
+    "year": "2019",
+    "date": "2019-01-18",
+    "cover": "/covers/p2545740193.webp",
+    "categories": [
+      "真人秀"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "老友记第一季",
+    "creator": "大卫·克拉尼，玛尔塔·考夫曼",
+    "score": 9.7,
+    "year": "1994",
+    "date": "1994-09-22",
+    "cover": "/covers/p2186920269.webp",
+    "categories": [
+      "情景喜剧"
+    ],
+    "status": true
+  },
+  {
+    "type": "movie",
+    "title": "肖申克的救赎",
+    "creator": "弗兰克·德拉邦特",
+    "score": 9.7,
+    "year": "1994",
+    "date": "1994-09-10",
+    "cover": "/covers/p480747492.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "克拉克森的农场第二季",
+    "creator": "威尔·亚普",
+    "score": 9.6,
+    "year": "2023",
+    "date": "2023-02-10",
+    "cover": "/covers/p2914303642.webp",
+    "categories": [
+      "喜剧",
+      "真人秀",
+      "纪录片"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "克拉克森的农场第一季",
+    "creator": "加文·怀特海德",
+    "score": 9.6,
+    "year": "2021",
+    "date": "2021-06-11",
+    "cover": "/covers/p2661874547.jpg",
+    "categories": [
+      "喜剧",
+      "真人秀",
+      "纪录片"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "黄金神威第三季",
+    "creator": "难波日登志，铃木薰",
+    "score": 9.6,
+    "year": "2020",
+    "date": "2020-10-05",
+    "cover": "/covers/p2609644777.webp",
+    "categories": [
+      "动画"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "强风吹拂",
+    "creator": "野村和也，板津匡览",
+    "score": 9.6,
+    "year": "2018",
+    "date": "2018-10-02",
+    "cover": "/covers/p2535645337.webp",
+    "categories": [
+      "动画",
+      "运动"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "中国科幻基石丛书·三体（全三册）",
+    "creator": "刘慈欣",
+    "score": 9.6,
+    "year": "2008",
+    "date": "2008-01-01",
+    "cover": "/covers/s29857148.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "银魂",
+    "creator": "高松信司，藤田阳一",
+    "score": 9.6,
+    "year": "2006",
+    "date": "2006-04-04",
+    "cover": "/covers/p2267457536.webp",
+    "categories": [
+      "动作",
+      "动画",
+      "喜剧",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "武林外传",
+    "creator": "尚敬",
+    "score": 9.6,
+    "year": "2006",
+    "date": "2006-01-02",
+    "cover": null,
+    "categories": [
+      "古装",
+      "喜剧",
+      "武侠"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "星际牛仔",
+    "creator": "渡边信一郎，佐藤顺一",
+    "score": 9.6,
+    "year": "1998",
+    "date": "1998-04-03",
+    "cover": "/covers/p2011424828.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "动画",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "控方证人",
+    "creator": "比利·怀尔德",
+    "score": 9.6,
+    "year": "1957",
+    "date": "1957-12-17",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "悬疑",
+      "惊悚",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "葬送的芙莉莲",
+    "creator": "斋藤圭一郎",
+    "score": 9.5,
+    "year": "2023",
+    "date": "2023-09-29",
+    "cover": "/covers/p2897218476.webp",
+    "categories": [
+      "冒险",
+      "动画",
+      "奇幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "罪与罚",
+    "creator": "俄/陀思妥耶夫斯基",
+    "score": 9.5,
+    "year": "2021",
+    "date": "2021-05-01",
+    "cover": "/covers/s33863869.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "乒乓",
+    "creator": "汤浅政明，荒川真嗣",
+    "score": 9.5,
+    "year": "2014",
+    "date": "2014-04-10",
+    "cover": "/covers/p2166828587.webp",
+    "categories": [
+      "剧情",
+      "动画",
+      "运动"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "权力的游戏第一季",
+    "creator": "蒂莫西·范·帕腾，布莱恩·柯克",
+    "score": 9.5,
+    "year": "2011",
+    "date": "2011-04-17",
+    "cover": "/covers/p896064368.webp",
+    "categories": [
+      "冒险",
+      "剧情",
+      "奇幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "潜伏",
+    "creator": "姜伟，付玮",
+    "score": 9.5,
+    "year": "2008",
+    "date": "2008-12-20",
+    "cover": "/covers/p2189694504.webp",
+    "categories": [
+      "剧情"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "混沌武士",
+    "creator": "渡边信一郎，中泽一登",
+    "score": 9.5,
+    "year": "2004",
+    "date": "2004-05-19",
+    "cover": "/covers/p2330163082.webp",
+    "categories": [
+      "冒险",
+      "动作",
+      "动画"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "漫长的季节",
+    "creator": "辛爽",
+    "score": 9.4,
+    "year": "2023",
+    "date": "2023-04-22",
+    "cover": "/covers/p2890906384.webp",
+    "categories": [
+      "剧情",
+      "家庭",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "重启人生",
+    "creator": "水野格，狩山俊辅",
+    "score": 9.4,
+    "year": "2023",
+    "date": "2023-01-08",
+    "cover": "/covers/p2886331572.webp",
+    "categories": [
+      "剧情",
+      "喜剧",
+      "奇幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "机甲拳击第二季",
+    "creator": "森山洋，小坂春女",
+    "score": 9.4,
+    "year": "2021",
+    "date": "2021-04-04",
+    "cover": "/covers/p2631627815.webp",
+    "categories": [
+      "剧情",
+      "动画",
+      "运动"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "跨越边界的社区（修订版）",
+    "creator": "项飙",
+    "score": 9.4,
+    "year": "2018",
+    "date": "2018-03-01",
+    "cover": null,
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "越南战争",
+    "creator": "肯·伯恩斯，琳恩·诺维克",
+    "score": 9.4,
+    "year": "2017",
+    "date": "2017-09-17",
+    "cover": "/covers/p2498949003.webp",
+    "categories": [
+      "战争",
+      "纪录片"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "灵能百分百",
+    "creator": "立川让，大矢雄嗣",
+    "score": 9.4,
+    "year": "2016",
+    "date": "2016-07-11",
+    "cover": "/covers/p2358698477.webp",
+    "categories": [
+      "动画",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "齐木楠雄的灾难",
+    "creator": "樱井弘明，笠井贤一",
+    "score": 9.4,
+    "year": "2016",
+    "date": "2016-07-11",
+    "cover": "/covers/p2356774246.webp",
+    "categories": [
+      "动画",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "巅峰拍档第一季",
+    "creator": "欧文·特雷弗",
+    "score": 9.4,
+    "year": "2002",
+    "date": "2002-10-20",
+    "cover": "/covers/p2501604748.webp",
+    "categories": [
+      "纪录片"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "康熙的红票",
+    "creator": "孙立天",
+    "score": 9.3,
+    "year": "2024",
+    "date": "2024-03-01",
+    "cover": "/covers/s34821689.jpg",
+    "categories": [
+      "历史"
+    ],
+    "status": true
+  },
+  {
+    "type": "book",
+    "title": "杀死一只知更鸟",
+    "creator": "美/哈珀·李",
+    "score": 9.3,
+    "year": "2017",
+    "date": "2017-02-01",
+    "cover": "/covers/s29214279.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "浴血黑帮第二季",
+    "creator": "柯尔姆·麦卡锡",
+    "score": 9.3,
+    "year": "2014",
+    "date": "2014-10-02",
+    "cover": "/covers/p2344714378.jpg",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "新世纪福音战士",
+    "creator": "庵野秀明，鹤卷和哉",
+    "score": 9.3,
+    "year": "1995",
+    "date": "1995-10-04",
+    "cover": "/covers/p2026157878.webp",
+    "categories": [
+      "剧情",
+      "动画",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "东京爱情故事",
+    "creator": "永山耕三，本间欧彦",
+    "score": 9.3,
+    "year": "1991",
+    "date": "1991-01-07",
+    "cover": null,
+    "categories": [
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "教父",
+    "creator": "弗朗西斯·福特·科波拉",
+    "score": 9.3,
+    "year": "1972",
+    "date": "1972-03-15",
+    "cover": "/covers/p616779645.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "七武士",
+    "creator": "黑泽明",
+    "score": 9.3,
+    "year": "1954",
+    "date": "1954-04-26",
+    "cover": "/covers/p2215886505.webp",
+    "categories": [
+      "冒险",
+      "剧情",
+      "动作"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "雾山五行·犀川幻紫林",
+    "creator": "林魂",
+    "score": 9.2,
+    "year": "2023",
+    "date": "2023-07-26",
+    "cover": "/covers/p2893658260.webp",
+    "categories": [
+      "动作",
+      "动画",
+      "奇幻",
+      "武侠"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "曼达洛人第一季",
+    "creator": "黛博拉·周，瑞克·法穆易瓦",
+    "score": 9.2,
+    "year": "2019",
+    "date": "2019-11-12",
+    "cover": "/covers/p2566627804.webp",
+    "categories": [
+      "奇幻",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "爱，死亡和机器人第一季",
+    "creator": "维克多·马尔多纳多，加布里埃尔·彭纳基奥利",
+    "score": 9.2,
+    "year": "2019",
+    "date": "2019-03-15",
+    "cover": "/covers/p2551717438.jpg",
+    "categories": [
+      "动画",
+      "喜剧",
+      "奇幻",
+      "恐怖"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "悉达多",
+    "creator": "德/赫尔曼·黑塞",
+    "score": 9.2,
+    "year": "2017",
+    "date": "2017-01-01",
+    "cover": "/covers/s29396368.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "疯狂动物城",
+    "creator": "拜伦·霍华德，瑞奇·摩尔",
+    "score": 9.2,
+    "year": "2016",
+    "date": "2016-03-04",
+    "cover": null,
+    "categories": [
+      "冒险",
+      "动画",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "寻找小糖人",
+    "creator": "马利克·本德杰鲁",
+    "score": 9.2,
+    "year": "2012",
+    "date": "2012-01-19",
+    "cover": "/covers/p1741882642.webp",
+    "categories": [
+      "传记",
+      "纪录片",
+      "音乐"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "明朝那些事儿",
+    "creator": "当年明月",
+    "score": 9.2,
+    "year": "2011",
+    "date": "2011-12-01",
+    "cover": "/covers/s29399938.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "饮食男女",
+    "creator": "李安",
+    "score": 9.2,
+    "year": "1994",
+    "date": "1994-05-13",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "家庭"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "编辑部的故事",
+    "creator": "赵宝刚，金炎",
+    "score": 9.2,
+    "year": "",
+    "date": "",
+    "cover": "/covers/p2255590045.webp",
+    "categories": [
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "挽救计划",
+    "creator": "美/安迪·威尔",
+    "score": 9.1,
+    "year": "2021",
+    "date": "2021-09-01",
+    "cover": "/covers/s33958826.jpg",
+    "categories": [
+      "科幻"
+    ],
+    "status": true
+  },
+  {
+    "type": "book",
+    "title": "置身事内",
+    "creator": "兰小欢",
+    "score": 9.1,
+    "year": "2021",
+    "date": "2021-08-01",
+    "cover": "/covers/s33956867.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "短剧开始啦",
+    "creator": "猪股隆一，金井纮",
+    "score": 9.1,
+    "year": "2021",
+    "date": "2021-04-17",
+    "cover": null,
+    "categories": [
+      "喜剧",
+      "日剧TV",
+      "菅田将晖"
+    ],
+    "status": true
+  },
+  {
+    "type": "teleplay",
+    "title": "伍六七之最强发型师",
+    "creator": "何小疯",
+    "score": 9.1,
+    "year": "2019",
+    "date": "2019-10-23",
+    "cover": "/covers/p2571634144.webp",
+    "categories": [
+      "动画"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "寻梦环游记",
+    "creator": "李·昂克里奇，阿德里安·莫利纳",
+    "score": 9.1,
+    "year": "2017",
+    "date": "2017-11-22",
+    "cover": null,
+    "categories": [
+      "动画",
+      "喜剧",
+      "奇幻",
+      "音乐"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "怪奇物语第一季",
+    "creator": "肖恩·利维，马特·达菲",
+    "score": 9.1,
+    "year": "2016",
+    "date": "2016-07-15",
+    "cover": "/covers/p2364206200.webp",
+    "categories": [
+      "剧情",
+      "奇幻",
+      "恐怖"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "献给阿尔吉侬的花束",
+    "creator": "美/丹尼尔·凯斯",
+    "score": 9.1,
+    "year": "2015",
+    "date": "2015-04-01",
+    "cover": "/covers/s28050760.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "拾穗者",
+    "creator": "阿涅斯·瓦尔达",
+    "score": 9.1,
+    "year": "2000",
+    "date": "2000-07-07",
+    "cover": "/covers/p2435232670.webp",
+    "categories": [
+      "纪录片"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "撒哈拉的故事",
+    "creator": "三毛",
+    "score": 9.1,
+    "year": "1976",
+    "date": "1976-01-01",
+    "cover": "/covers/s3563113.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "万神殿第二季",
+    "creator": "David Dwooman Woo，朱诺·李",
+    "score": 9,
+    "year": "2023",
+    "date": "2023-10-15",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "动作",
+      "动画",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "一句顶一万句",
+    "creator": "刘震云",
+    "score": 9,
+    "year": "2022",
+    "date": "2022-08-01",
+    "cover": "/covers/s34289066.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "夏日重现",
+    "creator": "渡边步，筱原准",
+    "score": 9,
+    "year": "2022",
+    "date": "2022-04-14",
+    "cover": "/covers/p2867588013.webp",
+    "categories": [
+      "动画",
+      "悬疑",
+      "惊悚"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "文豪野犬第三季",
+    "creator": "五十岚卓哉",
+    "score": 9,
+    "year": "2019",
+    "date": "2019-04-12",
+    "cover": "/covers/p2551146170.webp",
+    "categories": [
+      "剧情",
+      "动画",
+      "奇幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "超脱",
+    "creator": "托尼·凯耶",
+    "score": 9,
+    "year": "2011",
+    "date": "2011-04-25",
+    "cover": "/covers/p1305562621.jpg",
+    "categories": [
+      "剧情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "让子弹飞",
+    "creator": "姜文",
+    "score": 9,
+    "year": "2010",
+    "date": "2010-12-16",
+    "cover": "/covers/p1512562287.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "喜剧",
+      "西部"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "红辣椒",
+    "creator": "今敏",
+    "score": 9,
+    "year": "2006",
+    "date": "2006-09-02",
+    "cover": "/covers/p2794776839.webp",
+    "categories": [
+      "动画",
+      "悬疑",
+      "惊悚",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "搏击俱乐部",
+    "creator": "大卫·芬奇",
+    "score": 9,
+    "year": "1999",
+    "date": "1999-09-10",
+    "cover": "/covers/p1910931622.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "悬疑",
+      "惊悚"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "好东西",
+    "creator": "邵艺辉",
+    "score": 8.9,
+    "year": "2024",
+    "date": "2024-11-13",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "超异能族",
+    "creator": "朴仁载，朴允书",
+    "score": 8.9,
+    "year": "2023",
+    "date": "2023-08-09",
+    "cover": "/covers/p2895751873.webp",
+    "categories": [
+      "动作",
+      "奇幻",
+      "悬疑",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "碧蓝之海",
+    "creator": "高松信司，岩崎太郎",
+    "score": 8.9,
+    "year": "2018",
+    "date": "2018-07-14",
+    "cover": "/covers/p2525362524.webp",
+    "categories": [
+      "动画",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "人生一串第一季",
+    "creator": "陈英杰，刘执戈",
+    "score": 8.9,
+    "year": "2018",
+    "date": "2018-06-20",
+    "cover": "/covers/p2524295558.webp",
+    "categories": [
+      "纪录片"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "杀人回忆",
+    "creator": "奉俊昊",
+    "score": 8.9,
+    "year": "2003",
+    "date": "2003-05-02",
+    "cover": "/covers/p1633113220.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "悬疑",
+      "惊悚"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "西西里的美丽传说",
+    "creator": "朱塞佩·托纳多雷",
+    "score": 8.9,
+    "year": "2000",
+    "date": "2000-10-27",
+    "cover": "/covers/p2441988159.webp",
+    "categories": [
+      "剧情",
+      "情色",
+      "战争"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "低俗小说",
+    "creator": "昆汀·塔伦蒂诺",
+    "score": 8.9,
+    "year": "1994",
+    "date": "1994-05-12",
+    "cover": "/covers/p1910902213.webp",
+    "categories": [
+      "剧情",
+      "喜剧",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "首尔之春",
+    "creator": "金成洙",
+    "score": 8.8,
+    "year": "2023",
+    "date": "2023-11-22",
+    "cover": "/covers/p2905141611.jpg",
+    "categories": [
+      "剧情"
+    ],
+    "status": true
+  },
+  {
+    "type": "book",
+    "title": "大医·日出篇",
+    "creator": "马伯庸",
+    "score": 8.8,
+    "year": "2022",
+    "date": "2022-12-01",
+    "cover": "/covers/s34358582.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "寄生虫",
+    "creator": "奉俊昊",
+    "score": 8.8,
+    "year": "2019",
+    "date": "2019-05-21",
+    "cover": "/covers/p2561439800.webp",
+    "categories": [
+      "剧情"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "AtomicHabits",
+    "creator": "JamesClear，詹姆斯·克利尔",
+    "score": 8.8,
+    "year": "2018",
+    "date": "2018-10-16",
+    "cover": "/covers/s29900086.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "金色梦乡",
+    "creator": "日/伊坂幸太郎",
+    "score": 8.8,
+    "year": "2016",
+    "date": "2016-11-01",
+    "cover": "/covers/s29397725.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "超能陆战队",
+    "creator": "唐·霍尔，克里斯·威廉姆斯",
+    "score": 8.8,
+    "year": "2014",
+    "date": "2014-10-23",
+    "cover": "/covers/p2224568669.webp",
+    "categories": [
+      "冒险",
+      "动作",
+      "动画",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "倩女幽魂",
+    "creator": "程小东",
+    "score": 8.8,
+    "year": "1987",
+    "date": "1987-07-18",
+    "cover": "/covers/p2918554634.webp",
+    "categories": [
+      "古装",
+      "奇幻",
+      "武侠",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "F1：狂飙飞车",
+    "creator": "约瑟夫·科辛斯基",
+    "score": 8.7,
+    "year": "2025",
+    "date": "2025-06-25",
+    "cover": "/covers/p2922238175.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "运动"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "失落的卫星",
+    "creator": "刘子超",
+    "score": 8.7,
+    "year": "2020",
+    "date": "2020-07-01",
+    "cover": "/covers/s33660509.jpg",
+    "categories": [],
+    "status": true
+  },
+  {
+    "type": "book",
+    "title": "我的阿勒泰",
+    "creator": "李娟",
+    "score": 8.7,
+    "year": "2018",
+    "date": "2018-08-01",
+    "cover": "/covers/s33678980.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "后窗",
+    "creator": "阿尔弗雷德·希区柯克",
+    "score": 8.7,
+    "year": "1954",
+    "date": "1954-08-01",
+    "cover": null,
+    "categories": [
+      "悬疑",
+      "惊悚"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "唐朝诡事录之西行",
+    "creator": "柏杉，司元甲",
+    "score": 8.6,
+    "year": "2024",
+    "date": "2024-07-18",
+    "cover": "/covers/p2910162228.webp",
+    "categories": [
+      "古装",
+      "奇幻",
+      "悬疑"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "怒呛人生第一季",
+    "creator": "宮崎光代，杰克·施莱尔",
+    "score": 8.6,
+    "year": "2023",
+    "date": "2023-04-06",
+    "cover": "/covers/p2890296057.webp",
+    "categories": [
+      "剧情",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "3年A班：从现在起，大家都是人质",
+    "creator": "小室直子，铃木勇马",
+    "score": 8.6,
+    "year": "2019",
+    "date": "2019-01-06",
+    "cover": "/covers/p2604157029.webp",
+    "categories": [
+      "日剧TV",
+      "菅田将晖"
+    ],
+    "status": true
+  },
+  {
+    "type": "movie",
+    "title": "头号玩家",
+    "creator": "史蒂文·斯皮尔伯格",
+    "score": 8.6,
+    "year": "2018",
+    "date": "2018-03-11",
+    "cover": "/covers/p2516578307.webp",
+    "categories": [
+      "冒险",
+      "动作",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "海边的曼彻斯特",
+    "creator": "肯尼思·洛纳根",
+    "score": 8.6,
+    "year": "2016",
+    "date": "2016-01-23",
+    "cover": "/covers/p2421855655.webp",
+    "categories": [
+      "剧情",
+      "家庭"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "白日梦想家",
+    "creator": "本·斯蒂勒",
+    "score": 8.6,
+    "year": "2013",
+    "date": "2013-12-25",
+    "cover": null,
+    "categories": [
+      "冒险",
+      "剧情",
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "疯狂的石头",
+    "creator": "宁浩",
+    "score": 8.6,
+    "year": "2006",
+    "date": "2006-06-30",
+    "cover": "/covers/p712241453.webp",
+    "categories": [
+      "喜剧",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "雄狮少年2",
+    "creator": "孙海鹏",
+    "score": 8.5,
+    "year": "2024",
+    "date": "2024-12-14",
+    "cover": "/covers/p2915942528.webp",
+    "categories": [
+      "动作",
+      "动画",
+      "喜剧"
+    ],
+    "status": true
+  },
+  {
+    "type": "movie",
+    "title": "金的音像店",
+    "creator": "大卫·雷德蒙，阿什莉·萨宾",
+    "score": 8.5,
+    "year": "2023",
+    "date": "2023-01-20",
+    "cover": "/covers/p2905882313.webp",
+    "categories": [
+      "纪录片"
+    ],
+    "status": false
+  },
+  {
+    "type": "teleplay",
+    "title": "狂飙",
+    "creator": "徐纪周，冯轩",
+    "score": 8.5,
+    "year": "2023",
+    "date": "2023-01-14",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "长安的荔枝",
+    "creator": "马伯庸",
+    "score": 8.5,
+    "year": "2022",
+    "date": "2022-10-01",
+    "cover": "/covers/s34327482.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "打开心智",
+    "creator": "李睿秋（Lachel）",
+    "score": 8.5,
+    "year": "2022",
+    "date": "2022-09-01",
+    "cover": "/covers/s34307445.jpg",
+    "categories": [],
+    "status": true
+  },
+  {
+    "type": "movie",
+    "title": "你的名字。",
+    "creator": "新海诚",
+    "score": 8.5,
+    "year": "2016",
+    "date": "2016-08-26",
+    "cover": null,
+    "categories": [
+      "剧情",
+      "动画",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "这个男人来自地球",
+    "creator": "理查德·沙因克曼",
+    "score": 8.5,
+    "year": "2007",
+    "date": "2007-11-13",
+    "cover": "/covers/p513303986.webp",
+    "categories": [
+      "剧情",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "真爱至上",
+    "creator": "理查德·柯蒂斯",
+    "score": 8.5,
+    "year": "2003",
+    "date": "2003-09-07",
+    "cover": "/covers/p475600770.webp",
+    "categories": [
+      "剧情",
+      "喜剧",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "认知觉醒（百万册精装纪念版）",
+    "creator": "周岭",
+    "score": 8.4,
+    "year": "2024",
+    "date": "2024-07-01",
+    "cover": "/covers/s34871792.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "甲方乙方",
+    "creator": "冯小刚",
+    "score": 8.4,
+    "year": "1997",
+    "date": "1997-12-24",
+    "cover": "/covers/p2901505312.webp",
+    "categories": [
+      "喜剧"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "荒野大镖客",
+    "creator": "赛尔乔·莱昂内",
+    "score": 8.4,
+    "year": "1964",
+    "date": "1964-09-12",
+    "cover": "/covers/p2178157710.webp",
+    "categories": [
+      "动作",
+      "西部"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "桂河大桥",
+    "creator": "大卫·里恩",
+    "score": 8.4,
+    "year": "1957",
+    "date": "1957-10-02",
+    "cover": "/covers/p2233749387.webp",
+    "categories": [
+      "剧情",
+      "历史",
+      "战争"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "流浪地球2",
+    "creator": "郭帆",
+    "score": 8.3,
+    "year": "2023",
+    "date": "2023-01-22",
+    "cover": "/covers/p2916835424.webp",
+    "categories": [
+      "冒险",
+      "灾难",
+      "科幻"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "夜晚的潜水艇",
+    "creator": "陈春成",
+    "score": 8.3,
+    "year": "2020",
+    "date": "2020-09-01",
+    "cover": "/covers/s33718940.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "啤酒事典",
+    "creator": "尹毅，赵云志",
+    "score": 8.3,
+    "year": "2018",
+    "date": "2018-07-01",
+    "cover": "/covers/s29844032.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "言叶之庭",
+    "creator": "新海诚",
+    "score": 8.3,
+    "year": "2013",
+    "date": "2013-05-31",
+    "cover": "/covers/p1958733032.webp",
+    "categories": [
+      "动画",
+      "爱情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "Hello！树先生",
+    "creator": "韩杰",
+    "score": 8.3,
+    "year": "2011",
+    "date": "2011-11-04",
+    "cover": "/covers/p1271999126.webp",
+    "categories": [
+      "剧情"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "闪灵",
+    "creator": "斯坦利·库布里克",
+    "score": 8.3,
+    "year": "1980",
+    "date": "1980-05-23",
+    "cover": null,
+    "categories": [
+      "恐怖"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "周处除三害",
+    "creator": "黄精甫",
+    "score": 8.1,
+    "year": "2023",
+    "date": "2023-10-06",
+    "cover": "/covers/p2905021483.webp",
+    "categories": [
+      "动作",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "圆圈正义",
+    "creator": "罗翔",
+    "score": 8.1,
+    "year": "2019",
+    "date": "2019-08-26",
+    "cover": "/covers/s33544846.jpg",
+    "categories": [],
+    "status": false
+  },
+  {
+    "type": "music",
+    "title": "SABLE, fABLE",
+    "creator": "Bon Iver",
+    "score": 7.8,
+    "year": "2025",
+    "date": "2025-04-11",
+    "cover": null,
+    "categories": [
+      "流行"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "惊天魔盗团",
+    "creator": "路易斯·莱特里尔",
+    "score": 7.8,
+    "year": "2013",
+    "date": "2013-05-21",
+    "cover": "/covers/p2151336415.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "犯罪"
+    ],
+    "status": false
+  },
+  {
+    "type": "movie",
+    "title": "诡才之道",
+    "creator": "徐汉强",
+    "score": 7.6,
+    "year": "2024",
+    "date": "2024-06-28",
+    "cover": "/covers/p2917676972.webp",
+    "categories": [
+      "喜剧",
+      "恐怖"
+    ],
+    "status": false
+  },
+  {
+    "type": "book",
+    "title": "长跑启示录",
+    "creator": "澳/凯·布雷茨",
+    "score": 0,
+    "year": "2025",
+    "date": "2025-01-01",
+    "cover": "/covers/s35041581.jpg",
+    "categories": [],
+    "status": true
+  }
 ]
