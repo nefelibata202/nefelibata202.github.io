@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const notes = (await getCollection('garden'))
+    .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf())
+    .map((e) => ({ url: `/garden/${e.id}`, title: e.data.title, tag: e.data.tags[0], updated: fmt(e.data.updated) }));
+  return paginate(notes, { pageSize: 16 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+<BaseLayout title="花园 · 归来">
+  <h1>数字花园</h1>
+  <p class="lead">慢慢生长、互相链接的笔记。</p>
+
+  <ul class="gindex">
+    {page.data.map((n) => (
+      <li class="grow">
+        <a class="grow-link" href={n.url}>
+          <span class="grow-title">{n.title}</span>
+          <span class="grow-meta">
+            {n.tag && <span class="grow-tag">{n.tag}</span>}
+            <span class="grow-date">{n.updated}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {page.lastPage > 1 && (
+    <nav class="pager" aria-label="分页">
+      {page.url.prev
+        ? <a class="pager-btn" href={page.url.prev}>‹ 上一页</a>
+        : <span class="pager-btn is-off">‹ 上一页</span>}
+      <span class="pager-num">{page.currentPage} / {page.lastPage}</span>
+      {page.url.next
+        ? <a class="pager-btn" href={page.url.next}>下一页 ›</a>
+        : <span class="pager-btn is-off">下一页 ›</span>}
+    </nav>
+  )}
+</BaseLayout>

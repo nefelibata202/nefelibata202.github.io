@@ -1,22 +1,33 @@
 ---
 import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 const readTime = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
 
-const items = (await getCollection('articles', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map((e) => ({
-    url: `/articles/${e.id}`,
-    title: e.data.title,
-    date: fmt(e.data.date),
-    summary: e.data.summary,
-    tags: e.data.tags,
-    read: readTime(e.body),
-  }));
+export const getStaticPaths = (async ({ paginate }) => {
+  const f = (d: Date) => d.toISOString().slice(0, 10);
+  const rt = (body = '') => `读 ${Math.max(1, Math.round(body.replace(/\s/g, '').length / 350))} 分钟`;
+  const items = (await getCollection('articles', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .map((e) => ({
+      url: `/articles/${e.id}`,
+      title: e.data.title,
+      date: f(e.data.date),
+      summary: e.data.summary,
+      tags: e.data.tags,
+      read: rt(e.body),
+    }));
+  return paginate(items, { pageSize: 8 });
+}) satisfies GetStaticPaths;
 
-const allTags = [...new Set(items.flatMap((i) => i.tags))];
+const { page } = Astro.props;
+
+// 标签筛选取全量文章（跨页一致），非仅当前页
+const allTags = [...new Set(
+  (await getCollection('articles', ({ data }) => !data.draft)).flatMap((e) => e.data.tags)
+)];
 const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
 ---
 <BaseLayout title="文章 · 归来" wide>
@@ -37,7 +48,7 @@ const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
 
   <div class="article-grid">
     <ul class="feed">
-      {items.map((it, i) => (
+      {page.data.map((it, i) => (
         <li class="card" data-tags={it.tags.join(',')} data-date={it.date}>
           <a class="card-link" href={it.url}>
             <div class="card-head">
@@ -53,6 +64,18 @@ const catClass = ['cat', 'cat cat--alt', 'cat cat--hot'];
     </ul>
     <p class="noresult" hidden>没有符合条件的文章。</p>
   </div>
+
+  {page.lastPage > 1 && (
+    <nav class="pager" aria-label="分页">
+      {page.url.prev
+        ? <a class="pager-btn" href={page.url.prev}>‹ 上一页</a>
+        : <span class="pager-btn is-off">‹ 上一页</span>}
+      <span class="pager-num">{page.currentPage} / {page.lastPage}</span>
+      {page.url.next
+        ? <a class="pager-btn" href={page.url.next}>下一页 ›</a>
+        : <span class="pager-btn is-off">下一页 ›</span>}
+    </nav>
+  )}
 
   <script is:inline>
     (() => {
