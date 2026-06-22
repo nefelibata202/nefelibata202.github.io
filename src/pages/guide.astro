@@ -11,7 +11,7 @@ const panels = await Promise.all(
 );
 
 // 按 island id 排序：个人岛在前，信息岛在后
-const order = ['people', 'philosophy', 'interests', 'travel', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
+const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
 panels.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
 ---
 

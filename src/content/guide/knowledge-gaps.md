@@ -1,7 +1,7 @@
 ---
 title: 知识库缺口
 island: knowledge-gaps
-accent: ink
+accent: gold
 ---
 
 知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。

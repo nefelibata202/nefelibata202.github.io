@@ -1,6 +1,7 @@
 ---
 title: 人生哲学
 island: philosophy
+accent: gold
 ---
 
 1. 接受自己是一个普通人

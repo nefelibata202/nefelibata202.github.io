@@ -1,6 +1,7 @@
 ---
 title: 人物
 island: people
+accent: gold
 ---
 
 ## 演员
