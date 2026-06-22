@@ -369,8 +369,69 @@ function guideSwitch(btn) {
   color: var(--muted);
 }
 
-.guide-section-body :global(li strong) {
+/* ── 知识缺口卡片 ── */
+.guide-section-body :global(h3) {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 24px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--hair);
+}
+
+/* 知识缺口岛专用：h2 作为分类卡片标题 */
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(h2) {
+  font-family: var(--disp);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: -0.01em;
   color: var(--ink);
+  margin: 28px 0 12px;
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  border-bottom: none;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(h2:first-of-type) {
+  margin-top: 8px;
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(ul) {
+  border: 2px solid var(--hair);
+  border-top: none;
+  margin: -12px 0 0;
+  padding: 8px 14px 10px 28px;
+  background: var(--soft);
+  list-style: none;
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li) {
+  position: relative;
+  padding: 5px 0 5px 2px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li::before) {
+  content: "☐";
+  position: absolute;
+  left: -20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li strong) {
+  color: var(--seal);
+  font-weight: 600;
+}
+
+.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(hr) {
+  display: none;
 }
 
 /* ── 响应式 ── */
