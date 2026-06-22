@@ -1,5 +1,5 @@
 ---
-title: 旅行计划
+title: 旅行
 island: travel
 ---
 

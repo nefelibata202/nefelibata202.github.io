@@ -1,5 +1,5 @@
 ---
-title: 个人兴趣
+title: 兴趣
 island: interests
 ---
 

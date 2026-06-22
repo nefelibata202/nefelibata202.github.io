@@ -425,31 +425,56 @@ main > h1 {
 /* 海报网格 */
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 30px 20px; padding: 4px 0 60px; }
 .pcard { display: flex; flex-direction: column; }
-.poster {
-  position: relative; width: 100%; aspect-ratio: 2/3;
-  border: 3px solid var(--line); background: var(--soft);
-  box-shadow: var(--shadow-sm); overflow: hidden; transition: transform .14s, box-shadow .14s;
-}
-.pcard:hover .poster { transform: translate(-4px, -4px); box-shadow: var(--shadow-lg); }
-.poster img { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-/* 无封面回退：得意黑标题铺底 */
-.poster--text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: var(--paper); }
-.poster--text .ptext { font-family: var(--disp); font-weight: 700; font-size: 1.5rem; line-height: 1.16; color: var(--ink); padding: 14px; text-align: center; letter-spacing: .01em; }
 
+/* poster：纯流式布局，图片自然撑开高度 */
+.poster {
+  position: relative; width: 100%;
+  border: 3px solid var(--line); background: var(--soft);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+/* 用 padding-top 占位维持 2:3 比例——放在 ::before 上避免影响子元素定位 */
+.poster::before {
+  content: ''; display: block; width: 100%; padding-top: 150%;
+}
+.poster img {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: block; object-fit: cover;
+}
+/* 叠加层（类型/评分/已阅）：绝对定位到 poster 内 */
 .ptype {
-  position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-weight: 700; font-size: .6rem;
+  position: absolute; top: 8px; left: 8px; z-index: 2;
+  font-family: var(--mono); font-weight: 700; font-size: .6rem;
   letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: var(--paper);
   border: 2px solid var(--line); padding: 2px 6px;
 }
 .pdone {
-  position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; display: flex; align-items: center;
-  justify-content: center; font-size: .8rem; font-weight: 700; color: var(--paper); background: var(--seal); border: 2px solid var(--line);
+  position: absolute; top: 8px; right: 8px; z-index: 2; width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700; color: var(--paper); background: var(--seal); border: 2px solid var(--line);
 }
 .pscore {
-  position: absolute; left: -3px; bottom: 10px; font-family: var(--mono); font-weight: 700; font-size: .92rem;
+  position: absolute; left: -3px; bottom: 10px; z-index: 2;
+  font-family: var(--mono); font-weight: 700; font-size: .92rem;
   color: var(--on-gold); background: var(--gold); border: 2.5px solid var(--line); padding: 2px 9px; letter-spacing: .02em;
 }
 .pscore--none { font-size: .68rem; color: var(--ink); background: var(--paper); }
+
+/* hover：位移 + 加深阴影，用 outline 代替 transform 避免影响子元素定位 */
+.pcard:hover .poster {
+  outline: 3px solid var(--line); outline-offset: -3px;
+  box-shadow: var(--shadow-lg);
+  translate: -4px -4px;
+}
+@supports not (translate: 1px) {
+  .pcard:hover .poster { transform: translate(-4px, -4px); }
+}
+
+/* 无封面回退：文字铺底 */
+.poster--text {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center; background: var(--paper);
+}
+.poster--text .ptext { font-family: var(--disp); font-weight: 700; font-size: 1.5rem; line-height: 1.16; color: var(--ink); padding: 14px; text-align: center; letter-spacing: .01em; }
 
 .pcap { padding: 11px 2px 0; }
 .pcap .pt {

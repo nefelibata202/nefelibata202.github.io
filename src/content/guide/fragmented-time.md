@@ -1,5 +1,5 @@
 ---
-title: 碎片时间能做的事
+title: 碎片时间
 island: fragmented-time
 accent: gold
 ---

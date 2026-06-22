@@ -1,5 +1,5 @@
 ---
-title: 喜欢的人物
+title: 人物
 island: people
 ---
 

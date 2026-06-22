@@ -1,5 +1,5 @@
 ---
-title: 高质量信息源
+title: 信息源
 island: info-sources
 accent: gold
 ---
