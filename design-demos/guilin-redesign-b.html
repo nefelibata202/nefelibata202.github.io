@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归图 · 个人导览 · 方案B</title>
+<style>
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.16);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-sm: 3px 3px 0 var(--line);
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+  --lat: "Archivo", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.16); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--zh); line-height: 1.75;
+  text-wrap: pretty;
+}
+
+/* ── 整体布局：左侧导航 + 右侧内容 ── */
+.guide-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+
+/* ── 左侧边栏 ── */
+.sidebar {
+  background: var(--paper);
+  border-right: 2px solid var(--line);
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  font-family: var(--disp);
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.sidebar-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--hair);
+}
+
+/* 导航列表 */
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.nav-item {
+  padding: 14px 16px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-item:hover {
+  background: var(--soft);
+  border-color: var(--hair);
+}
+.nav-item.active {
+  background: var(--soft);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.nav-item .nav-icon {
+  width: 36px; height: 36px;
+  border: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.nav-item.active .nav-icon {
+  background: var(--gold);
+}
+.nav-item .nav-text h3 {
+  font-family: var(--disp);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.nav-item .nav-text p {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-top: 2px;
+}
+
+/* 底部 toc 风格索引 */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 2px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── 右侧内容区 ── */
+.content {
+  padding: 48px 56px;
+  max-width: 720px;
+}
+
+/* 章节 */
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.section.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 章节标题 */
+.section-header {
+  margin-bottom: 36px;
+}
+.section-header .section-num {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.section-header h2 {
+  font-family: var(--disp);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.section-header .section-summary {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 440px;
+}
+
+/* 内容条目 — 水平卡片式 */
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 18px 20px;
+  background: var(--paper);
+  border: 2px solid var(--hair);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.item:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.item-body h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.item-body p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.item-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border: 1.5px solid var(--line);
+  background: var(--soft);
+  white-space: nowrap;
+}
+.item-tag.gold { border-color: var(--gold); color: var(--gold); background: rgba(242,179,18,0.06); }
+.item-tag.seal { border-color: var(--seal); color: var(--seal); }
+.item-tag.ink { border-color: var(--ink); }
+
+/* 进度条（知识缺口用） */
+.progress {
+  width: 60px;
+  height: 6px;
+  background: var(--hair);
+  border: 1px solid var(--line);
+  margin-top: 4px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+}
+.progress-fill.half { width: 40%; }
+.progress-fill.start { width: 15%; }
+
+/* 章节分隔 */
+.section + .section {
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 3px solid var(--line);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 900px) {
+  .guide-layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 2px solid var(--line);
+    padding: 32px 24px;
+  }
+  .nav-list { flex-direction: row; flex-wrap: wrap; }
+  .nav-item { flex: 1; min-width: 140px; }
+  .content { padding: 32px 24px; }
+  .sidebar-footer { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="guide-layout">
+
+  <!-- 左侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">归图</div>
+    <div class="sidebar-desc">个人知识导览<br>碎片时间 · 信息源 · 知识缺口</div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" onclick="activate(this, 'time')">
+        <div class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>碎片时间</h3>
+          <p>FRAGMENTED TIME</p>
+        </div>
+      </li>
+      <li class="nav-item" onclick="activate(this, 'sources')">
+        <div class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>信息源</h3>
+          <p>INFO SOURCES</p>
+        </div>
+      </li>
+      <li class="nav-item" onclick="activate(this, 'gaps')">
+        <div class="nav-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>知识缺口</h3>
+          <p>KNOWLEDGE GAPS</p>
+        </div>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <span>GUI TU</span>
+      <span>2026</span>
+    </div>
+  </aside>
+
+  <!-- 右侧内容 -->
+  <main class="content">
+
+    <!-- 章节1：碎片时间 -->
+    <div class="section active" id="time">
+      <div class="section-header">
+        <div class="section-num">/ 01</div>
+        <h2>碎片时间能做的事</h2>
+        <p class="section-summary">每天通勤、等咖啡、睡前 15 分钟……碎片时间加起来每天超过 2 小时。与其刷无意义的内容，不如用来积累微小的进步。</p>
+      </div>
+      <div class="item-list">
+        <div class="item">
+          <div class="item-body">
+            <h4>听英语播客</h4>
+            <p>ESL Pod、BBC 6 Minutes English — 每集 6-15 分钟，适合通勤时听。重点不是听懂每一个词，而是保持耳朵对英语的敏感度。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag gold">英语</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>读一篇 Pocket 收藏短文章</h4>
+            <p>平时看到好文章先存到 Pocket，碎片时间打开读一篇。不贪多，一篇就够。读完想一想：这篇文章的核心观点是什么？</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">阅读</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>记一条 flomo 碎片想法</h4>
+            <p>突然想到的一个观点、一个灵感、一个问题——立刻记下来。不要求完整，关键词就行。日积月累，这些碎片会自己连接成网。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">输出</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>听日语听力 + 出去走走</h4>
+            <p>散步 + 日语听力 = 身体和大脑同时在运动。NHK News Web Easy 是不错的选择，语速慢、用词简单。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">日语</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>刷一条行业短视频（学习竞品）</h4>
+            <p>不是无目的地刷，而是有意识地看竞品的社媒内容。他们用什么钩子？什么内容互动高？拆解一条比刷一百条有用。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">运营</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 章节2：信息源 -->
+    <div class="section" id="sources">
+      <div class="section-header">
+        <div class="section-num">/ 02</div>
+        <h2>高质量信息源</h2>
+        <p class="section-summary">信息源的质量比数量重要。每个领域只跟 1-2 个最优质的信息源，而不是刷海量内容。Newsletter 优于社交媒体，长文优于短内容。</p>
+      </div>
+      <div class="item-list">
+        <div class="item">
+          <div class="item-body">
+            <h4>Newsletter</h4>
+            <p>Morning Brew（商业日报，轻松易读）、Stratechery（科技战略深度分析）、Not Boring（创业与文化）。每周精选几篇深度阅读，比刷朋友圈有价值得多。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag gold">订阅</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>Podcast</h4>
+            <p>Lex Fridman（长对话，AI/科学/人文）、Huberman Lab（神经科学与健康）、商业就是这样（中国商业案例）。通勤、做饭、运动时的最佳伴侣。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">音频</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>书籍</h4>
+            <p>正在读《思考，快与慢》《原则》《穷查理宝典》。好书值得反复读，每读一遍都有新收获。读书不在多，在于读透了没有。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">深度</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>网站</h4>
+            <p>少数派（好工具好文章）、Hacker News（技术圈风向标）、Product Hunt（新产品发现）。浏览时不收藏就是浪费——看到有价值的内容立刻存起来。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">浏览</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>关注的人</h4>
+            <p>孟岩（投资與成长）、Lillian Li（AI 與写作）、Shane Parrish（决策与思维模型）。不是追星，而是师从——看他们读什么、想什么、输出什么。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag">学习</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 章节3：知识缺口 -->
+    <div class="section" id="gaps">
+      <div class="section-header">
+        <div class="section-num">/ 03</div>
+        <h2>知识库缺口</h2>
+        <p class="section-summary">知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。</p>
+      </div>
+      <div class="item-list">
+        <div class="item">
+          <div class="item-body">
+            <h4>数据分析基础</h4>
+            <p>SQL 查询、Excel 高级功能、基础统计学。做运营离不开数据，能看懂数据才能做出更好的决策。目前正在通过 Codecademy 学习 SQL。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag gold">进行中</span>
+            <div class="progress"><div class="progress-fill half"></div></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>认知科学 / 行为经济学入门</h4>
+            <p>人为什么会做出非理性决策？认知偏差有哪些？怎么利用这些知识做更好的产品和营销？计划从《思考，快与慢》开始系统学习。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag ink">待开始</span>
+            <div class="progress"><div class="progress-fill start"></div></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>前端开发基础</h4>
+            <p>HTML/CSS/JavaScript 基础。不求成为开发者，但要能和开发团队无障碍沟通，能独立修改落地页代码。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag ink">待开始</span>
+            <div class="progress"><div class="progress-fill start"></div></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>财务知识</h4>
+            <p>读懂资产负债表、利润表、现金流表。做企业不懂财务就像开车不看仪表盘。计划先读《财报就像一本故事书》入门。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag ink">待开始</span>
+            <div class="progress"><div class="progress-fill start"></div></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-body">
+            <h4>日语 N2 → N1</h4>
+            <p>已拿下 N2，目标是 N1。差距在词汇量和阅读速度。计划通过读日文原版书 + NHK 新闻来提升，而不是再刷语法题。</p>
+          </div>
+          <div class="item-meta">
+            <span class="item-tag gold">进行中</span>
+            <div class="progress"><div class="progress-fill half"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function activate(el, id) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

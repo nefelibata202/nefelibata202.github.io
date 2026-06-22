@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归图 · 个人导览 · 方案C</title>
+<style>
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.12);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-sm: 3px 3px 0 var(--line);
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+  --lat: "Archivo", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --read: "LXGW WenKai GB Screen", "Songti SC", "Noto Serif SC", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.12); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--zh); line-height: 1.75;
+  text-wrap: pretty;
+}
+
+/* ── 页面容器 ── */
+.guide-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 60px 28px 100px;
+}
+
+/* ── 页头：手写感 ── */
+.guide-head {
+  text-align: center;
+  margin-bottom: 72px;
+  position: relative;
+}
+.guide-head::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--gold);
+  margin: 24px auto 0;
+}
+.guide-head h1 {
+  font-family: var(--disp);
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.guide-head p {
+  font-family: var(--read);
+  font-size: 1rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── 三个大章节 ── */
+.chapter {
+  margin-bottom: 64px;
+}
+.chapter:last-child {
+  margin-bottom: 0;
+}
+
+/* 章节标题区 */
+.chapter-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--line);
+}
+.chapter-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  min-width: 28px;
+}
+.chapter-title {
+  font-family: var(--disp);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.chapter-en {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-left: auto;
+  letter-spacing: 0.06em;
+}
+
+/* ── 内容网格：每行2-3个条目 ── */
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* 条目卡片 */
+.entry {
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
+  padding: 20px;
+  position: relative;
+  transition: all 0.2s;
+}
+.entry:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+.entry-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.entry-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--hair);
+  background: var(--soft);
+  flex-shrink: 0;
+}
+.entry-icon svg {
+  opacity: 0.7;
+}
+.entry-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.entry h4 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.entry p {
+  font-family: var(--read);
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.entry .status {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  margin-top: 10px;
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  background: rgba(242,179,18,0.04);
+}
+.entry .status.pending {
+  border-color: var(--hair);
+  color: var(--muted);
+  background: transparent;
+}
+
+/* ── 特殊：信息源条目（更宽） ── */
+.entry.wide {
+  grid-column: 1 / -1;
+}
+.entry.wide .entry-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+.entry-categories {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.cat {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border: 1.5px solid var(--line);
+  background: var(--soft);
+}
+
+/* ── 知识缺口：带进度环 ── */
+.gap-entry {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 20px;
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
+  transition: all 0.2s;
+}
+.gap-entry:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.gap-ring {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2.5px solid var(--hair);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+.gap-ring.active {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.gap-entry h4 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.gap-entry p {
+  font-family: var(--read);
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.gap-eta {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+/* ── 底部 ── */
+.guide-end {
+  margin-top: 80px;
+  text-align: center;
+  padding-top: 32px;
+  border-top: 2px solid var(--hair);
+}
+.guide-end p {
+  font-family: var(--read);
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.guide-end .seal {
+  display: inline-block;
+  margin-top: 16px;
+  width: 48px; height: 48px;
+  border: 2.5px solid var(--seal);
+  color: var(--seal);
+  font-family: var(--disp);
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 44px;
+  text-align: center;
+  transform: rotate(-8deg);
+  opacity: 0.8;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 640px) {
+  .guide-page { padding: 40px 16px 60px; }
+  .chapter-grid { grid-template-columns: 1fr; }
+  .entry.wide .entry-body { grid-template-columns: 1fr; }
+  .gap-entry { grid-template-columns: 1fr; }
+  .gap-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="guide-page">
+
+  <!-- 页头 -->
+  <header class="guide-head">
+    <h1>归图</h1>
+    <p>驾舟泛海，以知识为图 — 我的学习地图与知识版图</p>
+  </header>
+
+  <!-- 章节1：碎片时间 -->
+  <section class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">壹</span>
+      <h2 class="chapter-title">碎片时间</h2>
+      <span class="chapter-en">FRAGMENTED TIME</span>
+    </div>
+    <div class="chapter-grid">
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+          </div>
+          <span class="entry-label">通勤 / 等待</span>
+        </div>
+        <h4>听英语播客</h4>
+        <p>ESL Pod、BBC 6 Minutes。每集 6-15 分钟，保持耳朵对英语的敏感度。</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <span class="entry-label">睡前 / 休息</span>
+        </div>
+        <h4>读一篇短文章</h4>
+        <p>Pocket 收藏夹里存的好文章。读完想一想：核心观点是什么？</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <span class="entry-label">随时</span>
+        </div>
+        <h4>记一条碎片想法</h4>
+        <p>flomo 上记一条。不要求完整，关键词就行。碎片会自己连接成网。</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <span class="entry-label">散步</span>
+        </div>
+        <h4>日语听力 + 走走</h4>
+        <p>NHK News Web Easy，语速慢、用词简单。身体和大脑同时在运动。</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><path d="M17 2l-5 5-5-5"/></svg>
+          </div>
+          <span class="entry-label">有意识地</span>
+        </div>
+        <h4>拆解一条竞品视频</h4>
+        <p>不是无目的地刷。他们用什么钩子？什么内容互动高？拆解一条比刷一百条有用。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 章节2：信息源 -->
+  <section class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">贰</span>
+      <h2 class="chapter-title">信息源</h2>
+      <span class="chapter-en">INFO SOURCES</span>
+    </div>
+    <div class="chapter-grid">
+      <div class="entry wide">
+        <div class="entry-body">
+          <div>
+            <div class="entry-top">
+              <div class="entry-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <span class="entry-label">Newsletter · 每周精选</span>
+            </div>
+            <h4>Morning Brew · Stratechery · Not Boring</h4>
+            <p>商业日报 + 科技战略 + 创业文化。每周精选几篇深度阅读，比刷朋友圈有价值得多。</p>
+            <div class="entry-categories">
+              <span class="cat">商业</span>
+              <span class="cat">科技</span>
+              <span class="cat">创业</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="entry wide">
+        <div class="entry-body">
+          <div>
+            <div class="entry-top">
+              <div class="entry-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </div>
+              <span class="entry-label">Podcast · 通勤伴侣</span>
+            </div>
+            <h4>Lex Fridman · Huberman Lab · 商业就是这样</h4>
+            <p>长对话、神经科学、中国商业案例。做饭、运动、通勤时的最佳伴侣。</p>
+            <div class="entry-categories">
+              <span class="cat">AI</span>
+              <span class="cat">健康</span>
+              <span class="cat">商业</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <span class="entry-label">书籍</span>
+        </div>
+        <h4>正在读</h4>
+        <p>《思考，快与慢》《原则》《穷查理宝典》。好书值得反复读。</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <span class="entry-label">网站</span>
+        </div>
+        <h4>常逛</h4>
+        <p>少数派、Hacker News、Product Hunt。看到有价值的内容立刻存起来。</p>
+      </div>
+      <div class="entry">
+        <div class="entry-top">
+          <div class="entry-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <span class="entry-label">关注的人</span>
+        </div>
+        <h4>师从</h4>
+        <p>孟岩、Lillian Li、Shane Parrish。看他们读什么、想什么、输出什么。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 章节3：知识缺口 -->
+  <section class="chapter">
+    <div class="chapter-header">
+      <span class="chapter-num">叁</span>
+      <h2 class="chapter-title">知识缺口</h2>
+      <span class="chapter-en">KNOWLEDGE GAPS</span>
+    </div>
+    <div class="chapter-grid" style="grid-template-columns: 1fr; gap: 12px;">
+      <div class="gap-entry">
+        <div class="gap-ring active">40%</div>
+        <div>
+          <h4>数据分析基础</h4>
+          <p>SQL 查询、Excel 高级功能、基础统计学。做运营离不开数据，能看懂数据才能做出更好的决策。目前正在通过 Codecademy 学习 SQL。</p>
+        </div>
+        <span class="gap-eta">预计 Q3</span>
+      </div>
+      <div class="gap-entry">
+        <div class="gap-ring">—</div>
+        <div>
+          <h4>认知科学 / 行为经济学</h4>
+          <p>人为什么会做出非理性决策？认知偏差有哪些？怎么利用这些知识做更好的产品和营销？计划从《思考，快与慢》开始。</p>
+        </div>
+        <span class="gap-eta">待开始</span>
+      </div>
+      <div class="gap-entry">
+        <div class="gap-ring">—</div>
+        <div>
+          <h4>前端开发基础</h4>
+          <p>HTML/CSS/JavaScript 基础。不求成为开发者，但要能和开发团队无障碍沟通，能独立修改落地页代码。</p>
+        </div>
+        <span class="gap-eta">待开始</span>
+      </div>
+      <div class="gap-entry">
+        <div class="gap-ring">—</div>
+        <div>
+          <h4>财务知识</h4>
+          <p>读懂资产负债表、利润表、现金流表。做企业不懂财务就像开车不看仪表盘。先读《财报就像一本故事书》入门。</p>
+        </div>
+        <span class="gap-eta">待开始</span>
+      </div>
+      <div class="gap-entry">
+        <div class="gap-ring active">60%</div>
+        <div>
+          <h4>日语 N2 → N1</h4>
+          <p>已拿下 N2，目标是 N1。差距在词汇量和阅读速度。计划通过读日文原版书 + NHK 新闻来提升。</p>
+        </div>
+        <span class="gap-eta">预计 Q4</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部 -->
+  <footer class="guide-end">
+    <p>知道自己不知道什么，比知道自己知道什么更重要。</p>
+    <div class="seal">归</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

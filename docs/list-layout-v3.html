@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>列表版式 V3 — 头条 + 索引流</title>
+<style>
+:root {
+  --bg: #F1EBDB; --paper: #FCF8EE; --soft: #F4EEDD;
+  --ink: #16140F; --line: #16140F;
+  --hair: rgba(22,20,15,.13); --muted: #6E685A;
+  --gold: #F2B312; --seal: #C8362B; --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen","Songti SC","Noto Serif SC",Georgia,serif;
+  --disp: "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,monospace;
+  --zh: "PingFang SC","Noto Sans SC",sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#14120C;--paper:#1E1B13;--soft:#211E15;
+  --ink:#F2ECDC;--line:#F2ECDC;--hair:rgba(242,236,220,.13);
+  --muted:#9A9382;--gold:#F2B312;--seal:#E45A4D;
+}}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);}
+
+/* ── 标注 ── */
+.note{position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--gold);color:var(--on-gold);
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-align:center;padding:6px;}
+
+/* ── 导航 ── */
+.nav{border-bottom:3px solid var(--line);background:var(--bg);
+  position:sticky;top:0;z-index:100;}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;height:56px;gap:0;}
+.brand{font-family:var(--mono);font-weight:700;font-size:.82rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink);
+  text-decoration:none;padding-right:20px;
+  border-right:2px solid var(--hair);margin-right:20px;}
+.brand:hover{color:var(--seal);}
+.page-title{font-family:var(--disp);font-weight:700;font-size:1.1rem;}
+
+/* ────────────────────────────────────────────────────
+   版式 V3：头条 + 索引流
+   理念：最新文章拥有编辑特权——第一篇全幅展示，
+         其余退为紧凑索引行，形成明确的权重差。
+   特征：头条大卡（左标题/右摘要）/ 分隔线 /
+         索引行（左日期+分类 / 中标题 / 右读时）/
+         hover 显出摘要 / 分类色点
+   ──────────────────────────────────────────────────── */
+.wrap{max-width:1080px;margin:0 auto;padding:44px 32px 88px;}
+
+/* 页面标题 + 筛选 */
+.page-head{margin-bottom:28px;}
+.page-h1{font-family:var(--disp);font-weight:700;
+  font-size:clamp(2.4rem,6vw,3.4rem);
+  letter-spacing:.03em;margin:0 0 8px;line-height:1;}
+.page-sub{font-family:var(--mono);font-size:.76rem;
+  color:var(--muted);letter-spacing:.06em;margin:0;}
+
+.filters{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:16px 0;margin:18px 0 0;
+  border-top:3px solid var(--line);
+}
+.f-label{font-family:var(--mono);font-weight:700;font-size:.62rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+  padding-right:10px;border-right:1.5px solid var(--hair);
+  margin-right:2px;white-space:nowrap;}
+.fchip{font-family:var(--mono);font-weight:700;font-size:.72rem;
+  color:var(--ink);text-decoration:none;padding:4px 11px;
+  border:1.5px solid var(--hair);transition:.12s;background:none;}
+.fchip:hover{border-color:var(--muted);}
+.fchip.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+
+/* ──── 头条卡片 ──── */
+.headliner{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 52px;
+  align-items:center;
+  text-decoration:none;color:var(--ink);
+  padding:40px 0 36px;
+  border-bottom:3px solid var(--line);
+  position:relative;
+  transition:background .14s;
+}
+.headliner::before{
+  content:'HEAD LINE';
+  position:absolute;top:-1px;left:0;
+  font-family:var(--mono);font-weight:700;font-size:.58rem;
+  letter-spacing:.18em;text-transform:uppercase;
+  background:var(--seal);color:#fff;
+  padding:3px 10px;
+}
+.hl-left{}
+.hl-cat{
+  display:inline-block;font-family:var(--mono);font-weight:700;
+  font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--seal);margin-bottom:12px;
+}
+.hl-title{
+  font-family:var(--disp);font-weight:700;
+  font-size:clamp(1.8rem,3.5vw,2.6rem);
+  line-height:1.12;letter-spacing:.01em;
+  margin:0 0 14px;color:var(--ink);
+}
+.headliner:hover .hl-title{color:var(--seal);}
+.hl-meta{
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  letter-spacing:.03em;display:flex;align-items:center;gap:10px;
+}
+.hl-meta .dot{color:var(--hair);}
+
+.hl-right{
+  border-left:1px solid var(--hair);
+  padding-left:52px;
+}
+.hl-sum{
+  font-family:var(--read);font-size:1.02rem;line-height:1.9;
+  color:var(--muted);margin:0 0 20px;
+}
+.hl-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--disp);font-weight:700;font-size:.94rem;
+  color:var(--seal);text-decoration:none;
+  letter-spacing:.04em;
+  border-bottom:2px solid var(--seal);padding-bottom:2px;
+  transition:.14s;
+}
+.headliner:hover .hl-cta{letter-spacing:.08em;}
+
+/* ──── 索引流 ──── */
+.index-list{margin-top:0;}
+
+/* 索引行 */
+.index-row{
+  display:grid;
+  grid-template-columns:180px 1fr auto;
+  gap:0 24px;
+  align-items:center;
+  padding:16px 12px;
+  border-bottom:1px solid var(--hair);
+  text-decoration:none;color:var(--ink);
+  position:relative;
+  transition:background .12s;
+}
+.index-row:last-child{border-bottom:3px solid var(--line);}
+
+/* 左侧：色点 + 分类 + 日期 */
+.idx-left{
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:nowrap;
+}
+.idx-dot{
+  width:7px;height:7px;border-radius:50%;
+  flex:0 0 7px;
+  background:var(--hair);
+}
+[data-cat="精酿"] .idx-dot{background:var(--gold);}
+[data-cat="思维模型"] .idx-dot,
+[data-cat="决策"] .idx-dot{background:var(--seal);}
+[data-cat="思考"] .idx-dot,
+[data-cat="社会观察"] .idx-dot{background:var(--ink);}
+
+.idx-cat{
+  font-family:var(--mono);font-weight:700;font-size:.66rem;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;
+}
+.idx-date{
+  font-family:var(--mono);font-size:.68rem;color:var(--muted);
+  letter-spacing:.02em;white-space:nowrap;
+  margin-left:auto;
+}
+
+/* 中：标题 + 展开摘要 */
+.idx-main{}
+.idx-title{
+  font-family:var(--read);font-weight:700;
+  font-size:1.22rem;line-height:1.32;letter-spacing:.01em;
+  display:block;
+}
+.index-row:hover .idx-title{color:var(--seal);}
+.idx-sum{
+  font-family:var(--read);font-size:.88rem;line-height:1.7;
+  color:var(--muted);display:block;
+  max-height:0;overflow:hidden;
+  transition:max-height .2s ease,margin .2s ease;
+  margin-top:0;
+}
+.index-row:hover .idx-sum{max-height:4em;margin-top:4px;}
+
+/* 右：阅读时间 */
+.idx-time{
+  font-family:var(--mono);font-size:.7rem;color:var(--muted);
+  white-space:nowrap;letter-spacing:.03em;
+  padding-left:8px;
+}
+
+/* hover 左侧朱砂线 */
+.index-row::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:0;background:var(--seal);transition:width .12s;
+}
+.index-row:hover::before{width:3px;}
+.index-row:hover{background:var(--paper);}
+
+/* 响应式 */
+@media(max-width:800px){
+  .headliner{grid-template-columns:1fr;gap:24px 0;}
+  .hl-right{border-left:none;padding-left:0;
+    border-top:1px solid var(--hair);padding-top:20px;}
+  .index-row{grid-template-columns:auto 1fr auto;gap:0 14px;}
+  .idx-date{display:none;}
+}
+@media(max-width:560px){
+  .wrap{padding:32px 18px 64px;}
+  .index-row{grid-template-columns:1fr auto;}
+  .idx-left{display:none;}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;}
+  .index-row:hover .idx-sum{max-height:4em;margin-top:4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="note">列表版式 V3 — 头条 + 索引流 · 最新文章全幅展示 / 其余行式索引</div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#">归来</a>
+    <span class="page-title">文章</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="page-head">
+    <h1 class="page-h1">文章</h1>
+    <p class="page-sub">共 6 篇 · 每周更新</p>
+
+    <div class="filters">
+      <span class="f-label">标签</span>
+      <a class="fchip on" href="#">全部</a>
+      <a class="fchip" href="#">精酿</a>
+      <a class="fchip" href="#">故事</a>
+      <a class="fchip" href="#">思维模型</a>
+      <a class="fchip" href="#">决策</a>
+      <a class="fchip" href="#">思考</a>
+      <a class="fchip" href="#">社会观察</a>
+      <a class="fchip" href="#">随笔</a>
+      <a class="fchip" href="#">心理</a>
+      <a class="fchip" href="#">职场</a>
+    </div>
+  </div>
+
+  <!-- ── 头条 ── -->
+  <a class="headliner" href="#">
+    <div class="hl-left">
+      <span class="hl-cat">社会观察</span>
+      <h2 class="hl-title">把话聊深的人，都在偷偷做同一件事</h2>
+      <div class="hl-meta">
+        <span>2026-06-21</span>
+        <span class="dot">·</span>
+        <span>读 9 分钟</span>
+      </div>
+    </div>
+    <div class="hl-right">
+      <p class="hl-sum">会聊天不是话多、反应快的天赋，而是一套可以刻意练习的技能——它的全部秘密，是把注意力从"评价这个人"挪到"和他一起把事情往前推"。深度对话的人，并不是更聪明，只是在做同一件事。</p>
+      <span class="hl-cta">阅读全文 →</span>
+    </div>
+  </a>
+
+  <!-- ── 索引流 ── -->
+  <div class="index-list">
+
+    <a class="index-row" href="#" data-cat="思维模型">
+      <div class="idx-left">
+        <span class="idx-dot"></span>
+        <span class="idx-cat">思维模型</span>
+        <span class="idx-date">06-21</span>
+      </div>
+      <div class="idx-main">
+        <span class="idx-title">从混沌到清晰：我解决问题的5步工具箱</span>
+        <span class="idx-sum">遇到复杂难题时，我用一套固定的5步框架：5 Why锁定真问题、MECE结构化拆解、诊断核心瓶颈、效益-成本矩阵排序方案、PDCA闭环执行。</span>
+      </div>
+      <span class="idx-time">读 7 分钟</span>
+    </a>
+
+    <a class="index-row" href="#" data-cat="精酿">
+      <div class="idx-left">
+        <span class="idx-dot"></span>
+        <span class="idx-cat">精酿</span>
+        <span class="idx-date">06-20</span>
+      </div>
+      <div class="idx-main">
+        <span class="idx-title">一杯啤酒里，藏着半部文明史</span>
+        <span class="idx-sum">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。</span>
+      </div>
+      <span class="idx-time">读 6 分钟</span>
+    </a>
+
+    <a class="index-row" href="#" data-cat="决策">
+      <div class="idx-left">
+        <span class="idx-dot"></span>
+        <span class="idx-cat">决策</span>
+        <span class="idx-date">06-20</span>
+      </div>
+      <div class="idx-main">
+        <span class="idx-title">信息永远不全，但判断不能等</span>
+        <span class="idx-sum">好决策不是赌一次完美，而是在信息不全、脑子还带着偏见的现实里，先粗糙地开始，再用一套动作持续逼近。</span>
+      </div>
+      <span class="idx-time">读 7 分钟</span>
+    </a>
+
+    <a class="index-row" href="#" data-cat="思考">
+      <div class="idx-left">
+        <span class="idx-dot"></span>
+        <span class="idx-cat">思考</span>
+        <span class="idx-date">06-20</span>
+      </div>
+      <div class="idx-main">
+        <span class="idx-title">当你能叫出它的名字，它就管不住你了</span>
+        <span class="idx-sum">那些心理效应最大的用处，不是让你显得懂行，而是给情绪的暗箱命名——当你能说出"我现在是哪种状态"，你就从被它驱动，变成了观察者。</span>
+      </div>
+      <span class="idx-time">读 5 分钟</span>
+    </a>
+
+    <a class="index-row" href="#" data-cat="随笔">
+      <div class="idx-left">
+        <span class="idx-dot"></span>
+        <span class="idx-cat">随笔</span>
+        <span class="idx-date">06-19</span>
+      </div>
+      <div class="idx-main">
+        <span class="idx-title">你好，归来</span>
+        <span class="idx-sum">第一篇文章，关于为什么建这个站。</span>
+      </div>
+      <span class="idx-time">读 2 分钟</span>
+    </a>
+
+  </div>
+
+</div>
+</body>
+</html>

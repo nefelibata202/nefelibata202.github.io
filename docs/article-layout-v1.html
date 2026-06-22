@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>版式 V1 — 边注书斋</title>
+<style>
+/* ── 品牌令牌（与 global.css 一致） ── */
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.14);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.14); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);line-height:1.7;}
+
+/* ──────────────────────────────────────────────
+   版式 V1：边注书斋
+   核心理念：阅读是主角，一切元数据退到边缘
+   布局：左留白（进度/节号）+ 主列（文章正文）+ 右留白（旁注/反链）
+   ────────────────────────────────────────────── */
+
+/* 标注说明条 */
+.design-note {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--seal); color: #fff;
+  font-family: var(--mono); font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-align: center; padding: 6px 16px;
+}
+
+/* 页面整体 */
+.page-wrap {
+  max-width: 1200px; margin: 0 auto; padding: 44px 32px 80px;
+}
+
+/* ── 三栏布局骨架 ── */
+.article-scaffold {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 640px) 220px;
+  gap: 0 52px;
+  align-items: start;
+}
+
+/* ── 左侧：节奏柱（进度条 + 节号） ── */
+.rail {
+  position: sticky; top: 80px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  padding-top: 4px;
+}
+.rail-site {
+  font-family: var(--mono); font-weight: 700; font-size: .68rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); text-align: right; margin-bottom: 16px;
+  text-decoration: none; display: block;
+}
+.rail-site:hover { color: var(--seal); }
+.toc-list { list-style: none; margin: 0; padding: 0; width: 100%; }
+.toc-list li { text-align: right; }
+.toc-link {
+  display: block; font-family: var(--mono); font-weight: 500; font-size: .7rem;
+  color: var(--muted); text-decoration: none; line-height: 1.5;
+  padding: 4px 0; letter-spacing: .02em;
+  border-right: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.toc-link:hover { color: var(--ink); border-right-color: var(--seal); }
+.toc-link.active { color: var(--seal); border-right-color: var(--seal); font-weight: 700; }
+.toc-num {
+  display: block; font-family: var(--mono); font-size: .58rem;
+  color: var(--muted); letter-spacing: .06em; opacity: .6; margin-bottom: 2px;
+}
+
+/* 阅读进度条 */
+.progress-bar {
+  position: fixed; top: 28px; left: 0; right: 0; height: 2px; z-index: 100;
+  background: var(--hair);
+}
+.progress-fill {
+  height: 100%; background: var(--seal); width: 42%; /* demo */
+  transition: width .1s;
+}
+
+/* ── 主列：文章正文 ── */
+.article-body { min-width: 0; }
+
+/* 文章头部 */
+.article-header { margin-bottom: 2.8rem; }
+.article-cat {
+  font-family: var(--mono); font-weight: 700; font-size: .66rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--seal); display: block; margin-bottom: .6rem;
+}
+.article-title {
+  font-family: var(--read); font-weight: 700;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1.18; letter-spacing: .02em;
+  margin: 0 0 .8rem; color: var(--ink);
+}
+.article-meta-strip {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 10px 0; border-top: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+  font-family: var(--mono); font-size: .74rem; color: var(--muted);
+  letter-spacing: .03em; margin-bottom: 1.6rem;
+}
+.article-meta-strip .dot { color: var(--hair); }
+.article-summary {
+  font-family: var(--read); font-size: 1.05rem; line-height: 1.8;
+  color: var(--muted); margin: 0; padding: 0 0 0 16px;
+  border-left: 3px solid var(--seal);
+}
+
+/* 正文排版 */
+.prose {
+  font-family: var(--read); font-size: 1.05rem;
+  line-height: 2; letter-spacing: .015em;
+  color: var(--ink);
+}
+.prose p { margin: 0 0 1.5em; }
+
+/* 首字下沉 */
+.prose > p:first-of-type::first-letter {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 3.2rem; line-height: .78;
+  float: left; margin: .05em .14em 0 0;
+  color: var(--seal);
+}
+
+/* 章节标题 */
+.prose h2 {
+  font-family: var(--read); font-weight: 700;
+  font-size: 1.4rem; color: var(--ink);
+  margin: 2.4em 0 .7em; letter-spacing: .03em;
+  display: flex; align-items: baseline; gap: 12px;
+}
+.prose h2 .sec-num {
+  font-family: var(--mono); font-weight: 700; font-size: .72rem;
+  color: var(--seal); letter-spacing: .04em;
+  flex: 0 0 auto; position: relative; top: -1px;
+}
+.prose h2::after {
+  content: ''; flex: 1; height: 1px; background: var(--hair); margin-left: 8px;
+}
+
+/* 内联链接（wiklink 样式） */
+.prose a {
+  color: var(--seal); text-decoration: none;
+  border-bottom: 1px dashed var(--seal);
+}
+.prose a:hover { border-bottom-style: solid; }
+
+/* 引用块 */
+.prose blockquote {
+  margin: 1.8em 0; padding: 0 0 0 18px;
+  border-left: 2px solid var(--seal);
+  color: var(--muted); font-style: normal;
+}
+.prose blockquote p { margin: 0; }
+
+/* 分隔线 */
+.prose hr { border: none; border-top: 1px solid var(--hair); margin: 2.8em 0; }
+
+/* ── 右侧：旁注区 ── */
+.sidenotes {
+  padding-top: 12px;
+  position: sticky; top: 80px;
+  display: flex; flex-direction: column; gap: 28px;
+  align-self: start;
+}
+
+/* 标签组 */
+.side-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.side-tag {
+  display: inline-block; font-family: var(--mono); font-weight: 500;
+  font-size: .68rem; letter-spacing: .04em;
+  color: var(--muted); text-decoration: none;
+  border: 1px solid var(--hair); padding: 3px 9px;
+  transition: color .15s, border-color .15s;
+}
+.side-tag:hover { color: var(--seal); border-color: var(--seal); }
+
+/* 旁注卡片 */
+.sidenote-card {
+  padding: 14px 0; border-top: 1px solid var(--hair);
+}
+.sidenote-label {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 10px; display: block;
+}
+.sidenote-text {
+  font-family: var(--read); font-size: .9rem; line-height: 1.75;
+  color: var(--muted); margin: 0; font-style: italic;
+}
+
+/* 延伸阅读（反链） */
+.backlinks-side { padding-top: 14px; border-top: 1px solid var(--hair); }
+.bl-item {
+  display: block; text-decoration: none; color: var(--ink);
+  padding: 8px 0; border-bottom: 1px solid var(--hair);
+  font-family: var(--read); font-size: .9rem; line-height: 1.4;
+  transition: color .15s;
+}
+.bl-item:hover { color: var(--seal); }
+.bl-item::before { content: '←  '; color: var(--seal); font-family: var(--mono); }
+
+/* ── 文章底部（脱离三栏回到全宽） ── */
+.article-footer {
+  max-width: 640px; margin: 64px auto 0;
+  padding-top: 32px; border-top: 1px solid var(--hair);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-nav a {
+  font-family: var(--read); font-size: .9rem; color: var(--muted);
+  text-decoration: none; border-bottom: 1px solid var(--hair);
+}
+.footer-nav a:hover { color: var(--seal); border-color: var(--seal); }
+.footer-back {
+  font-family: var(--mono); font-weight: 700; font-size: .74rem;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  border-bottom: 1px dashed var(--muted);
+}
+.footer-back:hover { color: var(--seal); border-color: var(--seal); }
+
+/* ── 移动端折叠 ── */
+@media (max-width: 900px) {
+  .article-scaffold { grid-template-columns: 1fr; gap: 0; }
+  .rail { display: none; }
+  .sidenotes { position: static; }
+}
+@media (max-width: 600px) {
+  .page-wrap { padding: 36px 18px 60px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="design-note">版式 V1 — 边注书斋 · 旁注 + 目录锚点 + 最小正文噪音</div>
+<div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+
+<div class="page-wrap">
+  <div class="article-scaffold">
+
+    <!-- ── 左轨：目录 + 返回 ── -->
+    <aside class="rail">
+      <a class="rail-site" href="#">← 归来</a>
+      <ul class="toc-list">
+        <li>
+          <span class="toc-num">01</span>
+          <a class="toc-link active" href="#s1">喝酒当饮水</a>
+        </li>
+        <li style="margin-top:10px">
+          <span class="toc-num">02</span>
+          <a class="toc-link" href="#s2">修士的液体面包</a>
+        </li>
+        <li style="margin-top:10px">
+          <span class="toc-num">03</span>
+          <a class="toc-link" href="#s3">苛刻的法律</a>
+        </li>
+        <li style="margin-top:10px">
+          <span class="toc-num">04</span>
+          <a class="toc-link" href="#s4">金色革命</a>
+        </li>
+        <li style="margin-top:10px">
+          <span class="toc-num">05</span>
+          <a class="toc-link" href="#s5">两次意外</a>
+        </li>
+        <li style="margin-top:10px">
+          <span class="toc-num">06</span>
+          <a class="toc-link" href="#s6">余味</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ── 主文 ── -->
+    <main class="article-body">
+      <header class="article-header">
+        <span class="article-cat">精酿 · 故事</span>
+        <h1 class="article-title">一杯啤酒里，藏着半部文明史</h1>
+        <div class="article-meta-strip">
+          <span>2026-06-20</span>
+          <span class="dot">·</span>
+          <span>约 3000 字</span>
+          <span class="dot">·</span>
+          <span>阅读约 8 分钟</span>
+        </div>
+        <p class="article-summary">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。</p>
+      </header>
+
+      <article class="prose">
+        <p>我以前一直以为，啤酒的风格只是口味的偶然：有人爱苦的，有人爱黑的，仅此而已。后来翻了几本资料才发现，完全不是这么回事。一杯啤酒的颜色、苦度、酒精度，背后几乎都拴着一段地理、贸易，或者阶级的真实故事。把它们串起来看，你会得到一条很奇妙的线索——啤酒不是饮料史的边角料，它差不多就是人类文明的伴生物。</p>
+
+        <p>下面这几段，是我现在最爱在酒桌上讲的。</p>
+
+        <h2 id="s1"><span class="sec-num">01</span>古人拿酒当水喝，不是贪杯，是怕死</h2>
+
+        <p>先说一个反常识的：古代欧洲人从国王到刚出生的婴儿，几乎天天喝啤酒，不是因为嘴馋，而是因为——喝水真的会死人。</p>
+
+        <p>那时候没有自来水消毒，河水里满是细菌和寄生虫。中世纪的黑死病、霍乱大流行，很大程度上就源于水源污染。人们慢慢发现一件怪事：喝生水的常常拉肚子甚至丧命，喝啤酒的却活得好好的，于是把啤酒当成了"神仙水"。</p>
+
+        <p>原理其实特别朴素：酿啤酒必须把麦汁彻底煮沸，误打误撞就杀光了水里的细菌；再加上酒精和啤酒花本身的抑菌作用，病菌很难存活。在长达几百年的时间里，啤酒在欧洲实际上扮演了<a href="#">"安全饮用水"</a>的角色。可以说，要不是有这道天然的"净水器"，欧洲人口可能在几场大瘟疫里就所剩无几了。</p>
+
+        <h2 id="s2"><span class="sec-num">02</span>断片的高度数啤酒，是苦修的修士发明的</h2>
+
+        <p>更有意思的是，那种能把人喝到微醺的高度数"断片酒"，最早竟是一群不近女色、闭关苦修的天主教修士搞出来的。</p>
+
+        <p>中世纪有"大斋期"，几十天里修士必须绝食，每天只能喝水，清苦难熬。有聪明的修士钻了个空子：规矩只说不能吃固体食物，可没说不能喝有热量的饮料啊。于是他们把麦汁浓度拼命加大，做出营养丰富、热量极高的啤酒，称为<a href="#">"液体面包"</a>，靠它扛过绝食期。</p>
+
+        <blockquote>
+          <p>为了区分浓淡，修士会在酒桶上画十字：两个十字是双料（Dubbel），三个十字是三料（Tripel）。那股迷人的果香，根本没加水果，全是酵母在高温发酵时自然产生的酯香。</p>
+        </blockquote>
+
+        <h2 id="s3"><span class="sec-num">03</span>一条苛刻的法律，意外锁死了一种基因</h2>
+
+        <p>1516 年，巴伐利亚公爵颁了一条<a href="#">《啤酒纯净法》</a>，规定啤酒只能用三种原料——水、大麦麦芽、啤酒花。这条看似抠门的法律，成了全世界现存最古老的食品法规之一，到今天还是德国啤酒的金字招牌。最妙的是，"只用四种原料"的这种克制，反而把德式啤酒对水、麦、花、酵母的讲究逼到了极致。</p>
+
+        <h2 id="s4"><span class="sec-num">04</span>一杯被市民"砸"出来的金色革命</h2>
+
+        <p>我们今天喝的绝大多数清亮金黄的工业拉格，血统都能追到 1842 年的一杯酒——而那杯酒，是捷克人砸出来的。当地市民直接砸掉了酒厂的橡木桶，集体向市政府施压，政府请来巴伐利亚酿酒师，酿出一款酒体通透、色泽金黄的全新啤酒。恰好赶上透明玻璃杯普及和铁路兴起，这杯酒走出小城，火遍世界。</p>
+
+        <h2 id="s5"><span class="sec-num">05</span>两次意外：IPA 和世涛</h2>
+
+        <p>满世界的网红 <a href="#">IPA</a>，最初是为了让啤酒漂洋过海几个月不馊而被逼出来的。大航海时代，酒厂老板往酒桶里疯狂塞啤酒花用于防腐，结果运到印度一开桶，反而炸出了热带水果和松针的香气。</p>
+
+        <p>至于那杯黑乎乎像中药的<a href="#">世涛</a>，当年是伦敦码头苦力的"快乐水"。有酒厂把几种便宜剩酒混在一起，再加进烤得焦黑的麦芽来掩盖瑕疵，结果酿出带咖啡和黑巧克力焦香的黑啤，因为便宜、顶饱、解乏，在工人里彻底爆火。</p>
+
+        <h2 id="s6"><span class="sec-num">06</span>余味</h2>
+
+        <p>你看，从一杯安全的水，到修道院的液体面包，到一条抠门的法律，再到几次哭笑不得的意外——啤酒风格的演变，从来不是口味的偶然，而是水质、气候、保存技术、贸易路线、税法和阶级需求共同塑形的结果。</p>
+
+        <p>读懂一杯啤酒，差不多就读懂了一段地方史。下次端起酒杯，不妨多看它两眼。</p>
+
+        <hr>
+      </article>
+
+      <div class="article-footer">
+        <div class="footer-nav">
+          <a href="#">← 上一篇：信息永远不全，但判断不能等</a>
+        </div>
+        <a class="footer-back" href="#">返回文章列表</a>
+      </div>
+    </main>
+
+    <!-- ── 右侧：旁注 ── -->
+    <aside class="sidenotes">
+      <div class="sidenote-card" style="padding-top:0; border-top:none;">
+        <span class="sidenote-label">标签</span>
+        <div class="side-tags">
+          <a class="side-tag" href="#">精酿</a>
+          <a class="side-tag" href="#">故事</a>
+          <a class="side-tag" href="#">历史</a>
+        </div>
+      </div>
+
+      <div class="sidenote-card">
+        <span class="sidenote-label">旁注</span>
+        <p class="sidenote-text">比利时六边形「Authentic Trappist Product」标志，是全球仅有少数修道院酒厂的认证标志，不得伪造。</p>
+      </div>
+
+      <div class="sidenote-card">
+        <span class="sidenote-label">旁注</span>
+        <p class="sidenote-text">皮尔森的软水矿物质极少，与德国硬水酿出的拉格截然不同——水质决定了风格的天花板。</p>
+      </div>
+
+      <div class="backlinks-side">
+        <span class="sidenote-label">反向链接（2）</span>
+        <a class="bl-item" href="#">古代啤酒作为安全饮用水</a>
+        <a class="bl-item" href="#">修道院啤酒与液体面包</a>
+        <a class="bl-item" href="#">德国啤酒纯净法</a>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+// 进度条演示
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const pct = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
+  document.getElementById('pfill').style.width = pct + '%';
+});
+</script>
+</body>
+</html>

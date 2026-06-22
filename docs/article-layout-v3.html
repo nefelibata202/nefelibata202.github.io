@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>版式 V3 — 单列·极简读写</title>
+<style>
+/* ── 品牌令牌 ── */
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.14);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.14); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);line-height:1.7;}
+
+/* ──────────────────────────────────────────────
+   版式 V3：单列·极简读写
+   核心理念：字即是设计——无侧栏干扰，阅读是唯一任务
+   特征：超大标题 / 阅读线宽精确 / 强化段落节奏 /
+         精致浮动 TOC（窄屏折叠）/ 知识链接高亮 / 底部关系网
+   ────────────────────────────────────────────── */
+
+/* 标注条 */
+.design-note {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--gold); color: var(--on-gold);
+  font-family: var(--mono); font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-align: center; padding: 6px 16px;
+}
+
+/* 极小顶部导航 */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); border-bottom: 1px solid var(--hair);
+  padding: 0;
+}
+.nav-inner {
+  max-width: 720px; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; height: 48px; gap: 0;
+}
+.nav-brand {
+  font-family: var(--mono); font-weight: 700; font-size: .8rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+}
+.nav-brand:hover { color: var(--seal); }
+.nav-sep { margin: 0 12px; color: var(--hair); }
+.nav-back {
+  font-family: var(--read); font-size: .88rem; color: var(--muted);
+  text-decoration: none; border-bottom: 1px solid var(--hair);
+}
+.nav-back:hover { color: var(--seal); border-color: var(--seal); }
+.nav-progress {
+  margin-left: auto; font-family: var(--mono); font-size: .68rem;
+  color: var(--muted); letter-spacing: .04em;
+}
+
+/* 滚动进度线 */
+.reading-line {
+  height: 2px; background: var(--hair);
+}
+.reading-fill {
+  height: 100%; background: var(--gold); width: 30%; /* demo */
+}
+
+/* ── 浮动 TOC（大屏固定右侧，小屏隐藏） ── */
+.float-toc {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  z-index: 90; display: flex; flex-direction: column; gap: 6px;
+  width: 8px;
+}
+.ftoc-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--hair); cursor: pointer;
+  transition: background .2s, transform .2s;
+  position: relative;
+}
+.ftoc-dot:hover, .ftoc-dot.active {
+  background: var(--seal); transform: scale(1.5);
+}
+.ftoc-dot:hover::after {
+  content: attr(data-title);
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  background: var(--ink); color: var(--bg);
+  font-family: var(--read); font-size: .8rem; white-space: nowrap;
+  padding: 4px 10px; pointer-events: none;
+}
+@media (max-width: 1100px) { .float-toc { display: none; } }
+
+/* ── 主内容单列 ── */
+.page-wrap {
+  max-width: 720px; margin: 0 auto; padding: 52px 28px 88px;
+}
+
+/* 文章头部 */
+.article-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+/* 分类+标签行 */
+.header-top {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 1.4rem;
+}
+.h-cat {
+  font-family: var(--mono); font-weight: 700; font-size: .64rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--paper); background: var(--seal);
+  padding: 3px 10px;
+}
+.h-tag {
+  font-family: var(--mono); font-size: .64rem; letter-spacing: .08em;
+  color: var(--muted); text-decoration: none;
+  border: 1px solid var(--hair); padding: 3px 9px;
+  transition: .15s;
+}
+.h-tag:hover { color: var(--seal); border-color: var(--seal); }
+
+/* 大标题 */
+.article-title {
+  font-family: var(--read); font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.22; letter-spacing: .02em;
+  margin: 0 0 1rem; color: var(--ink);
+}
+
+/* 摘要 */
+.article-lede {
+  font-family: var(--read); font-size: 1.1rem;
+  line-height: 1.85; color: var(--muted);
+  margin: 0 0 1.4rem; max-width: 50em;
+}
+
+/* 元数据行（极简） */
+.article-byline {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--mono); font-size: .72rem;
+  color: var(--muted); letter-spacing: .03em;
+}
+.byline-sep { color: var(--hair); }
+/* 阅读时间 pill */
+.byline-pill {
+  background: var(--soft); border: 1px solid var(--hair);
+  padding: 2px 10px; font-size: .68rem;
+}
+
+/* ── 正文 ── */
+.prose {
+  font-family: var(--read); font-size: 1.06rem;
+  line-height: 2.05; letter-spacing: .015em;
+  color: var(--ink);
+}
+.prose p { margin: 0 0 1.6em; }
+
+/* 首字下沉 */
+.prose > p:first-of-type::first-letter {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 3.4rem; line-height: .76;
+  float: left; margin: .05em .14em 0 0;
+  color: var(--seal);
+}
+
+/* 章节标题 — 前置朱砂竖线 */
+.prose h2 {
+  font-family: var(--read); font-weight: 700;
+  font-size: 1.4rem; color: var(--ink);
+  margin: 2.6em 0 .8em; letter-spacing: .025em;
+  padding-left: 16px;
+  border-left: 3px solid var(--seal);
+}
+
+/* 引用 */
+.prose blockquote {
+  margin: 1.8em 0; padding: 18px 20px;
+  background: var(--paper);
+  border-left: 2px solid var(--seal);
+  color: var(--muted);
+}
+.prose blockquote p { margin: 0; font-style: normal; }
+
+/* 分隔线 */
+.prose hr {
+  border: none; margin: 2.6em auto;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px;
+}
+.prose hr::before {
+  content: '· · ·'; font-family: var(--mono); font-size: 1.1rem;
+  color: var(--muted); letter-spacing: .5em;
+}
+
+/* 知识链接（wikilink）— 区别于普通链接 */
+.prose a.wikilink {
+  color: var(--seal); text-decoration: none;
+  border-bottom: 1.5px dashed var(--seal);
+  padding: 0 1px;
+  transition: background .15s, color .15s;
+}
+.prose a.wikilink:hover {
+  background: var(--gold); color: var(--on-gold);
+  border-color: transparent;
+}
+/* 普通链接 */
+.prose a:not(.wikilink) {
+  color: var(--seal); text-decoration: none;
+  border-bottom: 1px dashed var(--seal);
+}
+.prose a:not(.wikilink):hover { border-bottom-style: solid; }
+
+/* ── 文章底部 ── */
+.article-end {
+  margin-top: 56px; padding-top: 28px;
+  border-top: 1px solid var(--hair);
+}
+
+/* 知识节点网格 */
+.nodes-section { margin-bottom: 36px; }
+.nodes-label {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 14px; display: flex;
+  align-items: center; gap: 8px;
+}
+.nodes-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--hair);
+}
+.nodes-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.node-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--read); font-size: .88rem; color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--hair); padding: 6px 14px;
+  background: var(--paper);
+  transition: .15s;
+}
+.node-chip:hover { border-color: var(--seal); color: var(--seal); background: var(--soft); }
+.node-chip .node-arrow { font-family: var(--mono); color: var(--seal); font-size: .78rem; }
+.node-chip--backlink { background: none; }
+.node-chip--backlink .node-arrow::before { content: '← '; }
+.node-chip--forward .node-arrow::after { content: ' →'; }
+
+/* 标签 */
+.tags-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 28px; }
+.end-tag {
+  display: inline-block; font-family: var(--mono); font-size: .7rem;
+  color: var(--muted); text-decoration: none;
+  border: 1px solid var(--hair); padding: 4px 11px;
+  letter-spacing: .04em; transition: .15s;
+}
+.end-tag:hover { color: var(--seal); border-color: var(--seal); }
+
+/* 前后篇导航 */
+.prev-next {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 28px;
+}
+.pn-card {
+  display: block; text-decoration: none; color: var(--ink);
+  padding: 16px 18px;
+  border: 1px solid var(--hair);
+  transition: .15s;
+}
+.pn-card:hover { border-color: var(--seal); background: var(--paper); }
+.pn-dir {
+  font-family: var(--mono); font-size: .62rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px;
+}
+.pn-title {
+  font-family: var(--read); font-size: .96rem; line-height: 1.4;
+}
+.pn-card--prev .pn-dir::before { content: '← '; }
+.pn-card--next { text-align: right; }
+.pn-card--next .pn-dir::after { content: ' →'; }
+.pn-card:hover .pn-title { color: var(--seal); }
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .page-wrap { padding: 36px 18px 64px; }
+  .prev-next { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="design-note">版式 V3 — 单列·极简读写 · 字即是设计 / 知识链接高亮 / 浮点 TOC 小球</div>
+
+<!-- 浮动 TOC（小圆点） -->
+<nav class="float-toc" aria-label="文章目录">
+  <div class="ftoc-dot active" data-title="起点"></div>
+  <div class="ftoc-dot" data-title="01 喝酒当水喝"></div>
+  <div class="ftoc-dot" data-title="02 修士的液体面包"></div>
+  <div class="ftoc-dot" data-title="03 苛刻的法律"></div>
+  <div class="ftoc-dot" data-title="04 金色革命"></div>
+  <div class="ftoc-dot" data-title="05 IPA 和世涛"></div>
+  <div class="ftoc-dot" data-title="余味"></div>
+</nav>
+
+<!-- 顶部导航 -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">归来</a>
+    <span class="nav-sep">/</span>
+    <a class="nav-back" href="#">文章</a>
+    <span class="nav-progress" id="pct">30%</span>
+  </div>
+  <div class="reading-line"><div class="reading-fill" id="rfill"></div></div>
+</nav>
+
+<!-- 主内容 -->
+<div class="page-wrap">
+
+  <header class="article-header">
+    <div class="header-top">
+      <span class="h-cat">故事</span>
+      <a class="h-tag" href="#">精酿</a>
+      <a class="h-tag" href="#">历史</a>
+    </div>
+    <h1 class="article-title">一杯啤酒里，藏着半部文明史</h1>
+    <p class="article-lede">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。把它们串起来看，会得到一条很奇妙的线索。</p>
+    <div class="article-byline">
+      <span>Evan</span>
+      <span class="byline-sep">·</span>
+      <span>2026-06-20</span>
+      <span class="byline-sep">·</span>
+      <span class="byline-pill">约 8 分钟</span>
+    </div>
+  </header>
+
+  <article class="prose">
+    <p>我以前一直以为，啤酒的风格只是口味的偶然：有人爱苦的，有人爱黑的，仅此而已。后来翻了几本资料才发现，完全不是这么回事。一杯啤酒的颜色、苦度、酒精度，背后几乎都拴着一段地理、贸易，或者阶级的真实故事。把它们串起来看，你会得到一条很奇妙的线索——啤酒不是饮料史的边角料，它差不多就是人类文明的伴生物。</p>
+
+    <p>下面这几段，是我现在最爱在酒桌上讲的。</p>
+
+    <h2 id="s1">古人拿酒当水喝，不是贪杯，是怕死</h2>
+
+    <p>先说一个反常识的：古代欧洲人从国王到刚出生的婴儿，几乎天天喝啤酒，不是因为嘴馋，而是因为喝水真的会死人。那时候没有自来水消毒，河水里满是细菌和寄生虫。中世纪的黑死病、霍乱大流行，很大程度上就源于水源污染。</p>
+
+    <p>人们慢慢发现：酿啤酒必须把麦汁彻底煮沸，误打误撞就杀光了水里的细菌；再加上酒精和啤酒花本身的抑菌作用，病菌很难存活。在长达几百年的时间里，啤酒在欧洲实际上扮演了<a class="wikilink" href="#">安全饮用水</a>的角色。</p>
+
+    <h2 id="s2">断片的高度数啤酒，是苦修的修士发明的</h2>
+
+    <p>更有意思的是，那种能把人喝到微醺的高度数"断片酒"，最早竟是一群不近女色、闭关苦修的天主教修士搞出来的。中世纪有"大斋期"，几十天里修士必须绝食，每天只能喝水，清苦难熬。</p>
+
+    <p>有聪明的修士钻了个空子：规矩只说不能吃固体食物，可没说不能喝有热量的饮料。于是他们做出营养丰富、热量极高的啤酒，称为<a class="wikilink" href="#">液体面包</a>，靠它扛过绝食期。</p>
+
+    <blockquote>
+      <p>为了区分浓淡，修士会在酒桶上画十字：两个十字是双料（Dubbel，带焦糖红枣味），三个十字是三料（Tripel，度数更高，带香蕉和丁香的果香）。那股迷人的果香，根本没加水果，全是比利时酵母在高温发酵时自然产生的酯香。</p>
+    </blockquote>
+
+    <h2 id="s3">1516：一条苛刻的法律，意外锁死了一种基因</h2>
+
+    <p>1516 年，巴伐利亚公爵颁了一条<a class="wikilink" href="#">德国啤酒纯净法</a>，规定啤酒只能用三种原料——水、大麦麦芽、啤酒花。公爵的算盘其实很现实：一面把小麦、黑麦留给面包，不让百姓饿肚子；一面用"纯净"的名义锁定品质，顺便保住自己的税源。</p>
+
+    <p>但这条看似抠门的法律，成了全世界现存最古老的食品法规之一，到今天还是德国啤酒的金字招牌。最妙的是，正是"只用四种原料"的克制，反而把德式啤酒对水、麦、花、酵母的讲究逼到了极致。</p>
+
+    <h2 id="s4">一杯被市民"砸"出来的金色革命</h2>
+
+    <p>我们今天喝的绝大多数清亮金黄的工业拉格，血统其实都能追到 1842 年的一杯酒——而那杯酒，是捷克人砸出来的。民怨积到顶点，市民直接砸掉了酒厂的橡木桶，集体向市政府施压，政府请来巴伐利亚酿酒师，酿出一款酒体通透、色泽金黄的<a class="wikilink" href="#">皮尔森</a>。恰好赶上透明玻璃杯普及和铁路兴起，这杯酒走出小城，火遍世界。</p>
+
+    <h2 id="s5">两次意外：IPA 和世涛</h2>
+
+    <p>满世界的网红 <a class="wikilink" href="#">IPA</a>，最初是为了让啤酒漂洋过海几个月不馊而被逼出来的。大航海时代，酒厂老板往酒桶里疯狂塞啤酒花防腐，结果运到印度一开桶，反而炸出了热带水果和松针的香气，苦得提神醒脑。IPA 的苦，纯属一场防腐意外。</p>
+
+    <p>至于那杯黑乎乎像中药的<a class="wikilink" href="#">波特与世涛</a>，当年是伦敦码头苦力的"快乐水"：几种便宜剩酒混在一起，加进烤得焦黑的麦芽来掩盖瑕疵，结果带出了咖啡和黑巧克力焦香，在工人里彻底爆火。</p>
+
+    <hr>
+
+    <h2 id="s6">余味</h2>
+
+    <p>从一杯安全的水，到修道院的液体面包，到一条抠门的法律，再到几次哭笑不得的意外——啤酒风格的演变，从来不是口味的偶然，而是水质、气候、保存技术、贸易路线、税法和阶级需求共同塑形的结果。</p>
+
+    <p>读懂一杯啤酒，差不多就读懂了一段地方史。下次端起酒杯，不妨多看它两眼。</p>
+  </article>
+
+  <!-- 文章底部 -->
+  <footer class="article-end">
+    <!-- 引用的知识节点 -->
+    <div class="nodes-section">
+      <div class="nodes-label">本文引用的知识节点</div>
+      <div class="nodes-grid">
+        <a class="node-chip node-chip--forward" href="#">
+          安全饮用水<span class="node-arrow"></span>
+        </a>
+        <a class="node-chip node-chip--forward" href="#">
+          液体面包<span class="node-arrow"></span>
+        </a>
+        <a class="node-chip node-chip--forward" href="#">
+          德国啤酒纯净法<span class="node-arrow"></span>
+        </a>
+        <a class="node-chip node-chip--forward" href="#">
+          皮尔森的诞生<span class="node-arrow"></span>
+        </a>
+        <a class="node-chip node-chip--forward" href="#">
+          IPA的由来<span class="node-arrow"></span>
+        </a>
+        <a class="node-chip node-chip--forward" href="#">
+          波特与世涛的诞生<span class="node-arrow"></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 反向链接 -->
+    <div class="nodes-section">
+      <div class="nodes-label">引用本文的笔记（反向链接）</div>
+      <div class="nodes-grid">
+        <a class="node-chip node-chip--backlink" href="#">
+          <span class="node-arrow"></span>修道院啤酒与液体面包
+        </a>
+        <a class="node-chip node-chip--backlink" href="#">
+          <span class="node-arrow"></span>啤酒里的历史
+        </a>
+      </div>
+    </div>
+
+    <!-- 标签 -->
+    <div class="tags-row">
+      <a class="end-tag" href="#">精酿</a>
+      <a class="end-tag" href="#">故事</a>
+      <a class="end-tag" href="#">历史</a>
+      <a class="end-tag" href="#">文明</a>
+    </div>
+
+    <!-- 前后导航 -->
+    <div class="prev-next">
+      <a class="pn-card pn-card--prev" href="#">
+        <span class="pn-dir">上一篇</span>
+        <span class="pn-title">信息永远不全，但判断不能等</span>
+      </a>
+      <a class="pn-card pn-card--next" href="#">
+        <span class="pn-dir">下一篇</span>
+        <span class="pn-title">你的名字里藏着什么？</span>
+      </a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// 进度条 + TOC 高亮演示
+window.addEventListener('scroll', () => {
+  const d = document.documentElement;
+  const pct = Math.round(d.scrollTop / (d.scrollHeight - d.clientHeight) * 100);
+  document.getElementById('rfill').style.width = pct + '%';
+  document.getElementById('pct').textContent = pct + '%';
+});
+</script>
+</body>
+</html>

@@ -27,6 +27,7 @@ const guide = defineCollection({
     title: z.string(),
     island: z.string(),
     placeholder: z.boolean().default(false),
+    accent: z.enum(['gold', 'seal', 'ink']).default('ink'),
   }),
 });
 

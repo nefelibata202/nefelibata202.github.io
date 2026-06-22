@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归图 · 个人导览 · 方案B v2</title>
+<style>
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.16);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-sm: 3px 3px 0 var(--line);
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+  --lat: "Archivo", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.16); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--zh); line-height: 1.75;
+  text-wrap: pretty;
+}
+
+/* ── 整体布局：左侧导航 + 右侧内容 ── */
+.guide-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 100vh;
+}
+
+/* ── 左侧边栏 ── */
+.sidebar {
+  background: var(--paper);
+  border-right: 2px solid var(--line);
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  font-family: var(--disp);
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.sidebar-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 36px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--hair);
+}
+.nav-list { list-style: none; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.nav-item {
+  padding: 12px 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-item:hover { background: var(--soft); border-color: var(--hair); }
+.nav-item.active { background: var(--soft); border-color: var(--line); box-shadow: var(--shadow-sm); }
+.nav-item .nav-icon {
+  width: 32px; height: 32px;
+  border: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; background: var(--bg);
+}
+.nav-item.active .nav-icon { background: var(--gold); }
+.nav-item .nav-text h3 { font-family: var(--disp); font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+.nav-item .nav-text p { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+.sidebar-footer {
+  margin-top: auto; padding-top: 16px;
+  border-top: 2px solid var(--hair);
+  font-family: var(--mono); font-size: 0.7rem; color: var(--muted);
+  display: flex; justify-content: space-between;
+}
+
+/* ── 右侧内容区 ── */
+.content { padding: 48px 56px; max-width: 760px; }
+.section { display: none; animation: fadeIn 0.25s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-header { margin-bottom: 36px; }
+.section-header .section-num { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 8px; }
+.section-header h2 { font-family: var(--disp); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 10px; }
+.section-header .section-summary { font-size: 0.9rem; color: var(--muted); line-height: 1.7; max-width: 460px; }
+
+/* ══════════════════════════════════════
+   碎片时间：场景卡片
+   ══════════════════════════════════════ */
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+.scene-card {
+  background: var(--paper);
+  border: 2px solid var(--hair);
+  padding: 20px;
+  transition: all 0.15s;
+}
+.scene-card:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+.scene-icon {
+  width: 40px; height: 40px;
+  border: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+  background: var(--soft);
+}
+.scene-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+.scene-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+.scene-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border: 1.5px solid var(--hair);
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+/* ══════════════════════════════════════
+   信息源：图标 + 介绍网格
+   ══════════════════════════════════════ */
+.source-category {
+  margin-bottom: 36px;
+}
+.source-category-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--hair);
+}
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.source-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: var(--paper);
+  border: 2px solid var(--hair);
+  transition: all 0.15s;
+}
+.source-card:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.source-logo {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  border: 2px solid var(--hair);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.source-logo img, .source-logo svg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.source-info h4 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+.source-info p {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.source-url {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════
+   知识缺口：简洁列表
+   ══════════════════════════════════════ */
+.gap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.gap-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1.5px solid var(--hair);
+}
+.gap-item:last-child { border-bottom: none; }
+.gap-status {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  border: 2px solid var(--line);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.gap-status.active { border-color: var(--gold); color: var(--gold); background: rgba(242,179,18,0.04); }
+.gap-status.pending { border-color: var(--hair); color: var(--muted); }
+.gap-info h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
+.gap-info p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+.gap-eta {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-left: auto;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 900px) {
+  .guide-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; border-right: none; border-bottom: 2px solid var(--line); padding: 28px 20px; }
+  .nav-list { flex-direction: row; flex-wrap: wrap; }
+  .nav-item { flex: 1; min-width: 120px; }
+  .content { padding: 28px 20px; }
+  .sidebar-footer { display: none; }
+  .source-grid { grid-template-columns: 1fr; }
+  .gap-item { flex-wrap: wrap; }
+  .gap-eta { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="guide-layout">
+
+  <!-- 左侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">归图</div>
+    <div class="sidebar-desc">个人知识导览<br>碎片时间 · 信息源 · 知识缺口</div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" onclick="activate(this, 'time')">
+        <div class="nav-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>碎片时间</h3>
+          <p>FRAGMENTED TIME</p>
+        </div>
+      </li>
+      <li class="nav-item" onclick="activate(this, 'sources')">
+        <div class="nav-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>信息源</h3>
+          <p>INFO SOURCES</p>
+        </div>
+      </li>
+      <li class="nav-item" onclick="activate(this, 'gaps')">
+        <div class="nav-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="nav-text">
+          <h3>知识缺口</h3>
+          <p>KNOWLEDGE GAPS</p>
+        </div>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <span>GUI TU</span>
+      <span>2026</span>
+    </div>
+  </aside>
+
+  <!-- 右侧内容 -->
+  <main class="content">
+
+    <!-- 章节1：碎片时间 -->
+    <div class="section active" id="time">
+      <div class="section-header">
+        <div class="section-num">/ 01</div>
+        <h2>碎片时间能做的事</h2>
+        <p class="section-summary">通勤、等咖啡、睡前 15 分钟……碎片时间加起来每天超过 2 小时。与其刷无意义的内容，不如用来积累微小的进步。</p>
+      </div>
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <h4>看喜欢的 B 站 UP 主视频</h4>
+          <p>关注了几个优质 UP 主，碎片时间看看他们的内容，既是放松也是学习。</p>
+          <span class="scene-tag">Bilibili</span>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h4>逛自己的网站「归来」</h4>
+          <p>看看个人网站，思考优化点和文章。自己的网站永远有改进空间。</p>
+          <span class="scene-tag">guilai</span>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <h4>豆瓣挖掘影视和书籍</h4>
+          <p>在豆瓣上探索想看的电影、剧集和书籍。好内容值得提前收藏。</p>
+          <span class="scene-tag">Douban</span>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h4>微信读书</h4>
+          <p>精力好的时候，打开微信读书看一会儿。碎片时间也能读完一本书。</p>
+          <span class="scene-tag">阅读</span>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h4>问 ChatGPT 感兴趣的问题</h4>
+            <p>脑子里突然冒出的问题，直接问 AI。好奇心不应该被等待消磨。</p>
+          <span class="scene-tag">AI</span>
+        </div>
+        <div class="scene-card">
+          <div class="scene-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h4>Anki 卡片复习</h4>
+          <p>英语表达、日语单词、知识点……每天复习几张卡片，积少成多。</p>
+          <span class="scene-tag">记忆</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 章节2：信息源（图标+介绍） -->
+    <div class="section" id="sources">
+      <div class="section-header">
+        <div class="section-num">/ 02</div>
+        <h2>高质量信息源</h2>
+        <p class="section-summary">信息源的质量比数量重要。每个领域只跟 1-2 个最优质的信息源，而不是刷海量内容。</p>
+      </div>
+
+      <!-- 网站 -->
+      <div class="source-category">
+        <div class="source-category-title">网站 · 常逛</div>
+        <div class="source-grid">
+          <div class="source-card">
+            <div class="source-logo" style="background:#DA3737;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#DA3737"/><text x="32" y="44" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="700" fill="white">少</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>少数派</h4>
+              <p>高效工作，品质生活。好工具、好文章、好社区。数字生活领域的深度内容。</p>
+              <div class="source-url">sspai.com</div>
+            </div>
+          </div>
+          <div class="source-card">
+            <div class="source-logo" style="background:#2C3E50;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#2C3E50"/><text x="32" y="43" text-anchor="middle" font-family="system-ui,sans-serif" font-size="26" font-weight="700" fill="white">红</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>红板报</h4>
+              <p>精美的英文资讯阅读。每天精选全球优质英文文章，附带中文导读。</p>
+              <div class="source-url">flipboard.com</div>
+            </div>
+          </div>
+          <div class="source-card">
+            <div class="source-logo" style="background:#24292E;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><path d="M32 4C16.5 4 4 16.5 4 32c0 12.4 8.1 22.9 19.3 26.7 1.4.3 1.9-.6 1.9-1.3v-4.6c-7.8 1.3-9.4-3.8-9.4-3.8-1.3-3.2-3.2-4.1-3.2-4.1-2.6-1.8.2-1.8.2-1.8 2.9.2 4.4 3 4.4 3 2.5 4.4 6.6 3.1 8.2 2.4.3-1.9 1-3.1 1.8-3.8-6.3-.7-12.8-3.1-12.8-13.9 0-3.1 1.1-5.6 3-7.5-.3-.7-1.3-3.6.3-7.4 0 0 2.5-.8 8.2 3 2.4-.7 4.9-1 7.4-1s5 .3 7.4 1c5.7-3.8 8.2-3 8.2-3 1.6 3.8.6 6.7.3 7.4 1.9 1.9 3 4.4 3 7.5 0 10.8-6.6 13.2-12.8 13.9 1 .9 1.9 2.6 1.9 5.3v8.2c0 .7.5 1.6 1.9 1.3C51.9 54.9 60 44.4 60 32 60 16.5 47.5 4 32 4z" fill="white"/></svg>
+            </div>
+            <div class="source-info">
+              <h4>GitHub 高星项目</h4>
+              <p>关注高星开源项目，了解技术趋势和优秀代码。star 数是最好的质量过滤器。</p>
+              <div class="source-url">github.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文章/博客 -->
+      <div class="source-category">
+        <div class="source-category-title">文章 · 深度阅读</div>
+        <div class="source-grid">
+          <div class="source-card">
+            <div class="source-logo" style="background:#1B3A5C;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#1B3A5C"/><text x="32" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="white" font-style="italic">P</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>Paul Graham Essays</h4>
+              <p>YC 联合创始人 Paul Graham 的文章集。关于创业、编程、写作和思考的长文，篇篇经典。</p>
+              <div class="source-url">paulgraham.com</div>
+            </div>
+          </div>
+          <div class="source-card">
+            <div class="source-logo" style="background:#2C5F2D;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#2C5F2D"/><text x="32" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="white" font-style="italic">F</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>Farnam Street</h4>
+              <p>Shane Parrish 的博客，专注思维模型、决策和终身学习。像一本不断更新的头脑手册。</p>
+              <div class="source-url">fs.blog</div>
+            </div>
+          </div>
+          <div class="source-card">
+            <div class="source-logo" style="background:#4A3728;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#4A3728"/><text x="32" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" fill="white" font-style="italic">A</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>Andy Matuschak Notes</h4>
+              <p>Andy 的研究笔记。关于记忆、学习、认知科学的深度探索，文风严谨又不失温度。</p>
+              <div class="source-url">andymatuschak.org</div>
+            </div>
+          </div>
+          <div class="source-card">
+            <div class="source-logo" style="background:#1A1A1A;">
+              <svg viewBox="0 0 64 64" width="44" height="44"><rect width="64" height="64" rx="12" fill="#1A1A1A"/><text x="32" y="42" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="700" fill="white">S</text></svg>
+            </div>
+            <div class="source-info">
+              <h4>Stratechery</h4>
+              <p>Ben Thompson 的科技战略分析。理解科技行业格局最好的 Newsletter，深度与前瞻性兼备。</p>
+              <div class="source-url">stratechery.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 章节3：知识缺口（简洁列表） -->
+    <div class="section" id="gaps">
+      <div class="section-header">
+        <div class="section-num">/ 03</div>
+        <h2>知识库缺口</h2>
+        <p class="section-summary">知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。</p>
+      </div>
+      <div class="gap-list">
+        <div class="gap-item">
+          <span class="gap-status active">进行中</span>
+          <div class="gap-info">
+            <h4>数据分析基础</h4>
+            <p>SQL 查询、Excel 高级功能、基础统计学。做运营离不开数据，能看懂数据才能做出更好的决策。目前正在通过 Codecademy 学习 SQL。</p>
+          </div>
+          <span class="gap-eta">预计 Q3</span>
+        </div>
+        <div class="gap-item">
+          <span class="gap-status active">进行中</span>
+          <div class="gap-info">
+            <h4>日语 N2 → N1</h4>
+            <p>已拿下 N2，目标是 N1。差距在词汇量和阅读速度。计划通过读日文原版书 + NHK 新闻来提升，而不是再刷语法题。</p>
+          </div>
+          <span class="gap-eta">预计 Q4</span>
+        </div>
+        <div class="gap-item">
+          <span class="gap-status pending">待开始</span>
+          <div class="gap-info">
+            <h4>认知科学 / 行为经济学</h4>
+            <p>人为什么会做出非理性决策？认知偏差有哪些？怎么利用这些知识做更好的产品和营销？计划从《思考，快与慢》开始系统学习。</p>
+          </div>
+          <span class="gap-eta">—</span>
+        </div>
+        <div class="gap-item">
+          <span class="gap-status pending">待开始</span>
+          <div class="gap-info">
+            <h4>前端开发基础</h4>
+            <p>HTML/CSS/JavaScript 基础。不求成为开发者，但要能和开发团队无障碍沟通，能独立修改落地页代码。</p>
+          </div>
+          <span class="gap-eta">—</span>
+        </div>
+        <div class="gap-item">
+          <span class="gap-status pending">待开始</span>
+          <div class="gap-info">
+            <h4>财务知识</h4>
+            <p>读懂资产负债表、利润表、现金流表。做企业不懂财务就像开车不看仪表盘。先读《财报就像一本故事书》入门。</p>
+          </div>
+          <span class="gap-eta">—</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function activate(el, id) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

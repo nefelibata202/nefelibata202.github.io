@@ -1,10 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import 'cn-fontsource-smiley-sans-oblique-regular/font.css';
-import 'cn-fontsource-lxgw-wen-kai-gb-screen/font.css';
-import '@fontsource/archivo/700.css';
-import '@fontsource/jetbrains-mono/400.css';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 const entries = await getCollection('guide');
 const panels = await Promise.all(
@@ -13,950 +9,404 @@ const panels = await Promise.all(
     return { data: e.data, Content };
   })
 );
+
+// 按 island id 排序：个人岛在前，信息岛在后
+const order = ['people', 'philosophy', 'interests', 'travel', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
+panels.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="归图 · 个人导览 — 驾船游历七座岛屿" />
-  <script is:inline>
-    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  </script>
-  <title>归图 · 个人导览</title>
-</head>
-<body>
+<BaseLayout title="归图 · 个人导览">
+  <div class="guide-layout">
 
-<canvas id="map-canvas" aria-hidden="true"></canvas>
-
-<!-- Minimal overlay nav -->
-<nav id="back-nav">
-  <a href="/" class="back-btn" aria-label="返回归来首页">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-      <path d="M19 12H5M12 5l-7 7 7 7"/>
-    </svg>
-    归来
-  </a>
-  <span class="page-heading">归图</span>
-</nav>
-
-<p id="hint" aria-live="polite">点击岛屿探索</p>
-
-<!-- Content panel (slides from right; bottom sheet on mobile) -->
-<div id="guide-panel" role="dialog" aria-modal="true" aria-hidden="true" aria-label="岛屿内容">
-  <div class="panel-accent" id="panel-accent-bar"></div>
-  <button class="panel-close" id="panel-close" aria-label="关闭面板">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-      <path d="M18 6 6 18M6 6l12 12"/>
-    </svg>
-  </button>
-  <div id="panel-inner">
-    {panels.map(({ data, Content }) => (
-      <div class="panel-content" data-island={data.island} hidden>
-        <h2 class="panel-title">{data.title}</h2>
-        {data.placeholder
-          ? <p class="panel-placeholder">内容整理中……</p>
-          : <div class="panel-body"><Content /></div>
-        }
+    <!-- 左侧边栏 -->
+    <aside class="guide-sidebar">
+      <div class="guide-sidebar-logo">
+        <a href="/" class="guide-back-link" aria-label="返回归来首页">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          归来
+        </a>
+        <span class="guide-logo-text">归图</span>
       </div>
-    ))}
+      <p class="guide-sidebar-desc">个人知识导览</p>
+
+      <nav class="guide-nav" aria-label="岛屿导航">
+        {panels.map(({ data }, i) => (
+          <button
+            type="button"
+            class:list={['guide-nav-item', i === 0 && 'active']}
+            data-target={data.island}
+            onclick="guideSwitch(this)"
+          >
+            <span class="guide-nav-icon" style={`--accent: var(--${data.accent})`}>
+              {data.island === 'people' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              )}
+              {data.island === 'philosophy' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              )}
+              {data.island === 'interests' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              )}
+              {data.island === 'travel' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              )}
+              {data.island === 'fragmented-time' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              )}
+              {data.island === 'info-sources' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              )}
+              {data.island === 'knowledge-gaps' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              )}
+            </span>
+            <span class="guide-nav-text">
+              <span class="guide-nav-title">{data.title}</span>
+              <span class="guide-nav-en">{data.island.toUpperCase().replace(/-/g, ' ')}</span>
+            </span>
+          </button>
+        ))}
+      </nav>
+
+      <div class="guide-sidebar-footer">
+        <span>GUI TU</span>
+        <span>2026</span>
+      </div>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="guide-content">
+      {panels.map(({ data, Content }, i) => (
+        <article
+          class:list={['guide-section', i === 0 && 'active']}
+          id={`guide-${data.island}`}
+          data-island={data.island}
+        >
+          <header class="guide-section-header">
+            <span class="guide-section-num" style={`--accent: var(--${data.accent})`}>
+              / {String(order.indexOf(data.island) + 1).padStart(2, '0')}
+            </span>
+            <h2 class="guide-section-title">{data.title}</h2>
+          </header>
+          <div class="guide-section-body">
+            <Content />
+          </div>
+        </article>
+      ))}
+    </main>
+
   </div>
-</div>
+</BaseLayout>
 
 <script is:inline>
-(function () {
-'use strict';
-
-/* ════════════════════════════════════════
-   PALETTE (matches site design tokens)
-════════════════════════════════════════ */
-const PAPER = '#FCF8EE';
-const INK   = '#16140F';
-const GOLD  = '#F2B312';
-const SEAL  = '#C8362B';
-const MUTED = '#6E685A';
-const SEA   = '#C4B99A';
-
-const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* ════════════════════════════════════════
-   CANVAS
-════════════════════════════════════════ */
-const canvas = document.getElementById('map-canvas');
-const ctx    = canvas.getContext('2d');
-const dpr    = window.devicePixelRatio || 1;
-let W, H;
-
-function resize() {
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width  = Math.round(W * dpr);
-  canvas.height = Math.round(H * dpr);
-  canvas.style.width  = W + 'px';
-  canvas.style.height = H + 'px';
-  buildPaths();
-  homePos = { x: W * HOME_F.fx, y: H * HOME_F.fy };
-  if (!animating && !activeIsland) boatPos = { ...homePos };
-}
-
-/* ════════════════════════════════════════
-   ISLAND DEFINITIONS
-   fx/fy  = center as fraction of W/H
-   rx/ry  = half-extent as fraction of W/H
-   pts    = Catmull-Rom control offsets (±1 units relative to rx/ry)
-   accent = panel top-bar color class
-════════════════════════════════════════ */
-const HOME_F = { fx: 0.52, fy: 0.52 };
-
-const ISLAND_DEFS = {
-  'people': {
-    fx:0.12, fy:0.19, rx:0.085, ry:0.115, gold:true, accent:'gold',
-    pts:[[-0.9,-0.5],[-0.2,-1.0],[0.8,-0.9],[1.1,-0.1],[0.9,0.8],[-0.1,1.1],[-1.0,0.7]],
-  },
-  'philosophy': {
-    fx:0.34, fy:0.17, rx:0.115, ry:0.10, gold:false, accent:'ink',
-    pts:[[-1.0,-0.3],[-0.6,-1.0],[0.4,-1.0],[1.1,-0.5],[1.0,0.4],[0.3,1.0],[-0.7,0.9],[-1.1,0.2]],
-  },
-  'interests': {
-    fx:0.13, fy:0.46, rx:0.09, ry:0.11, gold:false, accent:'seal',
-    pts:[[-0.9,-0.6],[0.0,-1.1],[0.9,-0.7],[1.0,0.1],[0.7,0.9],[-0.2,1.1],[-1.0,0.6]],
-  },
-  'travel': {
-    fx:0.33, fy:0.44, rx:0.115, ry:0.105, gold:true, accent:'gold',
-    pts:[[-1.0,-0.4],[-0.5,-1.0],[0.5,-1.0],[1.1,-0.3],[0.9,0.6],[0.1,1.1],[-0.8,0.8],[-1.1,0.1]],
-  },
-  'info-sources': {
-    fx:0.72, fy:0.26, rx:0.10, ry:0.095, gold:false, accent:'ink',
-    pts:[[-0.8,-0.7],[-0.1,-1.1],[0.9,-0.8],[1.1,-0.1],[0.8,0.7],[0.0,1.0],[-0.9,0.7]],
-  },
-  'knowledge-gaps': {
-    fx:0.87, fy:0.50, rx:0.095, ry:0.105, gold:false, accent:'ink',
-    pts:[[-0.7,-0.8],[0.1,-1.1],[0.9,-0.6],[1.1,0.2],[0.8,0.9],[-0.1,1.1],[-0.9,0.6],[-1.1,-0.1]],
-  },
-  'fragmented-time': {
-    fx:0.73, fy:0.76, rx:0.105, ry:0.10, gold:false, accent:'ink',
-    pts:[[-1.0,-0.3],[-0.4,-1.0],[0.6,-0.9],[1.1,-0.2],[0.8,0.7],[0.0,1.1],[-0.8,0.8]],
-  },
-};
-
-const ISLAND_LABELS = {
-  'people':          '喜欢的人物',
-  'philosophy':      '人生哲学',
-  'interests':       '个人兴趣',
-  'travel':          '旅行计划',
-  'info-sources':    '信息源',
-  'knowledge-gaps':  '知识缺口',
-  'fragmented-time': '碎片时间',
-};
-
-/* ════════════════════════════════════════
-   ISLAND PATHS (rebuilt on resize)
-════════════════════════════════════════ */
-let islandPaths   = {};
-let islandCenters = {};
-let homePos       = { x: 0, y: 0 };
-
-function catmullToBezier(pts) {
-  const n = pts.length;
-  const path = new Path2D();
-  path.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 0; i < n; i++) {
-    const p0 = pts[(i - 1 + n) % n];
-    const p1 = pts[i];
-    const p2 = pts[(i + 1) % n];
-    const p3 = pts[(i + 2) % n];
-    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
-    path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2[0], p2[1]);
-  }
-  path.closePath();
-  return path;
-}
-
-function buildPaths() {
-  islandPaths   = {};
-  islandCenters = {};
-  for (const [id, def] of Object.entries(ISLAND_DEFS)) {
-    const cx = W * def.fx;
-    const cy = H * def.fy;
-    const rx = W * def.rx;
-    const ry = H * def.ry;
-    islandCenters[id] = { x: cx, y: cy };
-    const pts = def.pts.map(([px, py]) => [cx + px * rx, cy + py * ry]);
-    islandPaths[id] = catmullToBezier(pts);
-  }
-}
-
-/* ════════════════════════════════════════
-   BUTTERFLIES
-════════════════════════════════════════ */
-const BFY_COLORS = [GOLD, SEAL, '#E8A010', '#D44030'];
-
-function Butterfly() {
-  const self = {
-    x: 0, y: 0, vx: 0, vy: 0,
-    size: 0, phase: 0, wingSpeed: 0,
-    color: '', alpha: 0, fadeIn: false,
-    wanderX: 0, wanderY: 0, angle: 0,
-  };
-  self.reset = function (initial) {
-    self.x         = W * (0.06 + Math.random() * 0.83);
-    self.y         = H * (0.06 + Math.random() * 0.58);
-    self.size      = 7 + Math.random() * 5;
-    self.phase     = Math.random() * Math.PI * 2;
-    self.vx        = (Math.random() - 0.5) * 0.7;
-    self.vy        = (Math.random() - 0.5) * 0.35;
-    self.color     = BFY_COLORS[Math.floor(Math.random() * BFY_COLORS.length)];
-    self.wingSpeed = 6 + Math.random() * 4;
-    self.wanderX   = Math.random() * Math.PI * 2;
-    self.wanderY   = Math.random() * Math.PI * 2;
-    self.alpha     = initial ? Math.random() : 0;
-    self.fadeIn    = !initial;
-    self.angle     = 0;
-  };
-  self.update = function (dt) {
-    if (self.fadeIn) {
-      self.alpha = Math.min(1, self.alpha + dt * 0.5);
-      if (self.alpha >= 1) self.fadeIn = false;
-    }
-    self.wanderX += dt * 0.8;
-    self.wanderY += dt * 0.6;
-    const wx = Math.sin(self.wanderX + self.phase) * 0.4;
-    const wy = Math.cos(self.wanderY + self.phase) * 0.25;
-    self.x += (self.vx + wx) * dt * 40;
-    self.y += (self.vy + wy) * dt * 40;
-    const margin = 60;
-    if (self.x < margin)          self.vx += 0.02;
-    if (self.x > W - margin)      self.vx -= 0.02;
-    if (self.y < margin)          self.vy += 0.02;
-    if (self.y > H * 0.82 - margin) self.vy -= 0.02;
-    self.vx   *= 0.992;
-    self.vy   *= 0.992;
-    self.angle = Math.atan2(self.vy, self.vx);
-  };
-  self.draw = function (t) {
-    const wo = (Math.sin(t * self.wingSpeed + self.phase) + 1) * 0.5;
-    const s  = self.size;
-    ctx.save();
-    ctx.translate(self.x, self.y);
-    ctx.rotate(self.angle);
-    ctx.globalAlpha = self.alpha * 0.82;
-    ctx.fillStyle   = self.color;
-    function wing(xSign) {
-      // Upper lobe
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(xSign*s*1.2*wo, -s*0.6, xSign*s*1.8*wo, -s*1.6, xSign*s*0.1, -s*1.4);
-      ctx.bezierCurveTo(xSign*-s*0.3, -s*1.2, xSign*-s*0.1, -s*0.4, 0, 0);
-      ctx.fill();
-      // Lower lobe
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(xSign*s*0.9*wo, s*0.3, xSign*s*1.3*wo, s*1.2, xSign*s*0.2, s*1.1);
-      ctx.bezierCurveTo(xSign*-s*0.2, s*1.0, xSign*-s*0.1, s*0.5, 0, 0);
-      ctx.fill();
-    }
-    wing(-1); wing(1);
-    // Body
-    ctx.globalAlpha = self.alpha;
-    ctx.fillStyle   = INK;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, s*0.18, s*0.7, 0, 0, Math.PI*2);
-    ctx.fill();
-    // Antennae
-    ctx.strokeStyle = INK; ctx.lineWidth = 0.8; ctx.lineCap = 'round';
-    ctx.globalAlpha = self.alpha * 0.7;
-    [-1, 1].forEach(sign => {
-      ctx.beginPath();
-      ctx.moveTo(0, -s*0.6);
-      ctx.quadraticCurveTo(sign*s*0.6, -s*1.8, sign*s*0.4, -s*2.2);
-      ctx.stroke();
-    });
-    ctx.restore();
-  };
-  self.reset(true);
-  return self;
-}
-
-const butterflies = Array.from({ length: 9 }, () => Butterfly());
-
-/* ════════════════════════════════════════
-   BOAT STATE
-════════════════════════════════════════ */
-let boatPos      = { x: 0, y: 0 };
-let boatAngle    = 0;
-let boatBob      = 0;
-let idlePhase    = 0;
-let animating    = false;
-let wakePoints   = [];
-let activeIsland = null;
-let panelTimer   = null;
-
-// Sailing state
-let sailFrom, sailTo, sailCP, sailDur, sailStart, sailDone;
-
-/* ════════════════════════════════════════
-   BOAT DRAWING
-════════════════════════════════════════ */
-function drawBoat(cx, cy, angleDeg, bob) {
-  const s = Math.max(0.55, Math.min(1.25, W / 960));
-  ctx.save();
-  ctx.translate(cx, cy + bob);
-  ctx.rotate(angleDeg * Math.PI / 180);
-
-  // Keel curve
-  ctx.beginPath();
-  ctx.moveTo(-22*s, 5*s);
-  ctx.quadraticCurveTo(-7*s, 13*s, 7*s, 13*s);
-  ctx.quadraticCurveTo(18*s, 11*s, 24*s, 5*s);
-  ctx.strokeStyle = INK; ctx.lineWidth = 2.5*s; ctx.lineCap = 'round'; ctx.stroke();
-
-  // Hull body
-  ctx.beginPath();
-  ctx.moveTo(-22*s, 5*s);
-  ctx.lineTo(-20*s, -5*s);
-  ctx.lineTo(20*s, -5*s);
-  ctx.quadraticCurveTo(26*s, -4*s, 24*s, 5*s);
-  ctx.quadraticCurveTo(18*s, 11*s, 7*s, 13*s);
-  ctx.quadraticCurveTo(-7*s, 13*s, -22*s, 5*s);
-  ctx.closePath();
-  ctx.fillStyle = INK; ctx.fill();
-
-  // Cabin highlight
-  ctx.fillStyle = 'rgba(255,255,255,0.10)';
-  ctx.fillRect(-14*s, -5*s, 10*s, 3.5*s);
-
-  // Mast
-  ctx.beginPath(); ctx.moveTo(0, -30*s); ctx.lineTo(0, -5*s);
-  ctx.strokeStyle = INK; ctx.lineWidth = 2.8*s; ctx.stroke();
-
-  // Yard arm
-  ctx.beginPath(); ctx.moveTo(0, -22*s); ctx.lineTo(22*s, -22*s);
-  ctx.lineWidth = 1.8*s; ctx.stroke();
-
-  // Sail (gold, billowing)
-  ctx.beginPath();
-  ctx.moveTo(0, -28*s);
-  ctx.quadraticCurveTo(26*s, -18*s, 24*s, -5*s);
-  ctx.lineTo(0, -5*s); ctx.closePath();
-  ctx.fillStyle = GOLD; ctx.fill();
-  ctx.strokeStyle = INK; ctx.lineWidth = 0.9*s; ctx.stroke();
-
-  // Sail highlight
-  ctx.fillStyle = 'rgba(255,255,255,0.20)';
-  ctx.beginPath();
-  ctx.moveTo(2*s, -24*s);
-  ctx.quadraticCurveTo(17*s, -15*s, 15*s, -7*s);
-  ctx.lineTo(2*s, -7*s); ctx.closePath(); ctx.fill();
-
-  // Pennant
-  ctx.beginPath();
-  ctx.moveTo(0, -30*s); ctx.lineTo(8*s, -26*s); ctx.lineTo(0, -22*s);
-  ctx.closePath(); ctx.fillStyle = SEAL; ctx.fill();
-
-  // Immediate wake ripples
-  ctx.globalAlpha = 0.35; ctx.strokeStyle = SEAL; ctx.lineWidth = 1.2*s;
-  ctx.beginPath();
-  ctx.moveTo(-22*s, 4*s); ctx.quadraticCurveTo(-28*s, 6*s, -34*s, 3*s); ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(-22*s, 7*s); ctx.quadraticCurveTo(-27*s, 9*s, -32*s, 7*s); ctx.stroke();
-
-  ctx.restore();
-}
-
-/* ════════════════════════════════════════
-   SEA DRAWING
-════════════════════════════════════════ */
-function drawSea(t) {
-  // Background gradient
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#B5AA8A');
-  grad.addColorStop(0.4, SEA);
-  grad.addColorStop(1, '#CAC0A8');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
-
-  // Faint chart grid
-  ctx.strokeStyle = 'rgba(22,20,15,0.04)'; ctx.lineWidth = 0.6;
-  const g = Math.max(W, H) / 10;
-  for (let x = 0; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-  for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-
-  // Wave layers
-  const layers = [
-    { yF:0.30, amp:H*0.006, freq:0.008, speed:0.22, alpha:0.10 },
-    { yF:0.42, amp:H*0.009, freq:0.011, speed:0.34, alpha:0.12 },
-    { yF:0.56, amp:H*0.012, freq:0.014, speed:0.46, alpha:0.10 },
-    { yF:0.70, amp:H*0.010, freq:0.018, speed:0.55, alpha:0.08 },
-    { yF:0.84, amp:H*0.008, freq:0.022, speed:0.62, alpha:0.06 },
-  ];
-  layers.forEach(({ yF, amp, freq, speed, alpha }) => {
-    const y0 = H * yF;
-    ctx.beginPath(); ctx.moveTo(-2, y0);
-    for (let x = 0; x <= W + 2; x += 3) {
-      ctx.lineTo(x, y0
-        + Math.sin(x * freq + t * speed) * amp
-        + Math.sin(x * freq * 1.6 + t * speed * 0.8 + 1.2) * amp * 0.4);
-    }
-    ctx.lineTo(W+2, H); ctx.lineTo(-2, H); ctx.closePath();
-    ctx.fillStyle = `rgba(22,20,15,${alpha})`; ctx.fill();
-
-    // Foam flecks at crests
-    ctx.fillStyle = `rgba(252,248,238,${alpha * 1.4})`;
-    for (let x = 10; x < W; x += 70 + Math.sin(x * 0.03) * 20) {
-      const crest = Math.sin(x * freq + t * speed);
-      if (crest > 0.55) {
-        const sz = (crest - 0.55) * 6;
-        ctx.beginPath();
-        ctx.arc(x + Math.sin(t + x * 0.1) * 4,
-                y0 + Math.sin(x * freq + t * speed) * amp - 1, sz, 0, Math.PI*2);
-        ctx.fill();
-      }
-    }
+function guideSwitch(btn) {
+  var target = btn.getAttribute('data-target');
+  // 切换导航 active 状态
+  document.querySelectorAll('.guide-nav-item').forEach(function(el) {
+    el.classList.remove('active');
   });
-
-  // Depth markers
-  ctx.fillStyle = 'rgba(22,20,15,0.13)';
-  ctx.font = `${Math.max(8, W * 0.009)}px Georgia,serif`;
-  ctx.textAlign = 'left';
-  [[0.19,0.30],[0.40,0.17],[0.45,0.27],[0.60,0.20],[0.55,0.38],
-   [0.62,0.52],[0.75,0.20],[0.76,0.45],[0.92,0.13],[0.88,0.36],
-   [0.14,0.37],[0.22,0.46],[0.43,0.42],[0.08,0.58],[0.50,0.48]
-  ].forEach(([fx, fy]) => ctx.fillText('·', W*fx, H*fy));
+  btn.classList.add('active');
+  // 切换内容区 active 状态
+  document.querySelectorAll('.guide-section').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  var section = document.getElementById('guide-' + target);
+  if (section) section.classList.add('active');
+  // 更新 URL（不刷新页面）
+  history.replaceState(null, '', '/guide?island=' + target);
+  // 滚动到顶部
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-/* ════════════════════════════════════════
-   ISLANDS DRAWING
-════════════════════════════════════════ */
-function drawIslands(hoveredId) {
-  for (const [id, def] of Object.entries(ISLAND_DEFS)) {
-    const path     = islandPaths[id];
-    const isHover  = id === hoveredId;
-    const isActive = id === activeIsland;
-
-    ctx.save();
-    if (isHover || isActive) {
-      ctx.shadowColor = isActive ? 'rgba(242,179,18,0.78)' : 'rgba(242,179,18,0.52)';
-      ctx.shadowBlur  = isActive ? 24 : 15;
-    } else {
-      ctx.shadowColor   = 'rgba(22,20,15,0.20)';
-      ctx.shadowBlur    = 8;
-      ctx.shadowOffsetX = 3;
-      ctx.shadowOffsetY = 4;
-    }
-    ctx.fillStyle = PAPER; ctx.fill(path);
-    ctx.restore();
-
-    if (def.gold) { ctx.fillStyle = 'rgba(242,179,18,0.16)'; ctx.fill(path); }
-
-    // Inner contour
-    const c  = islandCenters[id];
-    ctx.save(); ctx.clip(path);
-    ctx.beginPath();
-    ctx.ellipse(c.x, c.y, W*def.rx*0.7, H*def.ry*0.7, 0, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(22,20,15,0.14)'; ctx.lineWidth = 0.8; ctx.stroke();
-    ctx.restore();
-
-    // Border
-    ctx.strokeStyle = INK; ctx.lineWidth = (isHover || isActive) ? 2.8 : 2.0;
-    ctx.stroke(path);
-
-    // Topo dots
-    ctx.fillStyle = 'rgba(22,20,15,0.25)';
-    ctx.beginPath(); ctx.arc(c.x, c.y, 2.5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(c.x + W*def.rx*0.4, c.y - H*def.ry*0.3, 1.8, 0, Math.PI*2); ctx.fill();
-
-    // Label
-    const labelSize = Math.max(11, W * 0.012);
-    ctx.fillStyle = (isHover || isActive) ? INK : MUTED;
-    ctx.font = `${isActive ? 700 : 600} ${labelSize}px "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(ISLAND_LABELS[id] || id, W * def.fx, H * def.fy + H * def.ry * 1.22 + 14);
-    ctx.textAlign = 'left';
-  }
-}
-
-/* ════════════════════════════════════════
-   HOME PORT
-════════════════════════════════════════ */
-function drawHomePort() {
-  const { x, y } = homePos;
-  ctx.save();
-  ctx.beginPath(); ctx.arc(x, y, 18, 0, Math.PI*2);
-  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.setLineDash([3.5,3.5]);
-  ctx.globalAlpha = 0.35; ctx.stroke(); ctx.setLineDash([]);
-  ctx.globalAlpha = 0.65;
-  ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
-  ctx.fillStyle = INK; ctx.fill();
-  // Anchor
-  ctx.globalAlpha = 0.30; ctx.strokeStyle = INK; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
-  const ay = y - 10;
-  ctx.beginPath(); ctx.moveTo(x, ay-7); ctx.lineTo(x, ay+7); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x-5.5, ay-5); ctx.lineTo(x+5.5, ay-5); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, ay+7, 5, 0, Math.PI); ctx.stroke();
-  ctx.restore();
-}
-
-/* ════════════════════════════════════════
-   WAKE TRAIL
-════════════════════════════════════════ */
-function drawWake() {
-  if (wakePoints.length < 2) return;
-  ctx.save();
-  ctx.strokeStyle = SEAL; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
-  ctx.setLineDash([4,10]); ctx.globalAlpha = 0.65;
-  ctx.beginPath();
-  ctx.moveTo(wakePoints[0].x, wakePoints[0].y);
-  wakePoints.forEach(p => ctx.lineTo(p.x, p.y));
-  ctx.stroke(); ctx.setLineDash([]);
-  ctx.restore();
-}
-
-/* ════════════════════════════════════════
-   COMPASS ROSE
-════════════════════════════════════════ */
-function drawCompass() {
-  const cx = W - 58, cy = H - 62;
-  const r  = Math.max(22, Math.min(30, W * 0.028));
-  ctx.save(); ctx.translate(cx, cy);
-  ctx.beginPath(); ctx.arc(0, 0, r+4, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(252,248,238,0.45)'; ctx.fill();
-  ctx.strokeStyle = INK; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.35; ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  function arrowPt(ox, oy, tx, ty, col, alpha) {
-    ctx.globalAlpha = alpha; ctx.fillStyle = col;
-    const hw = r * 0.22, len = Math.hypot(tx-ox, ty-oy) || 1;
-    const px = -(ty-oy)/len*hw, py = (tx-ox)/len*hw;
-    ctx.beginPath();
-    ctx.moveTo(tx, ty); ctx.lineTo(ox+px, oy+py); ctx.lineTo(ox, oy); ctx.lineTo(ox-px, oy-py);
-    ctx.closePath(); ctx.fill();
-  }
-
-  arrowPt(0, r*0.4, 0, -r, GOLD, 1);
-  arrowPt(0, -r*0.4, 0, r, INK, 0.5);
-  arrowPt(-r*0.4, 0, r, 0, GOLD, 0.85);
-  arrowPt(r*0.4, 0, -r, 0, INK, 0.4);
-  const d = r * 0.68;
-  [[-d,-d],[d,-d],[d,d],[-d,d]].forEach(([tx,ty]) => arrowPt(tx*0.35, ty*0.35, tx, ty, INK, 0.25));
-
-  ctx.globalAlpha = 1;
-  ctx.beginPath(); ctx.arc(0, 0, r*0.2, 0, Math.PI*2);
-  ctx.fillStyle = GOLD; ctx.fill();
-  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
-
-  ctx.globalAlpha = 0.45; ctx.fillStyle = INK;
-  ctx.font = `italic ${r*0.5}px Georgia,serif`; ctx.textAlign = 'center';
-  ctx.fillText('N', 0, -r-5);
-  ctx.restore();
-}
-
-/* ════════════════════════════════════════
-   TITLE PLATE
-════════════════════════════════════════ */
-function drawTitlePlate() {
-  const x = 16, y = H - 74, pw = 192, ph = 54;
-  ctx.save();
-  ctx.fillStyle = PAPER; ctx.fillRect(x, y, pw, ph);
-  ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.strokeRect(x, y, pw, ph);
-  ctx.fillStyle = GOLD; ctx.fillRect(x, y, 5, ph);
-  ctx.fillStyle = INK;
-  ctx.font = `800 ${Math.max(16, W*0.018)}px "Smiley Sans Oblique","PingFang SC",sans-serif`;
-  ctx.textAlign = 'left'; ctx.fillText('归图', x+14, y+26);
-  ctx.font = `${Math.max(9, W*0.010)}px "PingFang SC","Noto Sans SC",sans-serif`;
-  ctx.fillStyle = MUTED; ctx.fillText('个人导览 · MMXXVI', x+14, y+44);
-  ctx.restore();
-}
-
-/* ════════════════════════════════════════
-   SAILING HELPERS
-════════════════════════════════════════ */
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-}
-
-function quadBez(p0, cp, p1, t) {
-  const u = 1-t;
-  return { x: u*u*p0.x + 2*u*t*cp.x + t*t*p1.x, y: u*u*p0.y + 2*u*t*cp.y + t*t*p1.y };
-}
-
-function controlPoint(a, b) {
-  const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
-  const dx = b.x-a.x, dy = b.y-a.y, len = Math.hypot(dx,dy)||1;
-  const off = Math.min(Math.max(W,H)*0.12, len*0.3);
-  return { x: mx-(dy/len)*off, y: my+(dx/len)*off };
-}
-
-function startSail(from, to, onDone) {
-  if (REDUCED) {
-    boatPos = { ...to }; boatAngle = 0; onDone && onDone(); return;
-  }
-  animating = true;
-  sailFrom  = { ...from };
-  sailTo    = { ...to };
-  sailCP    = controlPoint(from, to);
-  const dist = Math.hypot(to.x-from.x, to.y-from.y);
-  sailDur   = Math.max(900, Math.min(1800, dist * 2.5));
-  sailStart = null;
-  sailDone  = onDone;
-}
-
-/* ════════════════════════════════════════
-   ANIMATION LOOP
-════════════════════════════════════════ */
-let animTime = 0, lastT = 0;
-let hoveredIsland = null;
-
-function loop(ts) {
-  if (animating && sailStart === null) sailStart = ts;
-  const dt  = Math.min((ts - lastT) / 1000, 0.05);
-  lastT = ts;
-  if (!REDUCED) animTime += dt;
-  const t = animTime;
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, W, H);
-
-  // 1. Sea
-  drawSea(t);
-
-  // 2. Boat update
-  if (animating && sailStart !== null) {
-    const rawT = Math.min((ts - sailStart) / sailDur, 1);
-    const et   = easeInOutCubic(rawT);
-    const p    = quadBez(sailFrom, sailCP, sailTo, et);
-    const pf   = quadBez(sailFrom, sailCP, sailTo, Math.min(et+0.015, 1));
-    boatAngle  = Math.atan2(pf.y-p.y, pf.x-p.x) * 180/Math.PI;
-    boatAngle += Math.sin(rawT * Math.PI * 9) * 6 * Math.sin(rawT * Math.PI);
-    boatPos    = p;
-    wakePoints.push({ x: p.x, y: p.y });
-    if (rawT >= 1) {
-      animating = false;
-      boatPos   = { ...sailTo };
-      boatAngle = 0;
-      sailDone && sailDone();
-    }
-  } else {
-    idlePhase += dt;
-    boatBob    = Math.sin(idlePhase * 1.6) * 3.5 + Math.sin(idlePhase * 2.5 + 0.8) * 1.5;
-    boatAngle  = boatAngle + (Math.sin(idlePhase * 1.2) * 2.5 - boatAngle) * 0.05;
-  }
-
-  // 3. Wake
-  drawWake();
-
-  // 4. Islands
-  drawIslands(hoveredIsland);
-
-  // 5. Home port
-  drawHomePort();
-
-  // 6. Boat
-  drawBoat(boatPos.x, boatPos.y, boatAngle, boatBob);
-
-  // 7. Butterflies
-  butterflies.forEach(b => { b.update(dt); b.draw(t); });
-
-  // 8. UI overlays
-  drawCompass();
-  drawTitlePlate();
-
-  requestAnimationFrame(loop);
-}
-
-/* ════════════════════════════════════════
-   INTERACTION
-════════════════════════════════════════ */
-function islandAt(mx, my) {
-  for (const [id, path] of Object.entries(islandPaths)) {
-    if (ctx.isPointInPath(path, mx, my)) return id;
-  }
-  return null;
-}
-
-function toCanvas(e) {
-  const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-
-canvas.addEventListener('mousemove', e => {
-  const { x, y } = toCanvas(e);
-  const id = islandAt(x, y);
-  hoveredIsland = id;
-  canvas.style.cursor = id ? 'pointer' : 'default';
-});
-
-canvas.addEventListener('mouseleave', () => {
-  hoveredIsland = null;
-  canvas.style.cursor = 'default';
-});
-
-canvas.addEventListener('click', e => {
-  if (animating) return;
-  const { x, y } = toCanvas(e);
-  const id = islandAt(x, y);
-  if (id) handleIslandClick(id);
-});
-
-canvas.addEventListener('touchend', e => {
-  if (animating) return;
-  e.preventDefault();
-  const t = e.changedTouches[0];
-  const { x, y } = toCanvas(t);
-  const id = islandAt(x, y);
-  if (id) handleIslandClick(id);
-}, { passive: false });
-
-function handleIslandClick(id) {
-  document.getElementById('hint').classList.add('hidden');
-  if (activeIsland === id) {
-    activeIsland = null;
-    closePanel();
-    startSail(boatPos, homePos, null);
-    return;
-  }
-  activeIsland = id;
-  startSail(boatPos, islandCenters[id], () => showPanel(id));
-}
-
-/* ════════════════════════════════════════
-   PANEL
-════════════════════════════════════════ */
-const panel      = document.getElementById('guide-panel');
-const accentBar  = document.getElementById('panel-accent-bar');
-
-function showPanel(id) {
-  // Show matching content, hide others
-  document.querySelectorAll('.panel-content').forEach(el => { el.hidden = true; });
-  const target = document.querySelector(`.panel-content[data-island="${id}"]`);
-  if (target) target.hidden = false;
-
-  const accent = ISLAND_DEFS[id]?.accent || 'gold';
-  accentBar.className = 'panel-accent' + (accent !== 'gold' ? ' ' + accent : '');
-
-  clearTimeout(panelTimer);
-  panel.classList.add('open');
-  panel.setAttribute('aria-hidden', 'false');
-}
-
-function closePanel() {
-  panel.classList.remove('open');
-  panel.setAttribute('aria-hidden', 'true');
-  panelTimer = setTimeout(() => {
-    document.querySelectorAll('.panel-content').forEach(el => { el.hidden = true; });
-  }, 460);
-}
-
-document.getElementById('panel-close').addEventListener('click', () => {
-  if (animating) return;
-  activeIsland = null;
-  closePanel();
-  startSail(boatPos, homePos, null);
-});
-
-/* ════════════════════════════════════════
-   INIT
-════════════════════════════════════════ */
-window.addEventListener('resize', resize);
-resize();
-homePos = { x: W * HOME_F.fx, y: H * HOME_F.fy };
-boatPos = { ...homePos };
-
-// Stagger butterfly fade-in
-butterflies.forEach((b, i) => {
-  b.alpha  = 0;
-  b.fadeIn = false;
-  b.x = W * (0.06 + Math.random() * 0.83);
-  b.y = H * (0.06 + Math.random() * 0.55);
-  setTimeout(() => { b.fadeIn = true; }, i * 280 + 500);
-});
-
-lastT = performance.now();
-requestAnimationFrame(loop);
-
-})();
 </script>
 
-<style is:global>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<style>
+/* ── 整体布局 ── */
+.guide-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 60px);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
 
-  html, body {
-    width: 100%; height: 100%;
-    overflow: hidden;
-    background: #C4B99A;
-    font-family: var(--zh, "PingFang SC","Noto Sans SC",sans-serif);
-    color: var(--ink, #16140F);
+/* ── 左侧边栏 ── */
+.guide-sidebar {
+  padding: 40px 24px 40px 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 2px solid var(--hair);
+}
+
+.guide-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.guide-back-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+}
+
+.guide-back-link:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-logo-text {
+  font-family: var(--disp);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.guide-sidebar-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--hair);
+}
+
+/* 导航列表 */
+.guide-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.guide-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 2px solid transparent;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: inherit;
+  width: 100%;
+  transition: all 0.12s;
+}
+
+.guide-nav-item:hover {
+  background: var(--soft);
+  border-color: var(--hair);
+}
+
+.guide-nav-item.active {
+  background: var(--soft);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-nav-icon {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg);
+  color: var(--accent, var(--ink));
+}
+
+.guide-nav-item.active .guide-nav-icon {
+  background: var(--accent, var(--gold));
+  color: var(--on-gold);
+}
+
+.guide-nav-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-nav-title {
+  font-family: var(--disp);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.guide-nav-en {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.guide-sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 2px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── 右侧内容区 ── */
+.guide-content {
+  padding: 40px 0 60px 40px;
+  max-width: 680px;
+}
+
+.guide-section {
+  display: none;
+}
+
+.guide-section.active {
+  display: block;
+  animation: guideFadeIn 0.2s ease;
+}
+
+@keyframes guideFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.guide-section-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--line);
+}
+
+.guide-section-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent, var(--muted));
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.guide-section-title {
+  font-family: var(--disp);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.guide-section-body {
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.guide-section-body :global(h3) {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 24px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--hair);
+}
+
+.guide-section-body :global(h4) {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.guide-section-body :global(p) {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  margin-bottom: 6px;
+}
+
+.guide-section-body :global(hr) {
+  border: none;
+  border-top: 1.5px solid var(--hair);
+  margin: 16px 0;
+}
+
+.guide-section-body :global(strong) {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.guide-section-body :global(ul),
+.guide-section-body :global(ol) {
+  margin: 8px 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.guide-section-body :global(li) {
+  padding: 4px 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.guide-section-body :global(li strong) {
+  color: var(--ink);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 768px) {
+  .guide-layout {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
   }
 
-  #map-canvas {
-    position: fixed;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
+  .guide-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 2px solid var(--hair);
+    padding: 20px 0;
   }
 
-  /* ── Back nav ── */
-  #back-nav {
-    position: fixed;
-    top: 20px; left: 24px;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .guide-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
-  .back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--paper, #FCF8EE);
-    border: 2px solid var(--ink, #16140F);
-    padding: 6px 14px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--ink, #16140F);
-    box-shadow: 3px 3px 0 var(--ink, #16140F);
-    letter-spacing: 0.04em;
-    transition: background 0.12s, color 0.12s;
-  }
-  .back-btn:hover { background: var(--ink, #16140F); color: var(--paper, #FCF8EE); }
-
-  .page-heading {
-    font-family: var(--disp, "PingFang SC",sans-serif);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--ink, #16140F);
-    text-shadow: 2px 2px 0 rgba(252,248,238,0.35);
-    letter-spacing: -0.01em;
-    pointer-events: none;
+  .guide-nav-item {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 10px;
   }
 
-  /* ── Hint ── */
-  #hint {
-    position: fixed;
-    bottom: 30px; left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.8rem;
-    color: var(--ink, #16140F);
-    opacity: 0.4;
-    letter-spacing: 0.06em;
-    pointer-events: none;
-    transition: opacity 0.6s;
-    white-space: nowrap;
-    z-index: 10;
-  }
-  #hint.hidden { opacity: 0; }
-
-  /* ── Panel ── */
-  #guide-panel {
-    position: fixed;
-    top: 0; right: 0;
-    width: min(420px, 100vw);
-    height: 100%;
-    background: var(--paper, #FCF8EE);
-    border-left: 3px solid var(--ink, #16140F);
-    box-shadow: -9px 0 0 var(--ink, #16140F);
-    z-index: 30;
-    display: flex;
-    flex-direction: column;
-    transform: translateX(100%);
-    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-  }
-  #guide-panel.open { transform: translateX(0); }
-
-  .panel-accent {
-    height: 5px;
-    flex-shrink: 0;
-    background: var(--gold, #F2B312);
-  }
-  .panel-accent.seal { background: var(--seal, #C8362B); }
-  .panel-accent.ink  { background: var(--ink,  #16140F); }
-
-  .panel-close {
-    position: sticky;
-    top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px; height: 32px;
-    border: 2px solid var(--ink, #16140F);
-    background: var(--bg, #F1EBDB);
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--ink, #16140F);
-    color: var(--ink, #16140F);
-    margin: 12px 12px 0 auto;
-    flex-shrink: 0;
-    transition: background 0.12s, color 0.12s;
-  }
-  .panel-close:hover { background: var(--ink, #16140F); color: var(--paper, #FCF8EE); }
-  .panel-close svg { width: 16px; height: 16px; }
-
-  #panel-inner { flex: 1; overflow-y: auto; }
-
-  .panel-content { padding: 24px 32px 56px; }
-
-  .panel-title {
-    font-family: var(--disp, "PingFang SC",sans-serif);
-    font-size: 1.45rem;
-    font-weight: 800;
-    margin: 0 0 18px;
-    padding-bottom: 14px;
-    border-bottom: 2px solid var(--ink, #16140F);
-    letter-spacing: -0.01em;
+  .guide-nav-en {
+    display: none;
   }
 
-  .panel-placeholder {
-    color: var(--muted, #6E685A);
-    font-style: italic;
-    font-size: 0.9rem;
+  .guide-sidebar-footer {
+    display: none;
   }
 
-  .panel-body h2 {
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--muted, #6E685A);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin: 20px 0 8px;
+  .guide-content {
+    padding: 24px 0 40px;
   }
-  .panel-body p {
-    margin: 0 0 10px;
-    line-height: 1.85;
-    font-size: 0.95rem;
-  }
-  .panel-body ol, .panel-body ul {
-    padding-left: 1.5em;
-    line-height: 1.85;
-    font-size: 0.95rem;
-  }
-  .panel-body ol li { margin-bottom: 4px; }
-  .panel-body strong { font-weight: 700; }
-
-  /* ── Mobile: bottom sheet ── */
-  @media (max-width: 640px) {
-    #guide-panel {
-      top: auto; right: 0; bottom: 0; left: 0;
-      width: 100%; height: 68vh;
-      border-left: none;
-      border-top: 3px solid var(--ink, #16140F);
-      box-shadow: 0 -9px 0 var(--ink, #16140F);
-      transform: translateY(100%);
-    }
-    #guide-panel.open { transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #guide-panel { transition: none; }
-  }
+}
 </style>
-</body>
-</html>

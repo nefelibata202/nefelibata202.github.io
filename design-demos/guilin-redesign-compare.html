@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>归图重设计 · 三版对比</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111; color: #eee; font-family: system-ui, sans-serif; padding: 40px 20px; }
+h1 { text-align: center; font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
+.sub { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 48px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1600px; margin: 0 auto; }
+.card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid #333; }
+.card-header h2 { font-size: 1rem; margin-bottom: 4px; }
+.card-header p { font-size: 0.75rem; color: #888; line-height: 1.5; }
+.card-header .logic { display: inline-block; font-size: 0.68rem; padding: 2px 8px; border: 1px solid #444; color: #aaa; margin-bottom: 8px; }
+.card-body { position: relative; padding-top: 56.25%; /* 16:9 */ }
+.card-body iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; transform: scale(0.5); transform-origin: top left; width: 200%; height: 200%; }
+@media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>归图页面重设计 · 三版方案对比</h1>
+<p class="sub">点击卡片查看完整交互 · 文件位于 design-demos/ 目录</p>
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="logic">🎲 秒数轮盘 · #2 Neo-Brutalism</span>
+      <h2>方案 A · 三列卡片</h2>
+      <p>粗描边卡片 + 硬投影 + 顶部 accent 条。点击展开详情。信息密度高，视觉冲击力强。</p>
+    </div>
+    <div class="card-body">
+      <iframe src="file:///Users/evan/Downloads/Softwares/my_website/design-demos/guilin-redesign-a.html"></iframe>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="logic">🏆 现实参照 · Brittany Chiang</span>
+      <h2>方案 B · 侧栏导航</h2>
+      <p>左侧固定导航 + 右侧内容区。编号章节 + 进度条。清晰的信息架构，适合内容较多的场景。</p>
+    </div>
+    <div class="card-body">
+      <iframe src="file:///Users/evan/Downloads/Softwares/my_website/design-demos/guilin-redesign-b.html"></iframe>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="logic">🧠 最佳设计师 · 书房气质</span>
+      <h2>方案 C · 章节笔记本</h2>
+      <p>衬线阅读体 + 纸质感 + 朱砂印章。壹贰叁编号，进度环，像翻开一本个人笔记本。</p>
+    </div>
+    <div class="card-body">
+      <iframe src="file:///Users/evan/Downloads/Softwares/my_website/design-demos/guilin-redesign-c.html"></iframe>
+    </div>
+  </div>
+</div>
+</body>
+</html>

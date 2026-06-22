@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>列表版式 V2 — 匀格画廊</title>
+<style>
+:root {
+  --bg: #F1EBDB; --paper: #FCF8EE; --soft: #F4EEDD;
+  --ink: #16140F; --line: #16140F;
+  --hair: rgba(22,20,15,.13); --muted: #6E685A;
+  --gold: #F2B312; --seal: #C8362B; --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen","Songti SC","Noto Serif SC",Georgia,serif;
+  --disp: "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,monospace;
+  --zh: "PingFang SC","Noto Sans SC",sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#14120C;--paper:#1E1B13;--soft:#211E15;
+  --ink:#F2ECDC;--line:#F2ECDC;--hair:rgba(242,236,220,.13);
+  --muted:#9A9382;--gold:#F2B312;--seal:#E45A4D;
+}}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);}
+
+/* ── 标注 ── */
+.note{position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--ink);color:var(--bg);
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-align:center;padding:6px;}
+
+/* ── 导航 ── */
+.nav{border-bottom:3px solid var(--line);background:var(--bg);
+  position:sticky;top:0;z-index:100;}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;height:56px;gap:0;}
+.brand{font-family:var(--mono);font-weight:700;font-size:.82rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink);
+  text-decoration:none;padding-right:20px;
+  border-right:2px solid var(--hair);margin-right:20px;}
+.brand:hover{color:var(--seal);}
+.page-title{font-family:var(--disp);font-weight:700;font-size:1.1rem;}
+
+/* ────────────────────────────────────────────────────
+   版式 V2：匀格画廊
+   理念：所有文章等权——3 列均等网格，纯排版无图
+   特征：分类色带顶部 / 大标题 / 摘要省略至2行 /
+         hover 标题变朱砂 + 轻浮起 / 无偏移阴影 / 干净
+   ──────────────────────────────────────────────────── */
+.wrap{max-width:1080px;margin:0 auto;padding:44px 32px 88px;}
+
+/* 页面标题 */
+.page-head{
+  display:grid;grid-template-columns:1fr auto;
+  align-items:end;gap:24px;
+  margin-bottom:28px;
+}
+.page-h1{font-family:var(--disp);font-weight:700;
+  font-size:clamp(2.4rem,6vw,3.4rem);
+  letter-spacing:.03em;margin:0;line-height:1;}
+.page-count{font-family:var(--mono);font-size:.78rem;
+  color:var(--muted);letter-spacing:.06em;text-align:right;}
+
+/* 筛选栏 */
+.filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:16px 0;margin-bottom:32px;
+  border-top:2px solid var(--line);border-bottom:2px solid var(--line);}
+.f-label{font-family:var(--mono);font-weight:700;font-size:.62rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+  margin-right:6px;white-space:nowrap;}
+.fchip{font-family:var(--mono);font-weight:700;font-size:.72rem;
+  color:var(--ink);text-decoration:none;padding:5px 12px;
+  border:1.5px solid var(--hair);background:none;
+  transition:.12s;}
+.fchip:hover{background:var(--paper);}
+.fchip.on{background:var(--seal);color:#fff;border-color:var(--seal);}
+
+/* ── 主网格 ── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:24px;
+}
+
+/* 卡片 */
+.gcard{
+  display:flex;flex-direction:column;
+  background:var(--paper);
+  overflow:hidden;
+  transition:transform .18s cubic-bezier(.2,.7,.2,1),
+             box-shadow .18s cubic-bezier(.2,.7,.2,1);
+}
+.gcard:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px -16px rgba(22,20,15,.22);
+}
+
+/* 分类色带 */
+.gcard-band{
+  height:4px;flex:0 0 4px;
+  background:var(--hair);
+}
+.gcard[data-cat="精酿"] .gcard-band{background:var(--gold);}
+.gcard[data-cat="故事"] .gcard-band{background:var(--muted);}
+.gcard[data-cat="思维模型"] .gcard-band,
+.gcard[data-cat="决策"] .gcard-band{background:var(--seal);}
+.gcard[data-cat="思考"] .gcard-band,
+.gcard[data-cat="社会观察"] .gcard-band{background:var(--ink);}
+.gcard[data-cat="随笔"] .gcard-band{background:var(--hair);}
+
+/* 卡片体 */
+.gcard-body{
+  flex:1;display:flex;flex-direction:column;
+  padding:22px 22px 20px;
+}
+
+/* 顶行：分类 + 日期 */
+.gcard-top{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:14px;
+}
+.gcard-cat{
+  font-family:var(--mono);font-weight:700;font-size:.62rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);
+}
+.gcard[data-cat="精酿"] .gcard-cat{color:var(--gold);}
+.gcard[data-cat="思维模型"] .gcard-cat,
+.gcard[data-cat="决策"] .gcard-cat{color:var(--seal);}
+.gcard-dot{width:3px;height:3px;border-radius:50%;background:var(--hair);}
+.gcard-date{font-family:var(--mono);font-size:.68rem;color:var(--muted);
+  letter-spacing:.03em;margin-left:auto;}
+
+/* 标题 */
+.gcard-title{
+  font-family:var(--read);font-weight:700;
+  font-size:1.28rem;line-height:1.35;letter-spacing:.01em;
+  color:var(--ink);text-decoration:none;
+  display:-webkit-box;-webkit-line-clamp:3;
+  -webkit-box-orient:vertical;overflow:hidden;
+  margin:0 0 12px;
+  transition:color .15s;
+}
+.gcard:hover .gcard-title{color:var(--seal);}
+
+/* 摘要 */
+.gcard-sum{
+  font-family:var(--read);font-size:.9rem;line-height:1.75;
+  color:var(--muted);margin:0;
+  display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;
+  flex:1;
+}
+
+/* 底部元数据 */
+.gcard-foot{
+  display:flex;align-items:center;gap:8px;
+  margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--hair);
+  font-family:var(--mono);font-size:.68rem;color:var(--muted);
+}
+.gcard-read-dot{width:5px;height:5px;background:var(--seal);
+  border-radius:50%;flex:0 0 5px;}
+.gcard-go{margin-left:auto;color:var(--seal);font-weight:700;
+  font-size:.82rem;text-decoration:none;
+  transition:letter-spacing .15s;}
+.gcard:hover .gcard-go{letter-spacing:.06em;}
+
+/* 整个卡片是链接 */
+.gcard-link{
+  display:contents;
+}
+a.gcard{text-decoration:none;color:var(--ink);}
+
+/* 响应式 */
+@media(max-width:800px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:520px){
+  .wrap{padding:32px 18px 64px;}
+  .grid{grid-template-columns:1fr;gap:16px;}
+  .page-head{grid-template-columns:1fr;gap:8px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .gcard,.gcard-title,.gcard-go{transition:none!important;}
+  .gcard:hover{transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="note">列表版式 V2 — 匀格画廊 · 3列均等网格 / 分类色带 / 无阴影浮起</div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#">归来</a>
+    <span class="page-title">文章</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="page-head">
+    <h1 class="page-h1">文章</h1>
+    <div class="page-count">
+      <span>共 6 篇</span><br>
+      <span>5 个主题</span>
+    </div>
+  </div>
+
+  <div class="filters">
+    <span class="f-label">筛选</span>
+    <a class="fchip on" href="#">全部</a>
+    <a class="fchip" href="#">精酿</a>
+    <a class="fchip" href="#">故事</a>
+    <a class="fchip" href="#">思维模型</a>
+    <a class="fchip" href="#">决策</a>
+    <a class="fchip" href="#">思考</a>
+    <a class="fchip" href="#">社会观察</a>
+    <a class="fchip" href="#">随笔</a>
+    <a class="fchip" href="#">心理</a>
+    <a class="fchip" href="#">职场</a>
+  </div>
+
+  <div class="grid">
+
+    <a class="gcard" href="#" data-cat="社会观察">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">社会观察</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-21</span>
+        </div>
+        <h2 class="gcard-title">把话聊深的人，都在偷偷做同一件事</h2>
+        <p class="gcard-sum">会聊天不是话多、反应快的天赋，而是一套可以刻意练习的技能——它的全部秘密，是把注意力从"评价这个人"挪到"和他一起把事情往前推"。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 9 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="gcard" href="#" data-cat="思维模型">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">思维模型</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-21</span>
+        </div>
+        <h2 class="gcard-title">从混沌到清晰：我解决问题的5步工具箱</h2>
+        <p class="gcard-sum">遇到复杂难题时，我用一套固定的5步框架：5 Why锁定真问题、MECE结构化拆解、诊断核心瓶颈、效益-成本矩阵排序方案、PDCA闭环执行。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 7 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="gcard" href="#" data-cat="精酿">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">精酿</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-20</span>
+        </div>
+        <h2 class="gcard-title">一杯啤酒里，藏着半部文明史</h2>
+        <p class="gcard-sum">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 6 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="gcard" href="#" data-cat="决策">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">决策</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-20</span>
+        </div>
+        <h2 class="gcard-title">信息永远不全，但判断不能等</h2>
+        <p class="gcard-sum">好决策不是赌一次完美，而是在信息不全、脑子还带着偏见的现实里，先粗糙地开始，再用一套动作持续逼近——守住下限、算准停手的点、提防自己看走眼。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 7 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="gcard" href="#" data-cat="思考">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">思考</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-20</span>
+        </div>
+        <h2 class="gcard-title">当你能叫出它的名字，它就管不住你了</h2>
+        <p class="gcard-sum">那些心理效应最大的用处，不是让你显得懂行，而是给情绪的暗箱命名——当你能说出"我现在是哪种状态"，你就从被它驱动，变成了观察者。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 5 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="gcard" href="#" data-cat="随笔">
+      <div class="gcard-band"></div>
+      <div class="gcard-body">
+        <div class="gcard-top">
+          <span class="gcard-cat">随笔</span>
+          <span class="gcard-dot"></span>
+          <span class="gcard-date">2026-06-19</span>
+        </div>
+        <h2 class="gcard-title">你好，归来</h2>
+        <p class="gcard-sum">第一篇文章，关于为什么建这个站。</p>
+        <div class="gcard-foot">
+          <span class="gcard-read-dot"></span>
+          <span>读 2 分钟</span>
+          <span class="gcard-go">阅读 →</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+</div>
+</body>
+</html>

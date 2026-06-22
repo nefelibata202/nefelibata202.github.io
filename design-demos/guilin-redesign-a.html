@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归图 · 个人导览 · 方案A</title>
+<style>
+/* ── 归来设计令牌 ── */
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.16);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --on-gold: #16140F;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-sm: 3px 3px 0 var(--line);
+  --shadow-lg: 9px 9px 0 var(--line);
+  --maxw: 1080px;
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --zh: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  --lat: "Archivo", "Smiley Sans Oblique", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.16); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D; --on-gold: #16140F;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--zh); line-height: 1.7;
+  text-wrap: pretty; overflow-x: clip;
+}
+
+/* ── 布局 ── */
+.guide-layout {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 80px 28px 120px;
+}
+
+/* ── 页头 ── */
+.guide-header {
+  margin-bottom: 56px;
+}
+.guide-header h1 {
+  font-family: var(--disp);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.guide-header p {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 480px;
+}
+
+/* ── 三列卡片网格 ── */
+.island-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ── 岛屿卡片 ── */
+.island-card {
+  background: var(--paper);
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 32px 28px;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+.island-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--line);
+}
+.island-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+/* 顶部 accent 条 */
+.island-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+}
+.island-card.time::before { background: var(--gold); }
+.island-card.sources::before { background: var(--seal); }
+.island-card.gaps::before { background: var(--ink); }
+
+/* 图标区 */
+.island-icon {
+  width: 48px; height: 48px;
+  border: 2.5px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  background: var(--soft);
+}
+
+/* 标题 */
+.island-card h2 {
+  font-family: var(--disp);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.island-card .subtitle {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+
+/* 内容列表 */
+.island-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.island-list li {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  background: var(--soft);
+  border: 1.5px solid var(--hair);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.island-list li .num {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  min-width: 20px;
+  text-align: right;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+.island-list li .tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--hair);
+  padding: 1px 6px;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 展开详情 */
+.island-detail {
+  display: none;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--hair);
+}
+.island-card.expanded .island-detail {
+  display: block;
+}
+.island-detail h3 {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.island-detail p {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ── 底部签名 ── */
+.guide-footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 2px solid var(--hair);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 900px) {
+  .island-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .guide-layout { padding: 48px 20px 80px; }
+}
+</style>
+</head>
+<body>
+
+<div class="guide-layout">
+
+  <!-- 页头 -->
+  <header class="guide-header">
+    <h1>归图</h1>
+    <p>个人知识导览 — 碎片时间的利用、高质量信息源、以及待补的知识缺口</p>
+  </header>
+
+  <!-- 三列卡片 -->
+  <div class="island-grid">
+
+    <!-- 岛1：碎片化时间 -->
+    <div class="island-card time" onclick="this.classList.toggle('expanded')">
+      <div class="island-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <h2>碎片时间</h2>
+      <div class="subtitle">FRAGMENTED TIME</div>
+      <ul class="island-list">
+        <li><span class="num">01</span>听英语播客（ESL Pod、BBC 6 Minutes）<span class="tag">英语</span></li>
+        <li><span class="num">02</span>读一篇 Pocket 收藏短文章<span class="tag">阅读</span></li>
+        <li><span class="num">03</span>记一条 flomo 碎片想法<span class="tag">输出</span></li>
+        <li><span class="num">04</span>听日语听力 + 出去走走<span class="tag">日语</span></li>
+        <li><span class="num">05</span>刷一条行业短视频（学习竞品）<span class="tag">运营</span></li>
+      </ul>
+      <div class="island-detail">
+        <h3>为什么重视碎片时间</h3>
+        <p>每天通勤、等咖啡、睡前 15 分钟……碎片时间加起来每天超过 2 小时。与其刷无意义的内容，不如用来积累微小的进步。语言学习、行业观察、想法记录——都是不需要大块时间就能做的事。</p>
+      </div>
+    </div>
+
+    <!-- 岛2：高质量信息源 -->
+    <div class="island-card sources" onclick="this.classList.toggle('expanded')">
+      <div class="island-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <h2>信息源</h2>
+      <div class="subtitle">INFO SOURCES</div>
+      <ul class="island-list">
+        <li><span class="num">01</span>Morning Brew · Stratechery · Not Boring<span class="tag">Newsletter</span></li>
+        <li><span class="num">02</span>Lex Fridman · Huberman Lab · 商业就是这样<span class="tag">Podcast</span></li>
+        <li><span class="num">03</span>《思考，快与慢》《原则》《穷查理宝典》<span class="tag">书籍</span></li>
+        <li><span class="num">04</span>少数派 · Hacker News · Product Hunt<span class="tag">网站</span></li>
+        <li><span class="num">05</span>孟岩 · Lillian Li · Shane Parrish<span class="tag">人物</span></li>
+      </ul>
+      <div class="island-detail">
+        <h3>信息筛选原则</h3>
+        <p>信息源的质量比数量重要。每个领域只跟 1-2 个最优质的信息源，而不是刷海量内容。Newsletter 优于社交媒体，长文优于短内容，有深度的对话优于碎片化的观点。</p>
+      </div>
+    </div>
+
+    <!-- 岛3：知识库缺口 -->
+    <div class="island-card gaps" onclick="this.classList.toggle('expanded')">
+      <div class="island-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h2>知识缺口</h2>
+      <div class="subtitle">KNOWLEDGE GAPS</div>
+      <ul class="island-list">
+        <li><span class="num">01</span>数据分析基础（SQL、Excel 高级）<span class="tag">进行中</span></li>
+        <li><span class="num">02</span>认知科学 / 行为经济学入门<span class="tag">待开始</span></li>
+        <li><span class="num">03</span>前端开发基础（HTML/CSS/JS）<span class="tag">待开始</span></li>
+        <li><span class="num">04</span>财务知识（读懂财报）<span class="tag">待开始</span></li>
+        <li><span class="num">05</span>日语 N2 → N1 进阶<span class="tag">进行中</span></li>
+      </ul>
+      <div class="island-detail">
+        <h3>为什么记录缺口</h3>
+        <p>知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。每补上一个缺口，认知边界就扩大一点。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部签名 -->
+  <footer class="guide-footer">
+    <span>归图 · 个人导览</span>
+    <span>2026</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

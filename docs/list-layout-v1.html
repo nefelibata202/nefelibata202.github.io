@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>列表版式 V1 — 档案登记册</title>
+<style>
+:root {
+  --bg: #F1EBDB; --paper: #FCF8EE; --soft: #F4EEDD;
+  --ink: #16140F; --line: #16140F;
+  --hair: rgba(22,20,15,.13); --muted: #6E685A;
+  --gold: #F2B312; --seal: #C8362B; --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen","Songti SC","Noto Serif SC",Georgia,serif;
+  --disp: "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,monospace;
+  --zh: "PingFang SC","Noto Sans SC",sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#14120C;--paper:#1E1B13;--soft:#211E15;
+  --ink:#F2ECDC;--line:#F2ECDC;--hair:rgba(242,236,220,.13);
+  --muted:#9A9382;--gold:#F2B312;--seal:#E45A4D;
+}}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);}
+
+/* ── 标注 ── */
+.note{position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--seal);color:#fff;
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-align:center;padding:6px;}
+
+/* ── 简化导航 ── */
+.nav{border-bottom:3px solid var(--line);background:var(--bg);
+  position:sticky;top:0;z-index:100;}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;height:56px;gap:0;}
+.brand{font-family:var(--mono);font-weight:700;font-size:.82rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink);
+  text-decoration:none;padding-right:20px;
+  border-right:2px solid var(--hair);margin-right:20px;}
+.brand:hover{color:var(--seal);}
+.page-title{font-family:var(--disp);font-weight:700;font-size:1.1rem;color:var(--ink);}
+
+/* ────────────────────────────────────────────────────
+   版式 V1：档案登记册
+   理念：把文章当档案——按月归档，行式扫描，密度高
+   特征：月份大标题分组 / 每条一横排（分类 · 标题 · 读时）/
+         无摘要 / hover 整行高亮 / 极速扫视
+   ──────────────────────────────────────────────────── */
+.wrap{max-width:1080px;margin:0 auto;padding:44px 32px 88px;}
+
+/* 页面大标题 */
+.page-head{margin-bottom:32px;}
+.page-h1{font-family:var(--disp);font-weight:700;
+  font-size:clamp(2.4rem,6vw,3.4rem);
+  letter-spacing:.03em;margin:0 0 6px;line-height:1;}
+.page-sub{font-family:var(--mono);font-size:.78rem;color:var(--muted);
+  letter-spacing:.06em;}
+
+/* 筛选栏 */
+.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  margin-bottom:36px;padding-bottom:18px;
+  border-bottom:2.5px solid var(--line);}
+.f-label{font-family:var(--mono);font-weight:700;font-size:.64rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+  padding-right:10px;border-right:1.5px solid var(--hair);}
+.fchip{font-family:var(--mono);font-weight:700;font-size:.74rem;
+  color:var(--ink);text-decoration:none;padding:5px 13px;
+  border:1.5px solid var(--hair);background:var(--paper);
+  transition:.12s;}
+.fchip:hover{background:var(--soft);border-color:var(--muted);}
+.fchip.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+
+/* 档案分组 */
+.archive-group{margin-bottom:40px;}
+
+/* 月份标题 */
+.month-header{
+  display:flex;align-items:baseline;gap:14px;
+  margin-bottom:0;padding:10px 0 10px;
+  border-top:3px solid var(--line);
+  position:sticky;top:56px;background:var(--bg);z-index:10;
+}
+.month-zh{font-family:var(--disp);font-weight:700;font-size:1.3rem;
+  letter-spacing:.04em;color:var(--ink);}
+.month-en{font-family:var(--mono);font-size:.68rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;}
+.month-count{margin-left:auto;font-family:var(--mono);font-size:.68rem;
+  color:var(--muted);letter-spacing:.04em;}
+
+/* 档案行 */
+.archive-row{
+  display:grid;
+  grid-template-columns:80px 140px 1fr auto;
+  gap:0 20px;
+  align-items:center;
+  padding:13px 12px;
+  border-bottom:1px solid var(--hair);
+  text-decoration:none;color:var(--ink);
+  position:relative;
+  transition:background .12s;
+}
+.archive-row::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:0;background:var(--seal);transition:width .12s;
+}
+.archive-row:hover{background:var(--paper);}
+.archive-row:hover::before{width:4px;}
+.archive-row:last-child{border-bottom:none;}
+
+.row-date{font-family:var(--mono);font-size:.74rem;color:var(--muted);
+  letter-spacing:.02em;white-space:nowrap;}
+.row-cat{
+  font-family:var(--mono);font-weight:700;font-size:.64rem;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 9px;border:1.5px solid currentColor;
+  white-space:nowrap;align-self:center;
+  color:var(--muted);
+}
+.row-cat[data-cat="精酿"]{color:var(--gold);border-color:var(--gold);}
+.row-cat[data-cat="故事"]{color:var(--muted);}
+.row-cat[data-cat="思维模型"]{color:var(--seal);border-color:var(--seal);}
+.row-cat[data-cat="决策"]{color:var(--seal);border-color:var(--seal);}
+.row-cat[data-cat="思考"]{color:var(--ink);}
+.row-cat[data-cat="社会观察"]{color:var(--ink);}
+.row-cat[data-cat="随笔"]{color:var(--muted);}
+
+.row-title{font-family:var(--read);font-weight:700;font-size:1.18rem;
+  line-height:1.3;letter-spacing:.01em;}
+.archive-row:hover .row-title{color:var(--seal);}
+
+.row-time{font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  white-space:nowrap;letter-spacing:.02em;}
+
+/* 摘要（hover 展开） */
+.row-sum{
+  grid-column:3;font-family:var(--read);font-size:.9rem;
+  line-height:1.7;color:var(--muted);
+  max-height:0;overflow:hidden;
+  transition:max-height .2s ease, margin .2s ease;
+  margin:0;
+}
+.archive-row:hover .row-sum{max-height:5em;margin-top:4px;}
+
+/* 年份分隔（可选） */
+.year-sep{
+  font-family:var(--disp);font-weight:700;font-size:3rem;
+  color:var(--hair);letter-spacing:.08em;
+  margin:20px 0 0;line-height:1;
+  pointer-events:none;user-select:none;
+}
+
+/* ── 统计行 ── */
+.stats-row{
+  display:flex;gap:32px;margin-bottom:32px;
+  padding:16px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+}
+.stat{text-align:center;}
+.stat-n{font-family:var(--disp);font-weight:700;font-size:2rem;
+  color:var(--seal);display:block;line-height:1;}
+.stat-l{font-family:var(--mono);font-size:.62rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:4px;}
+
+/* 响应式 */
+@media(max-width:760px){
+  .archive-row{grid-template-columns:100px 1fr auto;gap:0 12px;}
+  .row-date{display:none;}
+}
+@media(max-width:560px){
+  .wrap{padding:36px 18px 64px;}
+  .archive-row{grid-template-columns:1fr auto;gap:0 12px;}
+  .row-cat{display:none;}
+  .stats-row{gap:16px;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="note">列表版式 V1 — 档案登记册 · 月份分组 / 行式扫描 / hover 展开摘要</div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#">归来</a>
+    <span class="page-title">文章</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="page-head">
+    <h1 class="page-h1">文章</h1>
+    <p class="page-sub">共 6 篇 · 2026 年起</p>
+  </div>
+
+  <!-- 统计 -->
+  <div class="stats-row">
+    <div class="stat"><span class="stat-n">6</span><span class="stat-l">篇文章</span></div>
+    <div class="stat"><span class="stat-n">5</span><span class="stat-l">个主题</span></div>
+    <div class="stat"><span class="stat-n">43</span><span class="stat-l">分钟阅读</span></div>
+  </div>
+
+  <!-- 筛选 -->
+  <div class="filters">
+    <span class="f-label">标签</span>
+    <a class="fchip on" href="#">全部</a>
+    <a class="fchip" href="#">精酿</a>
+    <a class="fchip" href="#">故事</a>
+    <a class="fchip" href="#">思维模型</a>
+    <a class="fchip" href="#">决策</a>
+    <a class="fchip" href="#">思考</a>
+    <a class="fchip" href="#">社会观察</a>
+    <a class="fchip" href="#">随笔</a>
+    <a class="fchip" href="#">心理</a>
+    <a class="fchip" href="#">职场</a>
+  </div>
+
+  <!-- 档案分组：2026年06月 -->
+  <div class="archive-group">
+
+    <div class="month-header">
+      <span class="month-zh">2026年06月</span>
+      <span class="month-en">June 2026</span>
+      <span class="month-count">6 篇</span>
+    </div>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-21</span>
+      <span class="row-cat" data-cat="社会观察">社会观察</span>
+      <span class="row-title">把话聊深的人，都在偷偷做同一件事</span>
+      <span class="row-time">读 9 分钟</span>
+      <span class="row-sum">会聊天不是话多、反应快的天赋，而是一套可以刻意练习的技能——它的全部秘密，是把注意力从"评价这个人"挪到"和他一起把事情往前推"。</span>
+    </a>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-21</span>
+      <span class="row-cat" data-cat="思维模型">思维模型</span>
+      <span class="row-title">从混沌到清晰：我解决问题的5步工具箱</span>
+      <span class="row-time">读 7 分钟</span>
+      <span class="row-sum">遇到复杂难题时，我用一套固定的5步框架：5 Why锁定真问题、MECE结构化拆解、诊断核心瓶颈、效益-成本矩阵排序方案、PDCA闭环执行。</span>
+    </a>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-20</span>
+      <span class="row-cat" data-cat="精酿">精酿</span>
+      <span class="row-title">一杯啤酒里，藏着半部文明史</span>
+      <span class="row-time">读 6 分钟</span>
+      <span class="row-sum">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。</span>
+    </a>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-20</span>
+      <span class="row-cat" data-cat="决策">决策</span>
+      <span class="row-title">信息永远不全，但判断不能等</span>
+      <span class="row-time">读 7 分钟</span>
+      <span class="row-sum">好决策不是赌一次完美，而是在信息不全、脑子还带着偏见的现实里，先粗糙地开始，再用一套动作持续逼近。</span>
+    </a>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-20</span>
+      <span class="row-cat" data-cat="思考">思考</span>
+      <span class="row-title">当你能叫出它的名字，它就管不住你了</span>
+      <span class="row-time">读 5 分钟</span>
+      <span class="row-sum">那些心理效应最大的用处，不是让你显得懂行，而是给情绪的暗箱命名。</span>
+    </a>
+
+    <a class="archive-row" href="#">
+      <span class="row-date">06-19</span>
+      <span class="row-cat" data-cat="随笔">随笔</span>
+      <span class="row-title">你好，归来</span>
+      <span class="row-time">读 2 分钟</span>
+      <span class="row-sum">第一篇文章，关于为什么建这个站。</span>
+    </a>
+
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>版式 V2 — 报馆·编辑台</title>
+<style>
+/* ── 品牌令牌 ── */
+:root {
+  --bg: #F1EBDB;
+  --paper: #FCF8EE;
+  --soft: #F4EEDD;
+  --ink: #16140F;
+  --line: #16140F;
+  --hair: rgba(22,20,15,.14);
+  --muted: #6E685A;
+  --gold: #F2B312;
+  --seal: #C8362B;
+  --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --disp: "Smiley Sans Oblique", "PingFang SC", "Noto Sans SC", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --zh: "PingFang SC", "Noto Sans SC", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --line: #F2ECDC;
+    --hair: rgba(242,236,220,.14); --muted: #9A9382;
+    --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{font-size:17px;-webkit-font-smoothing:antialiased;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);line-height:1.7;}
+
+/* ──────────────────────────────────────────────
+   版式 V2：报馆·编辑台
+   核心理念：纸质杂志的重量感 + 清晰信息层级
+   特征：大标题区 / 带号章节标题 / 抽出引语 / 底部卡片式延伸阅读
+   ────────────────────────────────────────────── */
+
+/* 标注条 */
+.design-note {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--ink); color: var(--bg);
+  font-family: var(--mono); font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-align: center; padding: 6px 16px;
+}
+
+/* 顶部导航栏（简化） */
+.site-nav {
+  border-bottom: 2px solid var(--ink);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  max-width: 960px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; gap: 0;
+  height: 52px;
+}
+.nav-brand {
+  font-family: var(--disp); font-weight: 700; font-size: 1.05rem;
+  letter-spacing: .12em; color: var(--ink); text-decoration: none;
+  padding-right: 20px; border-right: 2px solid var(--hair); margin-right: 20px;
+}
+.nav-crumb {
+  font-family: var(--mono); font-size: .72rem; color: var(--muted);
+  letter-spacing: .04em;
+}
+.nav-crumb a { color: var(--muted); text-decoration: none; }
+.nav-crumb a:hover { color: var(--seal); }
+.nav-crumb .sep { margin: 0 6px; opacity: .5; }
+.nav-tag {
+  margin-left: auto; font-family: var(--mono); font-weight: 700;
+  font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--seal); background: var(--soft);
+  border: 1.5px solid var(--seal); padding: 3px 10px;
+  text-decoration: none;
+}
+.nav-tag:hover { background: var(--seal); color: var(--paper); }
+
+/* ── 文章头部：报头式大版 ── */
+.article-masthead {
+  max-width: 960px; margin: 0 auto; padding: 48px 32px 0;
+  border-bottom: 3px solid var(--ink);
+}
+
+/* 分类 + 日期行 */
+.mast-topline {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+}
+.mast-cat {
+  display: inline-block; font-family: var(--mono); font-weight: 700;
+  font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+  background: var(--seal); color: #fff;
+  padding: 4px 12px;
+}
+.mast-date {
+  font-family: var(--mono); font-size: .74rem; color: var(--muted);
+  letter-spacing: .04em;
+}
+.mast-read {
+  margin-left: auto; font-family: var(--mono); font-size: .74rem;
+  color: var(--muted); letter-spacing: .04em;
+}
+
+/* 标题大字 */
+.mast-title {
+  font-family: var(--disp); font-weight: 700;
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  line-height: 1.1; letter-spacing: .01em;
+  margin: 0 0 20px; color: var(--ink);
+  max-width: 18em;
+}
+
+/* 摘要栏 */
+.mast-deck {
+  display: grid; grid-template-columns: 4px 1fr;
+  gap: 0 16px; margin-bottom: 28px; align-items: start;
+}
+.mast-deck-bar { background: var(--seal); width: 4px; }
+.mast-deck-text {
+  font-family: var(--read); font-size: 1.06rem; line-height: 1.8;
+  color: var(--muted); margin: 0;
+}
+
+/* ── 正文区 ── */
+.article-content {
+  max-width: 960px; margin: 0 auto;
+  padding: 40px 32px 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 0 56px;
+}
+
+.prose-main { min-width: 0; }
+
+/* 正文排版 */
+.prose {
+  font-family: var(--read); font-size: 1.05rem;
+  line-height: 2; letter-spacing: .015em;
+}
+.prose p { margin: 0 0 1.4em; }
+
+/* 首字 */
+.prose > p:first-of-type::first-letter {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 3.5rem; line-height: .76;
+  float: left; margin: .05em .14em 0 0;
+  color: var(--seal);
+}
+
+/* 章节标题 — 带数字徽标 */
+.prose h2 {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 1.45rem; color: var(--ink);
+  margin: 2.2em 0 .7em; letter-spacing: .01em;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.prose .h-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; flex: 0 0 28px;
+  background: var(--ink); color: var(--bg);
+  font-family: var(--mono); font-weight: 700; font-size: .7rem;
+  letter-spacing: 0; position: relative; top: 3px;
+}
+
+/* 引用 */
+.prose blockquote {
+  margin: 1.6em 0; padding: 0;
+  border: none; background: none;
+}
+.prose blockquote p {
+  font-family: var(--read); font-style: normal;
+  font-size: 1rem; line-height: 1.9; color: var(--muted);
+  margin: 0; padding: 0 0 0 20px;
+  border-left: 3px solid var(--hair);
+}
+
+/* 抽出引语（pull quote）— 全宽突出 */
+.pull-quote {
+  margin: 2em -32px; padding: 28px 32px;
+  background: var(--ink); color: var(--bg);
+  position: relative;
+}
+.pull-quote::before {
+  content: '\201C';
+  font-family: var(--disp); font-size: 6rem; line-height: 0;
+  color: var(--gold); position: absolute;
+  top: 32px; left: 24px; opacity: .6;
+}
+.pull-quote p {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 1.45rem; line-height: 1.4; letter-spacing: .02em;
+  margin: 0; position: relative; z-index: 1;
+  padding-left: 40px;
+}
+.pull-quote cite {
+  display: block; font-family: var(--mono); font-size: .7rem;
+  letter-spacing: .08em; color: var(--gold);
+  margin-top: 10px; padding-left: 40px; font-style: normal;
+}
+
+.prose hr { border: none; border-top: 1px solid var(--hair); margin: 2.6em 0; }
+
+/* 内联链接 */
+.prose a {
+  color: var(--seal); text-decoration: none;
+  border-bottom: 1px dashed var(--seal);
+}
+.prose a:hover { border-bottom-style: solid; }
+
+/* ── 右侧：文章信息栏 ── */
+.article-aside {
+  position: sticky; top: 72px; align-self: start;
+  display: flex; flex-direction: column; gap: 0;
+}
+
+/* 作者块 */
+.aside-author {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 0 18px; border-bottom: 1px solid var(--hair);
+  margin-bottom: 18px;
+}
+.author-avatar {
+  width: 44px; height: 44px; flex: 0 0 44px;
+  background: var(--seal); color: var(--paper);
+  font-family: var(--disp); font-weight: 700; font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.author-name { font-family: var(--read); font-weight: 700; font-size: .96rem; }
+.author-sub { font-family: var(--mono); font-size: .68rem; color: var(--muted); letter-spacing: .04em; }
+
+/* 标签 */
+.aside-section {
+  margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--hair);
+}
+.aside-label {
+  font-family: var(--mono); font-weight: 700; font-size: .6rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px; display: block;
+}
+.aside-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.aside-tag {
+  font-family: var(--mono); font-size: .68rem; color: var(--ink);
+  text-decoration: none; border: 1px solid var(--hair);
+  padding: 3px 9px; transition: .15s;
+}
+.aside-tag:hover { border-color: var(--seal); color: var(--seal); }
+
+/* 目录（精简） */
+.aside-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.aside-toc a {
+  display: block; font-family: var(--read); font-size: .88rem;
+  color: var(--muted); text-decoration: none; line-height: 1.4;
+  transition: color .15s;
+}
+.aside-toc a:hover { color: var(--seal); }
+
+/* ── 延伸阅读（全宽，文章底部） ── */
+.further-reading {
+  max-width: 960px; margin: 64px auto 0; padding: 0 32px 64px;
+  border-top: 3px solid var(--ink);
+}
+.further-reading .fr-head {
+  display: flex; align-items: baseline; gap: 14px; margin: 24px 0 24px;
+}
+.further-reading .fr-title {
+  font-family: var(--disp); font-weight: 700; font-size: 1.2rem;
+  letter-spacing: .02em;
+}
+.further-reading .fr-sub {
+  font-family: var(--mono); font-size: .7rem; color: var(--muted);
+  letter-spacing: .06em;
+}
+.fr-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.fr-card {
+  display: block; text-decoration: none; color: var(--ink);
+  padding: 18px 18px 16px;
+  border: 1.5px solid var(--hair);
+  transition: border-color .15s, background .15s;
+}
+.fr-card:hover { border-color: var(--seal); background: var(--paper); }
+.fr-card-cat {
+  font-family: var(--mono); font-size: .62rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--seal); margin-bottom: 8px; display: block;
+}
+.fr-card-title {
+  font-family: var(--read); font-weight: 700; font-size: 1.02rem;
+  line-height: 1.4; display: block;
+}
+.fr-card-meta {
+  font-family: var(--mono); font-size: .68rem; color: var(--muted);
+  margin-top: 10px; letter-spacing: .03em; display: block;
+}
+.fr-backlinks {
+  margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--hair);
+}
+.fr-bl-title {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px;
+}
+.fr-bl-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-bl-tag {
+  display: inline-block; text-decoration: none;
+  font-family: var(--read); font-size: .88rem; color: var(--muted);
+  border-bottom: 1px dashed var(--hair); transition: .15s;
+}
+.fr-bl-tag::before { content: '← '; font-family: var(--mono); color: var(--seal); font-size: .76rem; }
+.fr-bl-tag:hover { color: var(--seal); border-color: var(--seal); }
+
+/* 响应式 */
+@media (max-width: 800px) {
+  .article-content { grid-template-columns: 1fr; }
+  .article-aside { position: static; }
+  .fr-grid { grid-template-columns: 1fr 1fr; }
+  .pull-quote { margin: 2em -18px; padding: 22px 18px; }
+}
+@media (max-width: 560px) {
+  .article-masthead, .article-content, .further-reading { padding-left: 18px; padding-right: 18px; }
+  .fr-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="design-note">版式 V2 — 报馆·编辑台 · 大报头 / 带徽章节标题 / 抽出引语 / 卡片式延伸阅读</div>
+
+<!-- 导航 -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">归来</a>
+    <span class="nav-crumb">
+      <a href="#">文章</a>
+      <span class="sep">/</span>
+      <span>一杯啤酒里，藏着半部文明史</span>
+    </span>
+    <a class="nav-tag" href="#">精酿</a>
+  </div>
+</nav>
+
+<!-- 报头 -->
+<div class="article-masthead">
+  <div class="mast-topline">
+    <span class="mast-cat">故事</span>
+    <span class="mast-date">2026-06-20</span>
+    <span class="mast-read">约 3000 字 · 8 分钟</span>
+  </div>
+  <h1 class="mast-title">一杯啤酒里，藏着半部文明史</h1>
+  <div class="mast-deck">
+    <div class="mast-deck-bar"></div>
+    <p class="mast-deck-text">安全的水、修道院的液体面包、一条苛刻的法律、几次意外——每一种啤酒风格背后，都站着一段具体的历史。把它们串起来看，你会得到一条很奇妙的线索：啤酒不是饮料史的边角料，它差不多就是人类文明的伴生物。</p>
+  </div>
+</div>
+
+<!-- 内容区 -->
+<div class="article-content">
+  <main class="prose-main">
+    <article class="prose">
+      <p>我以前一直以为，啤酒的风格只是口味的偶然：有人爱苦的，有人爱黑的，仅此而已。后来翻了几本资料才发现，完全不是这么回事。一杯啤酒的颜色、苦度、酒精度，背后几乎都拴着一段地理、贸易，或者阶级的真实故事。下面这几段，是我现在最爱在酒桌上讲的。</p>
+
+      <h2><span class="h-badge">01</span>古人拿酒当水喝，不是贪杯，是怕死</h2>
+
+      <p>先说一个反常识的：古代欧洲人从国王到刚出生的婴儿，几乎天天喝啤酒，不是因为嘴馋，而是因为喝水真的会死人。那时候没有自来水消毒，河水里满是细菌和寄生虫。</p>
+
+      <p>酿啤酒必须把麦汁彻底煮沸，误打误撞就杀光了水里的细菌；再加上酒精和啤酒花本身的抑菌作用，病菌很难存活。在长达几百年的时间里，啤酒在欧洲实际上扮演了<a href="#">"安全饮用水"</a>的角色。</p>
+
+      <div class="pull-quote">
+        <p>要不是有这道天然的"净水器"，欧洲人口可能在几场大瘟疫里就所剩无几了。</p>
+        <cite>— 安全的水，酿造史的起点</cite>
+      </div>
+
+      <h2><span class="h-badge">02</span>断片的高度数啤酒，是苦修的修士发明的</h2>
+
+      <p>那种能把人喝到微醺的高度数"断片酒"，最早竟是一群不近女色、闭关苦修的天主教修士搞出来的。中世纪有"大斋期"，修士必须绝食。有人钻了个空子：做出营养丰富、热量极高的啤酒，称为<a href="#">"液体面包"</a>，靠它扛过绝食期。</p>
+
+      <blockquote>
+        <p>为了区分浓淡，修士会在酒桶上画十字：两个十字是双料（Dubbel），三个十字是三料（Tripel）。那股迷人的果香，根本没加水果，全是酵母在高温发酵时自然产生的酯香。</p>
+      </blockquote>
+
+      <h2><span class="h-badge">03</span>一条苛刻的法律，意外锁死了一种基因</h2>
+
+      <p>1516 年，巴伐利亚公爵颁了一条<a href="#">《啤酒纯净法》</a>，规定啤酒只能用三种原料——水、大麦麦芽、啤酒花。这条看似抠门的法律，成了全世界现存最古老的食品法规之一。正是"只用四种原料"的克制，反而把德式啤酒对水、麦、花、酵母的讲究逼到了极致。</p>
+
+      <h2><span class="h-badge">04</span>一杯被市民"砸"出来的金色革命</h2>
+
+      <p>我们今天喝的绝大多数清亮金黄的工业拉格，血统都能追到 1842 年的捷克小城。当地市民直接砸掉了酒厂的橡木桶，施压政府请来巴伐利亚酿酒师，酿出一款酒体通透、色泽金黄的<a href="#">皮尔森</a>。恰好赶上透明玻璃杯普及和铁路兴起，这杯酒走出小城，火遍世界。</p>
+
+      <h2><span class="h-badge">05</span>两次意外：IPA 和世涛</h2>
+
+      <p>满世界的网红 <a href="#">IPA</a>，是大航海时代酒厂老板往桶里疯狂塞啤酒花防腐的意外——运到印度一开桶，反而炸出了热带水果和松针的香气，苦得提神醒脑。</p>
+
+      <p>而那杯黑乎乎像中药的<a href="#">世涛</a>，当年是伦敦码头苦力的"快乐水"：几种便宜剩酒混在一起，加进烤得焦黑的麦芽掩盖瑕疵，结果带出了咖啡和黑巧克力焦香，在工人里彻底爆火。</p>
+
+      <h2><span class="h-badge">06</span>余味</h2>
+
+      <p>从一杯安全的水，到修道院的液体面包，到一条抠门的法律，再到几次哭笑不得的意外——啤酒风格的演变，从来不是口味的偶然，而是水质、气候、保存技术、贸易路线、税法和阶级需求共同塑形的结果。</p>
+
+      <p>读懂一杯啤酒，差不多就读懂了一段地方史。下次端起酒杯，不妨多看它两眼。</p>
+
+      <hr>
+    </article>
+  </main>
+
+  <!-- 右侧信息栏 -->
+  <aside class="article-aside">
+    <div class="aside-author">
+      <div class="author-avatar">归</div>
+      <div>
+        <div class="author-name">Evan</div>
+        <div class="author-sub">归来作者</div>
+      </div>
+    </div>
+
+    <div class="aside-section">
+      <span class="aside-label">本文标签</span>
+      <div class="aside-tags">
+        <a class="aside-tag" href="#">精酿</a>
+        <a class="aside-tag" href="#">故事</a>
+        <a class="aside-tag" href="#">历史</a>
+      </div>
+    </div>
+
+    <div class="aside-section">
+      <span class="aside-label">章节</span>
+      <ol class="aside-toc">
+        <li><a href="#">01 — 古人拿酒当水喝</a></li>
+        <li><a href="#">02 — 修士的液体面包</a></li>
+        <li><a href="#">03 — 苛刻的法律</a></li>
+        <li><a href="#">04 — 金色革命</a></li>
+        <li><a href="#">05 — IPA 和世涛</a></li>
+        <li><a href="#">06 — 余味</a></li>
+      </ol>
+    </div>
+  </aside>
+</div>
+
+<!-- 底部：延伸阅读 -->
+<div class="further-reading">
+  <div class="fr-head">
+    <span class="fr-title">延伸阅读</span>
+    <span class="fr-sub">来自归来文章库</span>
+  </div>
+  <div class="fr-grid">
+    <a class="fr-card" href="#">
+      <span class="fr-card-cat">思维模型</span>
+      <span class="fr-card-title">信息永远不全，但判断不能等</span>
+      <span class="fr-card-meta">2026-06-20 · 决策</span>
+    </a>
+    <a class="fr-card" href="#">
+      <span class="fr-card-cat">故事</span>
+      <span class="fr-card-title">修道院啤酒与液体面包</span>
+      <span class="fr-card-meta">数字花园笔记</span>
+    </a>
+    <a class="fr-card" href="#">
+      <span class="fr-card-cat">历史</span>
+      <span class="fr-card-title">德国啤酒纯净法 1516</span>
+      <span class="fr-card-meta">数字花园笔记</span>
+    </a>
+  </div>
+  <div class="fr-backlinks">
+    <div class="fr-bl-title">反向链接（3）</div>
+    <div class="fr-bl-list">
+      <a class="fr-bl-tag" href="#">古代啤酒作为安全饮用水</a>
+      <a class="fr-bl-tag" href="#">皮尔森的诞生</a>
+      <a class="fr-bl-tag" href="#">IPA的由来</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章列表 — Asymmetric Editorial Flow</title>
+<style>
+/* ── 品牌令牌 ── */
+:root {
+  --bg:    #F1EBDB;
+  --paper: #FCF8EE;
+  --soft:  #F4EEDD;
+  --ink:   #16140F;
+  --hair:  rgba(22,20,15,.12);
+  --muted: #6E685A;
+  --gold:  #F2B312;
+  --seal:  #C8362B;
+  --on-gold: #16140F;
+  --read: "LXGW WenKai GB Screen","Songti SC","Noto Serif SC",Georgia,serif;
+  --disp: "Smiley Sans Oblique","PingFang SC","Noto Sans SC",sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,monospace;
+  --zh:   "PingFang SC","Noto Sans SC",sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120C; --paper: #1E1B13; --soft: #211E15;
+    --ink: #F2ECDC; --hair: rgba(242,236,220,.12);
+    --muted: #9A9382; --gold: #F2B312; --seal: #E45A4D;
+  }
+}
+
+*,*::before,*::after { box-sizing: border-box; }
+html { font-size: 17px; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--zh); line-height: 1.7; }
+
+/* ══════════════════════════════════════════════
+   ASYMMETRIC EDITORIAL FLOW — 文章列表
+   核心：无卡片边框。负空间 + 髮丝线 = 容器。
+   每个区块用不同列比例，产生非重复节奏。
+   ════════════════════════════════════════════ */
+
+/* ── 导航 ── */
+.site-nav {
+  border-bottom: 1px solid var(--hair);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  max-width: 1080px; margin: 0 auto; padding: 0 40px;
+  display: flex; align-items: center; height: 54px; gap: 0;
+}
+.nav-brand {
+  font-family: var(--read); font-weight: 700; font-size: 1.08rem;
+  letter-spacing: .08em; color: var(--ink); text-decoration: none;
+  padding-right: 22px; border-right: 1px solid var(--hair); margin-right: 22px;
+  transition: color .15s;
+}
+.nav-brand:hover { color: var(--seal); }
+.nav-links { display: flex; gap: 0; }
+.nav-link {
+  font-family: var(--read); font-size: .9rem; color: var(--muted);
+  text-decoration: none; padding: 0 14px;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  line-height: 54px;
+}
+.nav-link:hover { color: var(--ink); }
+.nav-link.active { color: var(--ink); border-bottom-color: var(--seal); }
+
+/* ── 页面主体 ── */
+.page { max-width: 1080px; margin: 0 auto; padding: 0 40px 100px; }
+
+/* ── 页面标题行 ── */
+.page-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 40px 0 28px;
+}
+.page-h1 {
+  font-family: var(--disp); font-weight: 700;
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  letter-spacing: .03em; margin: 0; line-height: 1;
+}
+.page-count {
+  font-family: var(--mono); font-size: .76rem;
+  color: var(--muted); letter-spacing: .08em;
+}
+
+/* ── 筛选栏（下划线激活，无填充色） ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 0;
+  border-top: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+  padding: 12px 0; margin-bottom: 0;
+  flex-wrap: wrap; row-gap: 6px;
+}
+.filter-label {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-right: 16px; white-space: nowrap;
+}
+.filter-chip {
+  font-family: var(--read); font-size: .88rem;
+  color: var(--muted); text-decoration: none;
+  padding: 2px 12px;
+  border-bottom: 2px solid transparent;
+  transition: color .14s, border-color .14s;
+  white-space: nowrap;
+}
+.filter-chip:hover { color: var(--ink); }
+.filter-chip.on { color: var(--seal); border-bottom-color: var(--seal); }
+
+/* ═══════════════════════════════════════════
+   流式布局区块
+   BLOCK A  → 55 : 45  (最新，最重)
+   BLOCK B  → 37 : 63  (两篇：窄左 + 宽右)
+   BLOCK C  → 全宽单行  (一篇，轻笔触)
+   BLOCK D  → 63 : 37  (两篇：宽左 + 窄右，镜像B)
+   ═══════════════════════════════════════════ */
+
+.editorial-flow { margin-top: 0; }
+
+/* 通用：区块之间的水平分隔 */
+.eblock { border-top: 1px solid var(--hair); }
+
+/* 区块内：竖向分隔用 border-left */
+.eblock__grid { display: grid; }
+
+/* 区块单元格 */
+.ecell {
+  padding: 36px 32px;
+  transition: background .2s;
+}
+.ecell:first-child { padding-left: 0; }
+.ecell:last-child  { padding-right: 0; }
+
+/* 竖分隔：右侧单元格的左边框 */
+.ecell + .ecell { border-left: 1px solid var(--hair); }
+
+/* 链接包装 */
+a.ecell, a.estrip {
+  display: block; text-decoration: none; color: var(--ink);
+}
+
+/* ──────────────────────
+   BLOCK A：55 / 45
+   左：大标题 + 分类+日期
+   右：摘要 + 读时
+   ────────────────────── */
+.block-a .eblock__grid {
+  grid-template-columns: 55fr 45fr;
+}
+
+.a-left {}
+.a-cat {
+  font-family: var(--mono); font-weight: 700; font-size: .64rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--seal); display: block; margin-bottom: 14px;
+}
+.a-title {
+  font-family: var(--disp); font-weight: 700;
+  font-size: clamp(2rem, 3.6vw, 2.8rem);
+  line-height: 1.12; letter-spacing: .01em;
+  margin: 0 0 20px; color: var(--ink);
+  transition: color .15s;
+}
+.a-meta {
+  font-family: var(--mono); font-size: .72rem;
+  color: var(--muted); letter-spacing: .04em;
+}
+
+.a-right {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.a-sum {
+  font-family: var(--read); font-size: 1.02rem;
+  line-height: 1.88; color: var(--muted);
+  margin: 0 0 20px;
+}
+.a-cta {
+  font-family: var(--read); font-size: .9rem; color: var(--seal);
+  display: inline-flex; align-items: center; gap: 6px;
+  border-bottom: 1px solid var(--seal); padding-bottom: 2px;
+  align-self: flex-start;
+  transition: gap .15s;
+}
+
+/* hover 状态：整个 eblock 悬停 */
+.block-a .eblock__grid:hover .a-title { color: var(--seal); }
+.block-a .eblock__grid:hover .a-cta   { gap: 10px; }
+
+/* ──────────────────────
+   BLOCK B：37 / 63
+   左：紧凑（仅标题+元数据）
+   右：宽（标题+摘要）
+   ────────────────────── */
+.block-b .eblock__grid {
+  grid-template-columns: 37fr 63fr;
+}
+
+/* 小格（左）*/
+.b-compact {}
+.bc-cat {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); display: block; margin-bottom: 12px;
+}
+.bc-title {
+  font-family: var(--read); font-weight: 700;
+  font-size: 1.3rem; line-height: 1.35; letter-spacing: .01em;
+  margin: 0 0 16px; color: var(--ink);
+  transition: color .15s;
+}
+.bc-meta {
+  font-family: var(--mono); font-size: .68rem;
+  color: var(--muted); letter-spacing: .03em;
+}
+a.ecell:hover .bc-title { color: var(--seal); }
+
+/* 大格（右）*/
+.b-wide {}
+.bw-cat {
+  font-family: var(--mono); font-weight: 700; font-size: .62rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--seal); display: block; margin-bottom: 12px;
+}
+.bw-title {
+  font-family: var(--read); font-weight: 700;
+  font-size: 1.7rem; line-height: 1.26; letter-spacing: .01em;
+  margin: 0 0 14px; color: var(--ink);
+  transition: color .15s;
+}
+.bw-sum {
+  font-family: var(--read); font-size: .96rem;
+  line-height: 1.82; color: var(--muted);
+  margin: 0 0 14px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.bw-meta {
+  font-family: var(--mono); font-size: .68rem;
+  color: var(--muted); letter-spacing: .03em;
+}
+a.ecell:hover .bw-title { color: var(--seal); }
+
+/* ──────────────────────
+   BLOCK C：全宽单行
+   一条分隔线式文章条目
+   ────────────────────── */
+.block-c {}
+.estrip {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 0 20px;
+  padding: 22px 0;
+  border-top: 1px solid var(--hair);
+  text-decoration: none; color: var(--ink);
+  transition: background .15s;
+}
+.estrip:hover { background: none; }
+.estrip__cat {
+  font-family: var(--mono); font-weight: 700; font-size: .64rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); white-space: nowrap;
+  flex: 0 0 auto;
+}
+.estrip__title {
+  font-family: var(--read); font-weight: 700;
+  font-size: 1.12rem; letter-spacing: .01em; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color .15s;
+}
+.estrip:hover .estrip__title { color: var(--seal); }
+.estrip__meta {
+  font-family: var(--mono); font-size: .68rem;
+  color: var(--muted); letter-spacing: .04em;
+  white-space: nowrap; text-align: right;
+  flex: 0 0 auto;
+}
+
+/* ──────────────────────
+   BLOCK D：63 / 37
+   左：宽 / 右：紧凑（B的镜像）
+   ────────────────────── */
+.block-d .eblock__grid {
+  grid-template-columns: 63fr 37fr;
+}
+
+/* ── 页脚 ── */
+.page-footer {
+  border-top: 1px solid var(--hair); margin-top: 60px;
+  padding-top: 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono); font-size: .72rem; color: var(--muted);
+  letter-spacing: .04em;
+}
+.pf-brand {
+  font-family: var(--read); font-weight: 700; font-size: .9rem;
+  color: var(--ink);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 860px) {
+  .page { padding: 0 28px 72px; }
+  .block-a .eblock__grid,
+  .block-b .eblock__grid,
+  .block-d .eblock__grid { grid-template-columns: 1fr; }
+  .ecell + .ecell { border-left: none; border-top: 1px solid var(--hair); }
+  .ecell:first-child { padding-left: 0; }
+  .ecell:last-child  { padding-right: 0; }
+}
+@media (max-width: 560px) {
+  .page { padding: 0 20px 60px; }
+  .nav-inner { padding: 0 20px; }
+  .estrip { grid-template-columns: 1fr auto; }
+  .estrip__cat { display: none; }
+  .a-title { font-size: 1.7rem; }
+  .bw-title { font-size: 1.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── 导航 ── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">归来</a>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">文章</a>
+      <a class="nav-link" href="#">花园</a>
+      <a class="nav-link" href="#">收藏</a>
+      <a class="nav-link" href="#">关于</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- 页面标题 -->
+  <div class="page-header">
+    <h1 class="page-h1">文章</h1>
+    <span class="page-count">6 篇</span>
+  </div>
+
+  <!-- 筛选栏 -->
+  <div class="filter-bar">
+    <span class="filter-label">标签</span>
+    <a class="filter-chip on" href="#">全部</a>
+    <a class="filter-chip" href="#">精酿</a>
+    <a class="filter-chip" href="#">故事</a>
+    <a class="filter-chip" href="#">思维模型</a>
+    <a class="filter-chip" href="#">决策</a>
+    <a class="filter-chip" href="#">思考</a>
+    <a class="filter-chip" href="#">社会观察</a>
+    <a class="filter-chip" href="#">随笔</a>
+    <a class="filter-chip" href="#">心理</a>
+    <a class="filter-chip" href="#">职场</a>
+  </div>
+
+  <!-- ══════════════════════════════
+       编辑流起点
+       ══════════════════════════════ -->
+  <div class="editorial-flow">
+
+    <!-- BLOCK A：55 / 45，最新文章，最大权重 -->
+    <div class="eblock block-a">
+      <a class="eblock__grid" href="#">
+        <div class="ecell a-left">
+          <span class="a-cat">社会观察</span>
+          <h2 class="a-title">把话聊深的人，都在偷偷做同一件事</h2>
+          <div class="a-meta">2026-06-21 &nbsp;&nbsp; 读 9 分钟</div>
+        </div>
+        <div class="ecell a-right">
+          <p class="a-sum">会聊天不是话多、反应快的天赋，而是一套可以刻意练习的技能。它的全部秘密：把注意力从「评价这个人」挪到「和他一起把事情往前推」。</p>
+          <span class="a-cta">阅读全文 →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- BLOCK B：37 / 63，左小右大 -->
+    <div class="eblock block-b">
+      <div class="eblock__grid">
+        <a class="ecell b-compact" href="#">
+          <span class="bc-cat">思维模型</span>
+          <h2 class="bc-title">从混沌到清晰：我解决问题的5步工具箱</h2>
+          <div class="bc-meta">2026-06-21 &nbsp;&nbsp; 读 7 分钟</div>
+        </a>
+        <a class="ecell b-wide" href="#">
+          <span class="bw-cat">精酿</span>
+          <h2 class="bw-title">一杯啤酒里，藏着半部文明史</h2>
+          <p class="bw-sum">安全的水、修道院的液体面包、一条苛刻的法律、几次意外。每一种啤酒风格背后，都站着一段具体的历史。</p>
+          <div class="bw-meta">2026-06-20 &nbsp;&nbsp; 读 6 分钟</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- BLOCK C：全宽单行，最轻笔触 -->
+    <div class="block-c">
+      <a class="estrip" href="#">
+        <span class="estrip__cat">决策</span>
+        <span class="estrip__title">信息永远不全，但判断不能等</span>
+        <span class="estrip__meta">2026-06-20 &nbsp; 读 7 分钟</span>
+      </a>
+    </div>
+
+    <!-- BLOCK D：63 / 37，B 的镜像（宽左窄右） -->
+    <div class="eblock block-d">
+      <div class="eblock__grid">
+        <a class="ecell b-wide" href="#">
+          <span class="bw-cat">思考</span>
+          <h2 class="bw-title">当你能叫出它的名字，它就管不住你了</h2>
+          <p class="bw-sum">那些心理效应最大的用处，不是让你显得懂行，而是给情绪的暗箱命名。当你能说出「我现在是哪种状态」，你就从被驱动，变成了观察者。</p>
+          <div class="bw-meta">2026-06-20 &nbsp;&nbsp; 读 5 分钟</div>
+        </a>
+        <a class="ecell b-compact" href="#">
+          <span class="bc-cat">随笔</span>
+          <h2 class="bc-title">你好，归来</h2>
+          <div class="bc-meta">2026-06-19 &nbsp;&nbsp; 读 2 分钟</div>
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /editorial-flow -->
+
+  <!-- 页脚 -->
+  <footer class="page-footer">
+    <span class="pf-brand">归来</span>
+    <span>© 2026 Evan</span>
+  </footer>
+
+</main>
+</body>
+</html>
