@@ -6,7 +6,7 @@ import { buildLinkMapFromDisk } from './src/lib/linkmap.node';
 const linkMap = buildLinkMapFromDisk();
 
 export default defineConfig({
-  site: 'https://nefelibata202.github.io', // 绑定自定义域名后改为该域名
+  site: 'https://freespot.top',
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkWikiLink(linkMap)],
