@@ -849,6 +849,9 @@ main > h1 {
 .post h3 { font-family: var(--read); }
 .post.is-article > p:first-of-type::first-letter { font-family: var(--read); }
 
+/* 正文段落首行缩进 2 字符 */
+.post p { text-indent: 2em; }
+
 /* meta：去框去底，改一条底部细线 */
 .post > .meta {
   font-family: var(--mono); border: none; background: none;
