@@ -6,7 +6,7 @@ import { buildLinkMapFromDisk } from './src/lib/linkmap.node';
 const linkMap = buildLinkMapFromDisk();
 
 export default defineConfig({
-  site: 'https://freespot.top',
+  site: 'https://guilai.me',
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkWikiLink(linkMap)],
