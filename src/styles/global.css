@@ -742,13 +742,13 @@ main > h1 {
 .sy-left { display: flex; flex-direction: column; justify-content: space-between; }
 .sy-mast { display: flex; align-items: flex-start; gap: 24px; position: relative; }
 
-/* 辅助纹样：回形纹（回字本形 = 双重方框）半透明衬底，藏在「归来」大字背后 */
+/* 辅助纹样：回形纹（回字本形 = 双重方框）—— 仅覆盖底部「来」字的一行横向条 */
 .sy-lattice {
-  position: absolute; z-index: 0; left: -14px; top: -8px; bottom: -8px; width: 168px; pointer-events: none;
+  position: absolute; z-index: 0; left: -8px; right: -8px; bottom: -6px; height: 56px; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C8362B' stroke-width='1.4'%3E%3Crect x='3' y='3' width='34' height='34'/%3E%3Crect x='13.5' y='13.5' width='13' height='13'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 40px 40px; opacity: .1;
-  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 55%, transparent 100%);
-          mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 55%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 40%, transparent 100%);
+          mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 40%, transparent 100%);
 }
 .sy-big, .sy-seal { position: relative; z-index: 1; }
 .sy-big {
