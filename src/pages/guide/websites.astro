@@ -1,0 +1,511 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import raw from '../../data/websites.json';
+
+// 按分类分组，保持分类顺序
+const categoryOrder = ['学习认知', '知识文化', '影视娱乐', '资讯阅读', '工具效率', '生活健康'];
+
+const grouped: Record<string, typeof raw> = {};
+for (const item of raw) {
+  if (!grouped[item.category]) grouped[item.category] = [];
+  grouped[item.category].push(item);
+}
+
+const sections = categoryOrder
+  .filter((c) => grouped[c])
+  .map((c) => ({ category: c, items: grouped[c] }));
+
+const total = raw.length;
+---
+
+<BaseLayout title="网站 · 归图" description="高质量网站收藏——学习、知识、影视、资讯、工具、生活，六个领域的精选入口。">
+  <div class="guide-layout">
+
+    <!-- 左侧边栏（复用归图导航） -->
+    <aside class="guide-sidebar">
+      <div class="guide-sidebar-logo">
+        <a href="/" class="guide-back-link" aria-label="返回归来首页">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          归来
+        </a>
+        <span class="guide-logo-text">归图</span>
+      </div>
+      <p class="guide-sidebar-desc">个人知识导览</p>
+
+      <nav class="guide-nav" aria-label="岛屿导航">
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--gold)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">关于我</span>
+            <span class="guide-nav-en">PEOPLE</span>
+          </span>
+        </a>
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--seal)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">知识理念</span>
+            <span class="guide-nav-en">PHILOSOPHY</span>
+          </span>
+        </a>
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--ink)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">兴趣</span>
+            <span class="guide-nav-en">INTERESTS</span>
+          </span>
+        </a>
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--gold)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">碎片时间</span>
+            <span class="guide-nav-en">FRAGMENTED TIME</span>
+          </span>
+        </a>
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--gold)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">信息源</span>
+            <span class="guide-nav-en">INFO SOURCES</span>
+          </span>
+        </a>
+        <a href="/guide" class="guide-nav-item">
+          <span class="guide-nav-icon" style="--accent: var(--seal)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">知识缺口</span>
+            <span class="guide-nav-en">KNOWLEDGE GAPS</span>
+          </span>
+        </a>
+        <a href="/guide/websites" class="guide-nav-item active">
+          <span class="guide-nav-icon" style="--accent: var(--gold)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
+          <span class="guide-nav-text">
+            <span class="guide-nav-title">网站</span>
+            <span class="guide-nav-en">WEBSITES</span>
+          </span>
+        </a>
+      </nav>
+
+      <div class="guide-sidebar-footer">
+        <span>GUI TU</span>
+        <span>2026</span>
+      </div>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="guide-content">
+
+      <!-- 页眉 -->
+      <header class="guide-section-header">
+        <span class="guide-section-num" style="--accent: var(--gold)">
+          / {String(7).padStart(2, '0')}
+        </span>
+        <h2 class="guide-section-title">网站</h2>
+      </header>
+
+      <p class="websites-lede">
+        互联网上真正值得反复访问的站点——不追量，只取精。六个领域，{total} 座值得收藏的码头。
+      </p>
+
+      <!-- 分类导航锚点 -->
+      <nav class="cat-nav" aria-label="分类导航">
+        {sections.map((s) => (
+          <a href={`#cat-${s.category}`} class="cat-chip">{s.category} <span class="cat-num">{s.items.length}</span></a>
+        ))}
+      </nav>
+
+      <!-- 分类列表 -->
+      {sections.map((section) => (
+        <section class="cat-section" id={`cat-${section.category}`}>
+          <h3 class="cat-title">
+            <span class="cat-dot"></span>
+            {section.category}
+          </h3>
+          <div class="web-grid">
+            {section.items.map((item) => (
+              <a href={item.url} target="_blank" rel="noopener noreferrer" class="web-card">
+                <div class="web-card-head">
+                  <span class="web-name">{item.name}</span>
+                  <svg class="web-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                </div>
+                <p class="web-desc">{item.desc}</p>
+                <span class="web-url">{new URL(item.url).hostname.replace('www.', '')}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+/* ── 复用归图布局 ── */
+.guide-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 60px);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.guide-sidebar {
+  padding: 40px 24px 40px 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 2px solid var(--hair);
+}
+
+.guide-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.guide-back-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+}
+
+.guide-back-link:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-logo-text {
+  font-family: var(--disp);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.guide-sidebar-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--hair);
+}
+
+.guide-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.guide-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 2px solid transparent;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: inherit;
+  width: 100%;
+  transition: all 0.12s;
+  text-decoration: none;
+}
+
+.guide-nav-item:hover {
+  background: var(--soft);
+  border-color: var(--hair);
+}
+
+.guide-nav-item.active {
+  background: var(--soft);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-nav-icon {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg);
+  color: var(--accent, var(--ink));
+}
+
+.guide-nav-item.active .guide-nav-icon {
+  background: var(--accent, var(--gold));
+  color: var(--on-gold);
+}
+
+.guide-nav-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-nav-title {
+  font-family: var(--disp);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.guide-nav-en {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.guide-sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 2px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.guide-content {
+  padding: 40px 0 60px 48px;
+}
+
+.guide-section-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--line);
+}
+
+.guide-section-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent, var(--muted));
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.guide-section-title {
+  font-family: var(--disp);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* ── 网站页专属 ── */
+.websites-lede {
+  font-family: var(--read);
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+/* 分类锚点导航 */
+.cat-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.cat-chip {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 2px solid var(--hair);
+  background: var(--soft);
+  transition: all 0.12s;
+}
+
+.cat-chip:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.cat-num {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* 分类区块 */
+.cat-section {
+  margin-bottom: 40px;
+  scroll-margin-top: 40px;
+}
+
+.cat-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--hair);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* 网站卡片网格 */
+.web-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.web-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 2px solid var(--hair);
+  background: var(--paper);
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.12s;
+}
+
+.web-card:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.web-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.web-name {
+  font-family: var(--disp);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.web-arrow {
+  flex-shrink: 0;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.web-card:hover .web-arrow {
+  opacity: 1;
+}
+
+.web-desc {
+  font-family: var(--read);
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+
+.web-url {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 900px) {
+  .web-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .guide-layout {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .guide-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 2px solid var(--hair);
+    padding: 20px 0;
+  }
+
+  .guide-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .guide-nav-item {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 10px;
+  }
+
+  .guide-nav-en {
+    display: none;
+  }
+
+  .guide-sidebar-footer {
+    display: none;
+  }
+
+  .guide-content {
+    padding: 24px 0 40px;
+  }
+
+  .cat-nav {
+    gap: 6px;
+  }
+}
+</style>

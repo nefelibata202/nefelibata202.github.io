@@ -1,0 +1,128 @@
+[
+  {
+    "name": "ALKYPAL",
+    "url": "https://alkypal.com.au/index.html",
+    "desc": "以简单易懂的方式帮助人们更好地饮酒，涵盖葡萄酒、啤酒与烈酒的入门指南。",
+    "category": "生活健康",
+    "date": "2025-07-04"
+  },
+  {
+    "name": "WebMD",
+    "url": "https://www.webmd.com/",
+    "desc": "日常健康知识科普，覆盖饮食、锻炼、症状查询，医学科普领域的老牌权威。",
+    "category": "生活健康",
+    "date": "2025-08-12"
+  },
+  {
+    "name": "FS · Farnam Street",
+    "url": "https://fs.blog/",
+    "desc": "Shane Parrish 的博客，专注思维模型、决策框架与终身学习，像一本不断更新的头脑手册。",
+    "category": "学习认知",
+    "date": "2025-08-13"
+  },
+  {
+    "name": "少数派",
+    "url": "https://sspai.com/",
+    "desc": "高效工作，品质生活。数字生活领域的深度内容社区，好工具、好文章、好讨论。",
+    "category": "学习认知",
+    "date": "2025-08-13"
+  },
+  {
+    "name": "L先生公众号",
+    "url": "https://data.newrank.cn/m/s.html?s=OCwrNzM+PDs8&k=%23%E5%85%A8%E9%83%A8%E6%96%87%E7%AB%A0#data-3657408",
+    "desc": "L先生的高质量文章合集，关于思维成长、认知升级与自我管理。",
+    "category": "学习认知",
+    "date": "2025-08-13"
+  },
+  {
+    "name": "全历史",
+    "url": "https://www.allhistory.com/",
+    "desc": "以时间轴和关系图谱重新梳理历史，把零散的历史事件串成可探索的知识网络。",
+    "category": "知识文化",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "知妖（纪妖）",
+    "url": "https://www.cbaigui.com/",
+    "desc": "收录中国古今妖怪传说，从《山海经》到地方志，一座中文妖怪的数字化博物馆。",
+    "category": "知识文化",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "问真八字",
+    "url": "https://pcbz.iwzwh.com/#/home/index",
+    "desc": "中国传统命理占卜工具，提供八字排盘与卦术学习资源。",
+    "category": "知识文化",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "Five Books",
+    "url": "https://fivebooks.com/",
+    "desc": "各领域专家推荐五本好书，帮你快速找到某个主题下最值得读的书。",
+    "category": "知识文化",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "They Shoot Pictures",
+    "url": "https://theyshootpictures.com/",
+    "desc": "严肃电影爱好者的参考库，收录数万部电影的数据、评论与影史排名。",
+    "category": "影视娱乐",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "4K影视",
+    "url": "https://www.4kvm.org/",
+    "desc": "综合性影视资源站，持续更新电影、美剧推荐与高清资源导航。",
+    "category": "影视娱乐",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "Cloud 影视",
+    "url": "https://www.tvfans.top/",
+    "desc": "影视资源导航与在线观看入口，覆盖热门剧集与电影。",
+    "category": "影视娱乐",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "红板报 · Flipboard",
+    "url": "https://flipboard.com/",
+    "desc": "你的社交杂志。聚合你关心的主题和来源，以杂志式排版呈现全球优质内容。",
+    "category": "资讯阅读",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "Newsnow",
+    "url": "https://newsnow.busiyi.world/",
+    "desc": "实时新闻聚合，抓取各大热点源，按时间线呈现正在发生的事。",
+    "category": "资讯阅读",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "GitHub Trending",
+    "url": "https://github.com/trending",
+    "desc": "今日最受关注的开源项目，了解技术趋势和优秀代码的最佳入口。",
+    "category": "资讯阅读",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "Remove.bg",
+    "url": "https://www.remove.bg/zh/t/change-background",
+    "desc": "一键去除图片背景，AI 自动识别主体，免注册即用。",
+    "category": "工具效率",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "Z-Library",
+    "url": "https://z-library.sk/",
+    "desc": "全球最大的电子书共享图书馆，数百万册书籍与论文免费下载。",
+    "category": "工具效率",
+    "date": "2025-09-23"
+  },
+  {
+    "name": "知无不言",
+    "url": "https://www.wearesellers.com/",
+    "desc": "跨境电商卖家社区，分享运营经验、平台规则与出海实战。",
+    "category": "工具效率",
+    "date": "2025-09-23"
+  }
+]
