@@ -1,0 +1,308 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const interests = [
+  {
+    code: 'INT.01 · 历史',
+    domain: '叙事',
+    char: '历',
+    name: '历史故事',
+    en: 'History · Narrative',
+    desc: '喜欢<strong>带叙事感的历史</strong>，特别是微观史视角下普通人的故事——那些被大事件碾过的缝隙里，才是真正的人。',
+  },
+  {
+    code: 'INT.02 · 悬疑',
+    domain: '推理',
+    char: '悬',
+    name: '悬疑犯罪',
+    en: 'Mystery · Crime',
+    desc: '从《神探可伦坡》到真实犯罪播客，着迷于<strong>推理本身的快感</strong>，以及它揭示的人性逻辑。',
+  },
+  {
+    code: 'INT.03 · 系统',
+    domain: '核心',
+    domainGold: true,
+    char: '知',
+    name: '知识管理',
+    en: 'PKM · Systems',
+    desc: '用卡片笔记法梳理思想，让笔记<strong>互相牵连生长</strong>。这个站就是这套方法最好的产物。',
+  },
+  {
+    code: 'INT.04 · 感官',
+    domain: '工艺',
+    char: '精',
+    name: '精酿啤酒',
+    en: 'Craft Beer',
+    desc: '相信好酒应该有故事。酒标、酿造工艺、风格谱系——每一杯都是<strong>值得细读的文本</strong>。',
+  },
+  {
+    code: 'INT.05 · 语言',
+    domain: '语言',
+    char: '英',
+    name: '英语学习',
+    en: 'English Learning',
+    desc: '不只是工具，而是进入<strong>另一种思维频道</strong>的方式——用英语想问题，结论有时会不一样。',
+  },
+  {
+    code: 'INT.06 · 身体',
+    domain: '习惯',
+    char: '运',
+    name: '运动锻炼',
+    en: 'Sport · Fitness',
+    desc: '重训 + 跑步。身体练出来的东西，是<strong>最难被夺走的资产</strong>，也是最稳定的心理锚点。',
+  },
+];
+---
+
+<BaseLayout title="兴趣 · 归图" description="长期喜好与痴迷领域">
+  <div class="island-page">
+
+    <header class="island-header">
+      <a href="/guide" class="island-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        归图
+      </a>
+      <div class="island-title-block">
+        <p class="island-kicker">/ 03 · INTERESTS</p>
+        <h1 class="island-title">兴趣</h1>
+        <p class="island-lede">长期喜好与痴迷领域</p>
+      </div>
+    </header>
+
+    <main class="int-grid">
+      {interests.map((item) => (
+        <div class="int-card">
+          <div class="int-bar">
+            <span class="int-code">{item.code}</span>
+            <span class={`int-domain${item.domainGold ? ' int-domain--gold' : ''}`}>{item.domain}</span>
+          </div>
+          <div class="int-body">
+            <span class="int-char" aria-hidden="true">{item.char}</span>
+            <div class="int-name">{item.name}</div>
+            <div class="int-en">{item.en}</div>
+            <hr class="int-rule" />
+            <p class="int-desc" set:html={item.desc} />
+          </div>
+        </div>
+      ))}
+    </main>
+
+  </div>
+</BaseLayout>
+
+<style>
+.island-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+}
+
+/* ── header (mirrors [island].astro) ── */
+.island-header {
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 0;
+}
+
+.island-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+  margin-bottom: 20px;
+}
+
+.island-back:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.island-kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+.island-title {
+  font-family: var(--disp);
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 10px;
+}
+
+.island-lede {
+  font-family: var(--read);
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.65;
+}
+
+/* ── 2-col card grid ── */
+.int-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding-top: 32px;
+  animation: islandFadeIn 0.28s ease both;
+}
+
+@keyframes islandFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .int-grid { animation: none; }
+}
+
+/* ── card ── */
+.int-card {
+  position: relative;
+  background: var(--paper);
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.int-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* top bar */
+.int-bar {
+  background: var(--soft);
+  border-bottom: 2px solid var(--hair);
+  padding: 7px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.int-code {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.int-domain {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  border: 1.5px solid var(--seal);
+  color: var(--seal);
+  padding: 1px 6px;
+}
+
+.int-domain--gold {
+  border-color: var(--gold);
+  color: var(--on-gold);
+  background: var(--gold);
+}
+
+/* card body */
+.int-body {
+  position: relative;
+  padding: 18px 16px 20px;
+}
+
+/* watermark character */
+.int-char {
+  position: absolute;
+  bottom: -14px;
+  right: -4px;
+  font-size: 7.5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(22, 20, 15, 0.055);
+  font-family: var(--zh);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* dark mode watermark */
+:global([data-theme="dark"]) .int-char {
+  color: rgba(242, 236, 220, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .int-char {
+    color: rgba(242, 236, 220, 0.07);
+  }
+}
+
+.int-name {
+  font-family: var(--disp);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0 0 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.int-en {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.int-rule {
+  border: none;
+  border-top: 1px solid var(--hair);
+  margin: 0 0 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.int-desc {
+  font-family: var(--read);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.int-desc :global(strong) {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ── responsive ── */
+@media (max-width: 560px) {
+  .island-page {
+    padding: 20px 16px 60px;
+  }
+
+  .int-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-top: 24px;
+  }
+}
+</style>
