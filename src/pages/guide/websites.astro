@@ -56,22 +56,22 @@ const total = raw.length;
             <h2 class="cat-section-title">{section.category}</h2>
             <span class="cat-section-count">{section.items.length} 个站点</span>
           </div>
-          <div class="web-grid">
+          <div class="site-list">
             {section.items.map((item) => {
               const hostname = (() => {
                 try { return new URL(item.url).hostname.replace('www.', ''); } catch { return item.url; }
               })();
               return (
-                <a href={item.url} target="_blank" rel="noopener noreferrer" class="web-card">
-                  <div class="web-card-top">
-                    <span class="web-name">{item.name}</span>
-                    <span class="web-host">{hostname}</span>
-                  </div>
-                  <p class="web-desc">{item.desc}</p>
-                  <div class="web-card-bottom">
-                    <span class="web-cat-tag">{section.category}</span>
-                    <svg class="web-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-                  </div>
+                <a href={item.url} target="_blank" rel="noopener noreferrer" class="site-link">
+                  <img
+                    class="site-favicon"
+                    src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=64`}
+                    width="44"
+                    height="44"
+                    alt={item.name}
+                    loading="lazy"
+                  />
+                  <span class="site-name">{item.name}</span>
                 </a>
               );
             })}
@@ -235,99 +235,55 @@ const total = raw.length;
   flex-shrink: 0;
 }
 
-/* ── 网站卡片网格 ── */
-.web-grid {
+/* ── 站点列表 ── */
+.site-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 8px;
+  row-gap: 2px;
+  padding: 16px 0;
 }
 
-.web-card {
+.site-link {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 18px;
-  border: 2px solid var(--hair);
-  background: var(--paper);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
   text-decoration: none;
   color: var(--ink);
-  transition: all 0.12s;
-  position: relative;
+  border: 2px solid transparent;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s, transform 0.12s;
 }
 
-.web-card:hover {
-  border-color: var(--line);
+.site-link:hover {
+  border-color: var(--hair);
+  background: var(--paper);
   box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  transform: translate(-2px, -2px);
 }
 
-.web-card-top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+.site-favicon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
 }
 
-.web-name {
+.site-name {
   font-family: var(--disp);
   font-size: 0.95rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
   line-height: 1.3;
 }
 
-.web-host {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--muted);
-  opacity: 0.6;
-  flex-shrink: 0;
-  text-align: right;
-  max-width: 50%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.web-desc {
-  font-family: var(--read);
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.55;
-  margin: 0;
-  flex: 1;
-}
-
-.web-card-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.web-cat-tag {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--muted);
-  padding: 2px 7px;
-  border: 1.5px solid var(--hair);
-  background: var(--soft);
-}
-
-.web-arrow {
-  color: var(--muted);
-  opacity: 0;
-  flex-shrink: 0;
-  transition: opacity 0.12s;
-}
-
-.web-card:hover .web-arrow {
-  opacity: 1;
-}
-
 /* ── 响应式 ── */
-@media (max-width: 768px) {
-  .web-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 640px) {
+  .site-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
