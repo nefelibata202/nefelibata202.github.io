@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const entries = await getCollection('guide');
-const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
+const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'knowledge-gaps'];
 entries.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
 
 const meta: Record<string, string> = {
@@ -11,7 +11,6 @@ const meta: Record<string, string> = {
   'philosophy':       'PHILOSOPHY',
   'interests':        'INTERESTS',
   'fragmented-time':  'FRAGMENTED TIME',
-  'info-sources':     'INFO SOURCES',
   'knowledge-gaps':   'KNOWLEDGE GAPS',
 };
 ---

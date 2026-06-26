@@ -18,7 +18,7 @@ interface Props {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
-const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
+const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'knowledge-gaps'];
 const num = String(order.indexOf(entry.data.island) + 1).padStart(2, '0');
 const en = entry.data.island.toUpperCase().replace(/-/g, ' ');
 
@@ -27,7 +27,6 @@ const descs: Record<string, string> = {
   'philosophy':       '思考框架与人生观',
   'interests':        '长期喜好与痴迷领域',
   'fragmented-time':  '零散时间的最优解法',
-  'info-sources':     '信息获取的上游入口',
   'knowledge-gaps':   '待填补的知识空白地图',
 };
 const lede = descs[entry.data.island] ?? '';
