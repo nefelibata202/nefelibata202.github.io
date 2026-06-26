@@ -1,0 +1,357 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const mdPath = join(process.cwd(), 'src/content/guide/knowledge-gaps.md');
+const rawMd = readFileSync(mdPath, 'utf-8');
+const body = rawMd.replace(/^---[\s\S]*?---\n/, '');
+
+const updatedMatch = body.match(/<!-- sync-updated: (\d{4}-\d{2}-\d{2}) -->/);
+const updated = updatedMatch ? updatedMatch[1] : '';
+
+interface Section { title: string; items: string[]; id: string; }
+
+function parseSections(text: string): Section[] {
+  const secs: Section[] = [];
+  let cur: Section | null = null;
+  for (const line of text.split('\n')) {
+    if (line.startsWith('## ')) {
+      if (cur && cur.items.length > 0) secs.push(cur);
+      cur = { title: line.slice(3).trim(), items: [], id: `gap-${secs.length}` };
+    } else if (cur && line.startsWith('- [ ]')) {
+      cur.items.push(line.slice(6).trim());
+    }
+  }
+  if (cur && cur.items.length > 0) secs.push(cur);
+  return secs;
+}
+
+function renderText(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+const sections = parseSections(body);
+const total = sections.reduce((s, sec) => s + sec.items.length, 0);
+---
+
+<BaseLayout title="知识缺口 · 归图" description="知识库高优先级缺口精选——知道自己不知道什么，才能有方向地学习。">
+  <div class="gaps-page">
+
+    <header class="gaps-header">
+      <a href="/guide" class="gaps-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        归图
+      </a>
+      <div class="gaps-title-block">
+        <p class="gaps-kicker">/ 05 · KNOWLEDGE GAPS</p>
+        <h1 class="gaps-title">知识缺口</h1>
+        <p class="gaps-meta">
+          <span>{sections.length} 个领域</span>
+          <span class="gaps-meta-dot">·</span>
+          <span>{total} 条精选缺口</span>
+          {updated && (
+            <>
+              <span class="gaps-meta-dot">·</span>
+              <span class="gaps-meta-date">同步自 {updated}</span>
+            </>
+          )}
+        </p>
+        <p class="gaps-lede">知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。</p>
+      </div>
+    </header>
+
+    <nav class="gaps-nav" aria-label="领域导航">
+      {sections.map((sec, i) => (
+        <a href={`#${sec.id}`} class="gaps-pill">
+          <span class="gaps-pill-num">/{String(i + 1).padStart(2, '0')}</span>
+          <span class="gaps-pill-label">{sec.title}</span>
+          <span class="gaps-pill-count">{sec.items.length}</span>
+        </a>
+      ))}
+    </nav>
+
+    <main class="gaps-body">
+      {sections.map((sec, i) => (
+        <section class="gap-section" id={sec.id}>
+          <div class="gap-section-hd">
+            <span class="gap-section-num">/{String(i + 1).padStart(2, '0')}</span>
+            <h2 class="gap-section-title">{sec.title}</h2>
+            <span class="gap-section-count">{sec.items.length} 条</span>
+          </div>
+          <ul class="gap-list">
+            {sec.items.map(item => (
+              <li class="gap-item">
+                <span class="gap-check" aria-hidden="true">☐</span>
+                <span class="gap-text" set:html={renderText(item)} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+
+  </div>
+</BaseLayout>
+
+<style>
+.gaps-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+}
+
+/* ── header ── */
+.gaps-header {
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 0;
+}
+
+.gaps-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+  margin-bottom: 24px;
+}
+
+.gaps-back:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.gaps-kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+.gaps-title {
+  font-family: var(--disp);
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 10px;
+}
+
+.gaps-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin: 0 0 10px;
+}
+
+.gaps-meta-dot {
+  color: var(--hair);
+}
+
+.gaps-meta-date {
+  color: var(--gold);
+}
+
+.gaps-lede {
+  font-family: var(--read);
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 520px;
+}
+
+/* ── sticky nav ── */
+.gaps-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 2px solid var(--hair);
+}
+
+.gaps-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 2px solid var(--hair);
+  background: var(--paper);
+  text-decoration: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.gaps-pill:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-2px, -2px);
+}
+
+.gaps-pill-num {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.gaps-pill-label {
+  font-family: var(--zh, var(--read));
+  font-size: 0.72rem;
+}
+
+.gaps-pill-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--gold);
+  color: var(--paper);
+  font-size: 0.6rem;
+  font-weight: 700;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+/* ── content ── */
+.gaps-body {
+  padding-top: 48px;
+}
+
+.gap-section {
+  margin-bottom: 52px;
+  scroll-margin-top: 80px;
+  animation: gapFadeIn 0.28s ease both;
+}
+
+@keyframes gapFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.gap-section-hd {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--hair);
+}
+
+.gap-section-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.gap-section-title {
+  font-family: var(--disp);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.gap-section-count {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── item list ── */
+.gap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gap-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px 18px;
+  border: 2px solid var(--hair);
+  background: var(--paper);
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+}
+
+.gap-item:hover {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-2px, -2px);
+}
+
+.gap-check {
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--gold);
+  flex-shrink: 0;
+  line-height: 1.6;
+  user-select: none;
+}
+
+.gap-text {
+  font-family: var(--read);
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.gap-text :global(strong) {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ── responsive ── */
+@media (max-width: 640px) {
+  .gaps-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-right: 16px;
+  }
+  .gaps-nav::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 600px) {
+  .gaps-page {
+    padding: 24px 16px 60px;
+  }
+  .gap-section-hd {
+    flex-wrap: wrap;
+  }
+}
+</style>
