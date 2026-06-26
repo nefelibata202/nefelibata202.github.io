@@ -1,0 +1,289 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('guide');
+  return entries.map(entry => ({
+    params: { island: entry.data.island },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'guide'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
+const num = String(order.indexOf(entry.data.island) + 1).padStart(2, '0');
+const en = entry.data.island.toUpperCase().replace(/-/g, ' ');
+
+const descs: Record<string, string> = {
+  'people':           '我所欣赏与追随的人物',
+  'philosophy':       '思考框架与人生观',
+  'interests':        '长期喜好与痴迷领域',
+  'fragmented-time':  '零散时间的最优解法',
+  'info-sources':     '信息获取的上游入口',
+  'knowledge-gaps':   '待填补的知识空白地图',
+};
+const lede = descs[entry.data.island] ?? '';
+---
+
+<BaseLayout title={`${entry.data.title} · 归图`} description={lede}>
+  <div class="island-page">
+
+    <header class="island-header">
+      <a href="/guide" class="island-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        归图
+      </a>
+      <div class="island-title-block">
+        <p class="island-kicker">/ {num} · {en}</p>
+        <h1 class="island-title">{entry.data.title}</h1>
+        {lede && <p class="island-lede">{lede}</p>}
+      </div>
+    </header>
+
+    <main class={`island-content island--${entry.data.island}`}>
+      <Content />
+    </main>
+
+  </div>
+</BaseLayout>
+
+<style>
+.island-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+}
+
+/* ── header ── */
+.island-header {
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 0;
+}
+
+.island-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  transition: all 0.12s;
+  margin-bottom: 20px;
+}
+
+.island-back:hover {
+  color: var(--ink);
+  border-color: var(--line);
+  background: var(--soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.island-kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+.island-title {
+  font-family: var(--disp);
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 10px;
+}
+
+.island-lede {
+  font-family: var(--read);
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.65;
+}
+
+/* ── content body ── */
+.island-content {
+  padding-top: 40px;
+  animation: islandFadeIn 0.28s ease both;
+}
+
+@keyframes islandFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* h2 — section headings (people, philosophy, knowledge-gaps) */
+.island-content :global(h2) {
+  font-family: var(--disp);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 36px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--hair);
+}
+
+.island-content :global(h2:first-child) {
+  margin-top: 0;
+}
+
+/* h3 — sub-headings (fragmented-time, info-sources) */
+.island-content :global(h3) {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 32px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--hair);
+}
+
+.island-content :global(h3:first-child) {
+  margin-top: 0;
+}
+
+.island-content :global(p) {
+  font-family: var(--read);
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 0 0 8px;
+}
+
+.island-content :global(hr) {
+  border: none;
+  border-top: 1.5px solid var(--hair);
+  margin: 20px 0;
+}
+
+.island-content :global(strong) {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* unordered lists (general) */
+.island-content :global(ul) {
+  margin: 8px 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+/* ordered lists (philosophy numbered principles) */
+.island-content :global(ol) {
+  margin: 8px 0;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: island-counter;
+}
+
+.island-content :global(li) {
+  padding: 5px 0;
+  font-family: var(--read);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.island-content :global(ol > li) {
+  position: relative;
+  padding-left: 28px;
+  counter-increment: island-counter;
+}
+
+.island-content :global(ol > li::before) {
+  content: counter(island-counter) ".";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  top: 6px;
+}
+
+/* ── knowledge-gaps: accordion cards ── */
+.island--knowledge-gaps :global(h2) {
+  font-size: 1rem;
+  margin: 28px 0 0;
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  border-bottom: none;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.island--knowledge-gaps :global(h2:first-of-type) {
+  margin-top: 8px;
+}
+
+.island--knowledge-gaps :global(p) {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  margin-bottom: 6px;
+}
+
+.island--knowledge-gaps :global(ul) {
+  border: 2px solid var(--hair);
+  border-top: none;
+  margin: -8px 0 0;
+  padding: 8px 14px 10px 28px;
+  background: var(--soft);
+}
+
+.island--knowledge-gaps :global(li) {
+  position: relative;
+  padding: 5px 0 5px 2px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.island--knowledge-gaps :global(li input[type="checkbox"]) {
+  display: none;
+}
+
+.island--knowledge-gaps :global(li::before) {
+  content: "☐";
+  position: absolute;
+  left: -20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.island--knowledge-gaps :global(li strong) {
+  color: var(--seal);
+  font-weight: 600;
+}
+
+.island--knowledge-gaps :global(hr) {
+  display: none;
+}
+
+/* ── responsive ── */
+@media (max-width: 600px) {
+  .island-page {
+    padding: 20px 16px 60px;
+  }
+
+  .island-content {
+    padding-top: 28px;
+  }
+}
+</style>

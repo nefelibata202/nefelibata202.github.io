@@ -1,23 +1,24 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const entries = await getCollection('guide');
-const panels = await Promise.all(
-  entries.map(async (e) => {
-    const { Content } = await render(e);
-    return { data: e.data, Content };
-  })
-);
-
 const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'info-sources', 'knowledge-gaps'];
-panels.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
+entries.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
+
+const meta: Record<string, string> = {
+  'people':           'PEOPLE',
+  'philosophy':       'PHILOSOPHY',
+  'interests':        'INTERESTS',
+  'fragmented-time':  'FRAGMENTED TIME',
+  'info-sources':     'INFO SOURCES',
+  'knowledge-gaps':   'KNOWLEDGE GAPS',
+};
 ---
 
 <BaseLayout title="归图 · 个人导览" description="个人知识导览——关于我、知识理念、兴趣、碎片时间、信息源、知识缺口。">
   <div class="guide-page">
 
-    <!-- 顶部 header -->
     <header class="guide-header">
       <a href="/" class="guide-back-link" aria-label="返回归来首页">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -31,113 +32,83 @@ panels.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island
       </div>
     </header>
 
-    <!-- 岛屿导航（sticky） -->
-    <nav class="island-bar" aria-label="岛屿导航">
-      {panels.map(({ data }, i) => (
-        <button
-          type="button"
-          class:list={['island-pill', i === 0 && 'active']}
-          data-target={data.island}
-          onclick="guideSwitch(this)"
+    <main class="guide-grid">
+      {entries.map(({ data }, i) => (
+        <a
+          href={`/guide/${data.island}`}
+          class="guide-card"
+          style={`animation-delay: ${i * 65}ms`}
         >
-          <span class="island-pill-icon" style={`--accent: var(--${data.accent})`}>
+          <span class="guide-card-icon">
             {data.island === 'people' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
             )}
             {data.island === 'philosophy' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 22 12 12 22 2 12"/>
+              </svg>
             )}
             {data.island === 'interests' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-            )}
-            {data.island === 'travel' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
             )}
             {data.island === 'fragmented-time' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
             )}
             {data.island === 'info-sources' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
             )}
             {data.island === 'knowledge-gaps' && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
             )}
           </span>
-          <span class="island-pill-text">
-            <span class="island-pill-title">{data.title}</span>
-            <span class="island-pill-en">{data.island.toUpperCase().replace(/-/g, ' ')}</span>
-          </span>
-        </button>
+          <span class="guide-card-title">{data.title}</span>
+          <span class="guide-card-en">{meta[data.island]}</span>
+        </a>
       ))}
-      <a href="/guide/websites" class="island-pill island-pill--link">
-        <span class="island-pill-icon" style="--accent: var(--gold)">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        </span>
-        <span class="island-pill-text">
-          <span class="island-pill-title">网站</span>
-          <span class="island-pill-en">WEBSITES</span>
-        </span>
-      </a>
-    </nav>
 
-    <!-- 内容区 -->
-    <main class="guide-body">
-      {panels.map(({ data, Content }, i) => (
-        <article
-          class:list={['guide-section', i === 0 && 'active']}
-          id={`guide-${data.island}`}
-          data-island={data.island}
-        >
-          <header class="guide-section-header">
-            <span class="guide-section-num" style={`--accent: var(--${data.accent})`}>
-              / {String(order.indexOf(data.island) + 1).padStart(2, '0')}
-            </span>
-            <h2 class="guide-section-title">{data.title}</h2>
-          </header>
-          <div class="guide-section-body">
-            <Content />
-          </div>
-        </article>
-      ))}
+      <a
+        href="/guide/websites"
+        class="guide-card"
+        style={`animation-delay: ${entries.length * 65}ms`}
+      >
+        <span class="guide-card-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </span>
+        <span class="guide-card-title">网站</span>
+        <span class="guide-card-en">WEBSITES</span>
+      </a>
     </main>
 
   </div>
 </BaseLayout>
 
-<script is:inline>
-function guideSwitch(btn) {
-  var target = btn.getAttribute('data-target');
-  // 切换导航 active 状态
-  document.querySelectorAll('.island-pill').forEach(function(el) {
-    el.classList.remove('active');
-  });
-  btn.classList.add('active');
-  // 切换内容区 active 状态
-  document.querySelectorAll('.guide-section').forEach(function(el) {
-    el.classList.remove('active');
-  });
-  var section = document.getElementById('guide-' + target);
-  if (section) section.classList.add('active');
-  // 更新 URL
-  history.replaceState(null, '', '/guide?island=' + target);
-  // 滚动到内容区顶部
-  var bar = document.querySelector('.island-bar');
-  if (bar) {
-    var top = bar.getBoundingClientRect().bottom + window.scrollY;
-    window.scrollTo({ top: top, behavior: 'smooth' });
-  }
-}
-</script>
-
 <style>
-/* ── 整体容器 ── */
 .guide-page {
   max-width: 800px;
   margin: 0 auto;
   padding: 32px 28px 80px;
 }
 
-/* ── 顶部 header ── */
+/* ── header ── */
 .guide-header {
   padding-bottom: 24px;
   border-bottom: 2px solid var(--line);
@@ -183,267 +154,96 @@ function guideSwitch(btn) {
   margin: 0;
 }
 
-/* ── 岛屿导航（sticky） ── */
-.island-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 16px 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
-  border-bottom: 2px solid var(--hair);
+/* ── card grid ── */
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding-top: 32px;
 }
 
-.island-pill {
-  display: inline-flex;
+.guide-card {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  justify-content: center;
+  gap: 14px;
+  padding: 44px 20px 40px;
   border: 2px solid var(--hair);
   background: var(--paper);
-  color: var(--muted);
   text-decoration: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.12s;
-  white-space: nowrap;
-}
-
-.island-pill:hover {
   color: var(--ink);
-  border-color: var(--line);
-  background: var(--soft);
-  box-shadow: var(--shadow-sm);
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+  animation: guidePopIn 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.island-pill.active {
-  color: var(--ink);
+.guide-card:hover {
   border-color: var(--line);
-  background: var(--soft);
   box-shadow: var(--shadow-sm);
+  transform: translate(-3px, -3px);
 }
 
-.island-pill-icon {
+.guide-card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--line);
-  background: var(--bg);
-  color: var(--accent, var(--ink));
-  flex-shrink: 0;
+  color: var(--gold);
+  transition: transform 0.15s;
 }
 
-.island-pill.active .island-pill-icon {
-  background: var(--accent, var(--gold));
-  color: var(--on-gold);
+.guide-card:hover .guide-card-icon {
+  transform: scale(1.1);
 }
 
-.island-pill--link:hover .island-pill-icon {
-  background: var(--gold);
-  color: var(--on-gold);
-}
-
-.island-pill-text {
-  display: flex;
-  flex-direction: column;
+.guide-card-title {
+  font-family: var(--disp);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
   line-height: 1.2;
 }
 
-.island-pill-title {
-  font-family: var(--disp);
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.island-pill-en {
+.guide-card-en {
   font-family: var(--mono);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   color: var(--muted);
-  margin-top: 1px;
+  letter-spacing: 0.12em;
+  text-align: center;
 }
 
-/* ── 内容区 ── */
-.guide-body {
-  padding-top: 48px;
+@keyframes guidePopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-.guide-section {
-  display: none;
+@media (prefers-reduced-motion: reduce) {
+  .guide-card {
+    animation: none;
+  }
 }
 
-.guide-section.active {
-  display: block;
-  animation: guideFadeIn 0.2s ease;
-}
-
-@keyframes guideFadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.guide-section-header {
-  margin-bottom: 28px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--line);
-}
-
-.guide-section-num {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--accent, var(--muted));
-  letter-spacing: 0.1em;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.guide-section-title {
-  font-family: var(--disp);
-  font-size: clamp(1.4rem, 3vw, 1.8rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.guide-section-body {
-  font-family: var(--read);
-  font-size: 0.92rem;
-  line-height: 1.75;
-}
-
-.guide-section-body :global(h3) {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin: 24px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--hair);
-}
-
-.guide-section-body :global(h4) {
-  font-family: var(--read);
-  font-size: 0.92rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-  line-height: 1.4;
-}
-
-.guide-section-body :global(p) {
-  font-family: var(--read);
-  color: var(--muted);
-  font-size: 0.85rem;
-  line-height: 1.65;
-  margin-bottom: 6px;
-}
-
-.guide-section-body :global(hr) {
-  border: none;
-  border-top: 1.5px solid var(--hair);
-  margin: 16px 0;
-}
-
-.guide-section-body :global(strong) {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.guide-section-body :global(ul),
-.guide-section-body :global(ol) {
-  margin: 8px 0;
-  padding-left: 0;
-  list-style: none;
-}
-
-.guide-section-body :global(li) {
-  padding: 4px 0;
-  font-family: var(--read);
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-/* 知识缺口岛专属 */
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(h2) {
-  font-family: var(--disp);
-  font-size: 1rem;
-  font-weight: 800;
-  text-transform: none;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 28px 0 12px;
-  padding: 10px 14px;
-  border: 2px solid var(--line);
-  border-bottom: none;
-  background: var(--paper);
-  box-shadow: var(--shadow-sm);
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(h2:first-of-type) {
-  margin-top: 8px;
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(ul) {
-  border: 2px solid var(--hair);
-  border-top: none;
-  margin: -12px 0 0;
-  padding: 8px 14px 10px 28px;
-  background: var(--soft);
-  list-style: none;
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li) {
-  position: relative;
-  padding: 5px 0 5px 2px;
-  font-size: 0.85rem;
-  line-height: 1.55;
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li::before) {
-  content: "☐";
-  position: absolute;
-  left: -20px;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(li strong) {
-  color: var(--seal);
-  font-weight: 600;
-}
-
-.guide-section[data-island="knowledge-gaps"] .guide-section-body :global(hr) {
-  display: none;
-}
-
-/* ── 响应式 ── */
-@media (max-width: 768px) {
+/* ── responsive ── */
+@media (max-width: 600px) {
   .guide-page {
     padding: 20px 16px 60px;
   }
 
-  .island-bar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-right: 16px;
+  .guide-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
+}
 
-  .island-bar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .island-pill {
-    flex-shrink: 0;
-  }
-
-  .guide-body {
-    padding-top: 32px;
+@media (max-width: 360px) {
+  .guide-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
