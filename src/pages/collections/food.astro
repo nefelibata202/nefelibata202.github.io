@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CollectionTabs from '../../components/CollectionTabs.astro';
 import { loadFood, scoreBand } from '../../lib/food';
 import raw from '../../data/food.json';
 
@@ -27,6 +28,7 @@ const searchText = (i: typeof items[number]) =>
 const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
 <BaseLayout title="美食 · 私藏" description="私人觅食地图——亲自去过的宝藏馆子，按城市、菜系、评分检索。" wide>
+  <CollectionTabs active="food" />
   <header class="mlib-head">
     <div class="mlib-head-inner">
       <div class="mlib-head-text">

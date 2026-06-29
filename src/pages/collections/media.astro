@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CollectionTabs from '../../components/CollectionTabs.astro';
 import { loadFavorites, TYPE_LABEL, decadeOf } from '../../lib/favorites';
 import raw from '../../data/favorites.json';
 
@@ -31,6 +32,7 @@ const searchText = (i: typeof items[number]) =>
 const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
 <BaseLayout title="书影 · 归来" description="读过的书、看过的影视——一座私人媒体库，按类型、评分、品类、年代检索。" wide>
+  <CollectionTabs active="media" />
   <header class="mlib-head">
     <div class="mlib-head-inner">
       <div class="mlib-head-text">

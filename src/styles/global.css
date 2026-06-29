@@ -1017,3 +1017,16 @@ main > h1 { font-family: var(--read); letter-spacing: .04em; }
   text-decoration: none; color: var(--ink);
   border-bottom: 2px solid var(--gold);
 }
+
+/* ── 私藏页间分段切换 ─────────────────────── */
+.ctabs {
+  display: inline-flex; margin: 0 0 1.2rem;
+  border: 3px solid var(--ink, #1a1a1a);
+  box-shadow: 3px 3px 0 var(--ink, #1a1a1a);
+}
+.ctab {
+  padding: .4rem 1.1rem; text-decoration: none; color: inherit;
+  font-family: var(--disp); font-size: .95rem;
+}
+.ctab + .ctab { border-left: 3px solid var(--ink, #1a1a1a); }
+.ctab[aria-current="page"] { background: var(--gold, #c89a2b); color: var(--ink, #1a1a1a); }
