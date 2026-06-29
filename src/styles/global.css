@@ -980,3 +980,40 @@ main > h1 { font-family: var(--read); letter-spacing: .04em; }
 .hub-card-kicker { display: block; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold, #c89a2b); }
 .hub-card-title { margin: .35rem 0 .15rem; font-family: var(--disp, inherit); }
 .hub-card-meta { margin: 0; font-family: var(--mono, monospace); font-size: .85rem; color: var(--muted, inherit); }
+
+/* ── 美食统计 + 文字卡 ───────────────────── */
+.foodstats { display: flex; gap: 1.4rem; align-items: baseline; }
+.foodstat { display: flex; flex-direction: column; align-items: center; }
+.fs-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.fs-num--red { color: var(--seal); }
+.fs-lab { font-size: .72rem; color: var(--muted); margin-top: .2rem; }
+
+.fgrid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.fcard {
+  display: flex; flex-direction: column; gap: .45rem;
+  padding: 1rem 1.1rem;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.fcard-top { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.fcard-name { margin: 0; font-family: var(--disp); font-size: 1.1rem; }
+.fcard-score {
+  flex: none; font-family: var(--mono); font-weight: 700; font-size: .95rem;
+  color: var(--paper); background: var(--seal);
+  padding: .05rem .4rem; border: 2px solid var(--ink);
+}
+.fcard-loc { margin: 0; font-family: var(--mono); font-size: .8rem; color: var(--gold); }
+.fcard-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.fcard-tag { font-size: .72rem; padding: .05rem .4rem; border: 2px solid var(--ink); }
+.fcard-rec { margin: 0; font-size: .9rem; line-height: 1.5; }
+.fcard-dish { margin: 0; font-size: .82rem; color: var(--muted); }
+.fcard-map {
+  align-self: flex-start; margin-top: .15rem;
+  font-family: var(--mono); font-size: .8rem; font-weight: 700;
+  text-decoration: none; color: var(--ink);
+  border-bottom: 2px solid var(--gold);
+}

@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadFood, scoreBand } from '../../lib/food';
+import raw from '../../data/food.json';
+
+const items = loadFood(raw).sort((a, b) => b.score - a.score || b.date.localeCompare(a.date));
+
+// 城市（按家数降序）
+const cityCount = new Map<string, number>();
+for (const it of items) cityCount.set(it.city, (cityCount.get(it.city) ?? 0) + 1);
+const cities = [...cityCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]);
+
+// 菜系（top 12）
+const cuiCount = new Map<string, number>();
+for (const it of items) for (const c of it.cuisine) cuiCount.set(c, (cuiCount.get(c) ?? 0) + 1);
+const topCui = [...cuiCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map((e) => e[0]);
+
+const scored = items.filter((i) => i.score > 0);
+const stats = {
+  total: items.length,
+  cities: cityCount.size,
+  avg: scored.length ? (scored.reduce((s, i) => s + i.score, 0) / scored.length).toFixed(1) : '—',
+};
+
+const searchText = (i: typeof items[number]) =>
+  [i.name, ...i.cuisine, ...i.dishes].join(' ').toLowerCase();
+const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
+---
+<BaseLayout title="美食 · 私藏" description="私人觅食地图——亲自去过的宝藏馆子，按城市、菜系、评分检索。" wide>
+  <header class="mlib-head">
+    <div class="mlib-head-inner">
+      <div class="mlib-head-text">
+        <p class="kicker">私人觅食地图</p>
+        <h1>美食</h1>
+        <p class="mlib-lede">都是亲自去过、值得回头的宝藏馆子。按城市、菜系与评分自由检索。</p>
+      </div>
+      <div class="foodstats" aria-label="美食统计">
+        <div class="foodstat"><span class="fs-num">{stats.total}</span><span class="fs-lab">家</span></div>
+        <div class="foodstat"><span class="fs-num">{stats.cities}</span><span class="fs-lab">座城</span></div>
+        <div class="foodstat"><span class="fs-num fs-num--red">{stats.avg}</span><span class="fs-lab">均分</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mlib-bar">
+    <label class="msearch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+      <input id="fsearch" type="search" placeholder="搜店名、菜系、招牌菜…" autocomplete="off" aria-label="搜索美食" />
+    </label>
+    <div class="frow" role="group" aria-label="排序">
+      <span class="flabel">排序</span>
+      <button type="button" class="fchip is-on" data-sort="score">评分</button>
+      <button type="button" class="fchip" data-sort="date">最近</button>
+    </div>
+  </div>
+
+  <button type="button" class="mlib-filter-toggle" id="ffiltertoggle" aria-expanded="false">
+    筛选<span class="mft-badge" id="fftbadge" hidden>0</span><span class="mft-arr" aria-hidden="true">▼</span>
+  </button>
+
+  <div class="filters mlib-filters" id="food-filters-panel">
+    <div class="frow" role="group" aria-label="按城市筛选">
+      <span class="flabel">城市</span>
+      <button type="button" class="fchip is-on" data-facet="city" data-val="*">全部</button>
+      {cities.map((c) => <button type="button" class="fchip" data-facet="city" data-val={c}>{c} · {cityCount.get(c)}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按菜系筛选">
+      <span class="flabel">菜系</span>
+      <button type="button" class="fchip is-on" data-facet="cuisine" data-val="*">全部</button>
+      {topCui.map((c) => <button type="button" class="fchip" data-facet="cuisine" data-val={c}>{c}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按评分筛选">
+      <span class="flabel">评分</span>
+      <button type="button" class="fchip is-on" data-facet="score" data-val="*">全部</button>
+      <button type="button" class="fchip" data-facet="score" data-val="9">9+ 殿堂</button>
+      <button type="button" class="fchip" data-facet="score" data-val="8">8–9 杰作</button>
+      <button type="button" class="fchip" data-facet="score" data-val="7">7–8 佳作</button>
+      <button type="button" class="fchip" data-facet="score" data-val="lt7">7 以下</button>
+    </div>
+  </div>
+
+  <div class="mlib-meta">
+    <span class="mcount">收录 <b id="fcount">{items.length}</b> 家</span>
+    <button type="button" class="mreset" id="freset">清除筛选</button>
+  </div>
+
+  <div class="mlib">
+    <div class="fgrid" id="fgrid">
+      {items.map((it) => (
+        <article
+          class="fcard"
+          data-city={it.city}
+          data-cuisine={it.cuisine.join('|')}
+          data-band={scoreBand(it.score) ?? ''}
+          data-date={it.date}
+          data-q={searchText(it)}
+        >
+          <div class="fcard-top">
+            <h3 class="fcard-name">{it.name}</h3>
+            {it.score > 0 && <span class="fcard-score">{fmtScore(it.score)}</span>}
+          </div>
+          <p class="fcard-loc">{[it.city, it.area].filter(Boolean).join(' · ')}</p>
+          {it.cuisine.length > 0 && (
+            <div class="fcard-tags">
+              {it.cuisine.map((c) => <span class="fcard-tag">{c}</span>)}
+            </div>
+          )}
+          {it.recommend && <p class="fcard-rec">{it.recommend}</p>}
+          {it.dishes.length > 0 && <p class="fcard-dish">必点：{it.dishes.join(' / ')}</p>}
+          {it.map && <a class="fcard-map" href={it.map} target="_blank" rel="noopener">导航 ↗</a>}
+        </article>
+      ))}
+    </div>
+    <p class="noresult" id="fnone" hidden>没有符合条件的店——试着放宽筛选。</p>
+  </div>
+
+  <div class="mpager" id="fpager" hidden>
+    <button type="button" class="mpager-btn" id="fprev" aria-label="上一页">← 上一页</button>
+    <span class="mpager-info" id="fpinfo">第 1 / 1 页</span>
+    <button type="button" class="mpager-btn" id="fnext" aria-label="下一页">下一页 →</button>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const grid = document.getElementById('fgrid');
+      if (!grid) return;
+      const cards = Array.from(grid.children);
+      const none = document.getElementById('fnone');
+      const count = document.getElementById('fcount');
+      const search = document.getElementById('fsearch');
+      const pager = document.getElementById('fpager');
+      const pprev = document.getElementById('fprev');
+      const pnext = document.getElementById('fnext');
+      const pinfo = document.getElementById('fpinfo');
+      const ftoggle = document.getElementById('ffiltertoggle');
+      const ftbadge = document.getElementById('fftbadge');
+      const filterPanel = document.getElementById('food-filters-panel');
+      const PAGE_SIZE = 30;
+      const state = { city: '*', cuisine: '*', score: '*', q: '', sort: 'score', page: 0 };
+
+      const updateBadge = () => {
+        const n = ['city', 'cuisine', 'score'].filter((k) => state[k] !== '*').length;
+        if (ftbadge) { ftbadge.textContent = n; ftbadge.hidden = n === 0; }
+      };
+      ftoggle?.addEventListener('click', () => {
+        const open = filterPanel.classList.toggle('is-open');
+        ftoggle.setAttribute('aria-expanded', String(open));
+        const arr = ftoggle.querySelector('.mft-arr');
+        if (arr) arr.textContent = open ? '▲' : '▼';
+      });
+
+      const visible = (c) => {
+        const d = c.dataset;
+        if (state.city !== '*' && d.city !== state.city) return false;
+        if (state.cuisine !== '*' && !d.cuisine.split('|').includes(state.cuisine)) return false;
+        if (state.score !== '*' && d.band !== state.score) return false;
+        if (state.q && !d.q.includes(state.q)) return false;
+        return true;
+      };
+      const apply = () => {
+        const vis = cards.filter((c) => visible(c));
+        vis.sort((a, b) => {
+          if (state.sort === 'date') return (b.dataset.date || '').localeCompare(a.dataset.date || '');
+          return (b.dataset.band || '').localeCompare(a.dataset.band || '') ||
+                 (b.dataset.date || '').localeCompare(a.dataset.date || '');
+        });
+        const totalPages = Math.max(1, Math.ceil(vis.length / PAGE_SIZE));
+        if (state.page >= totalPages) state.page = totalPages - 1;
+        const start = state.page * PAGE_SIZE;
+        const pageItems = new Set(vis.slice(start, start + PAGE_SIZE));
+        cards.forEach((c) => { c.hidden = !pageItems.has(c); });
+        vis.slice(start, start + PAGE_SIZE).forEach((c) => grid.appendChild(c));
+        if (count) count.textContent = vis.length;
+        if (none) none.hidden = vis.length > 0;
+        if (pager) {
+          pager.hidden = totalPages <= 1;
+          if (pprev) pprev.disabled = state.page === 0;
+          if (pnext) pnext.disabled = state.page === totalPages - 1;
+          if (pinfo) pinfo.textContent = `第 ${state.page + 1} / ${totalPages} 页`;
+        }
+      };
+
+      document.querySelectorAll('[data-facet]').forEach((btn) => btn.addEventListener('click', () => {
+        const f = btn.dataset.facet;
+        state[f] = btn.dataset.val;
+        document.querySelectorAll(`[data-facet="${f}"]`).forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
+        apply();
+        updateBadge();
+      }));
+      document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
+        state.sort = btn.dataset.sort;
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
+        apply();
+      }));
+      let t;
+      search?.addEventListener('input', (e) => {
+        clearTimeout(t);
+        t = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); state.page = 0; apply(); }, 120);
+      });
+      document.getElementById('freset')?.addEventListener('click', () => {
+        Object.assign(state, { city: '*', cuisine: '*', score: '*', q: '', sort: 'score', page: 0 });
+        if (search) search.value = '';
+        document.querySelectorAll('[data-facet]').forEach((b) => b.classList.toggle('is-on', b.dataset.val === '*'));
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b.dataset.sort === 'score'));
+        apply();
+        updateBadge();
+      });
+      pprev?.addEventListener('click', () => {
+        if (state.page > 0) { state.page--; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+      pnext?.addEventListener('click', () => {
+        const totalPages = Math.max(1, Math.ceil(cards.filter((c) => visible(c)).length / PAGE_SIZE));
+        if (state.page < totalPages - 1) { state.page++; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+      apply();
+    })();
+  </script>
+</BaseLayout>
