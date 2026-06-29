@@ -1,0 +1,272 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadFavorites, TYPE_LABEL, decadeOf } from '../../lib/favorites';
+import raw from '../../data/favorites.json';
+
+const items = loadFavorites(raw).sort((a, b) => b.score - a.score || b.date.localeCompare(a.date));
+
+const types = (['movie', 'teleplay', 'book', 'music'] as const).filter((t) => items.some((i) => i.type === t));
+const typeCount = (t: string) => items.filter((i) => i.type === t).length;
+
+// 品类（取出现最多的前 12 个）
+const catCount = new Map<string, number>();
+for (const it of items) for (const c of it.categories) catCount.set(c, (catCount.get(c) ?? 0) + 1);
+const topCats = [...catCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map((e) => e[0]);
+
+// 年代（仅保留实际出现的桶，按新→旧）
+const decadeOrder = ['2020s', '2010s', '2000s', '1990s', '1980s', 'earlier'];
+const decadeLabel: Record<string, string> = { '2020s': '2020s', '2010s': '2010s', '2000s': '2000s', '1990s': '90s', '1980s': '80s', earlier: '更早' };
+const decades = decadeOrder.filter((d) => items.some((i) => decadeOf(i.year) === d));
+
+const scored = items.filter((i) => i.score > 0);
+const stats = {
+  total: items.length,
+  avg: scored.length ? (scored.reduce((s, i) => s + i.score, 0) / scored.length).toFixed(1) : '—',
+  done: items.filter((i) => i.status).length,
+};
+const segPct = (t: string) => ((typeCount(t) / stats.total) * 100).toFixed(2);
+
+const searchText = (i: typeof items[number]) =>
+  [i.title, i.creator, i.year, ...i.categories].join(' ').toLowerCase();
+const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
+---
+<BaseLayout title="书影 · 归来" description="读过的书、看过的影视——一座私人媒体库，按类型、评分、品类、年代检索。" wide>
+  <header class="mlib-head">
+    <div class="mlib-head-inner">
+      <div class="mlib-head-text">
+        <p class="kicker">私人甄选 · 影 / 视 / 书 / 乐</p>
+        <h1>书影</h1>
+        <p class="mlib-lede">一座私人的媒体库。每一件都经手挑选、亲自评分——在此按类型、评分、品类与年代自由穿行。</p>
+      </div>
+      <div class="statsmap" aria-label="藏品统计">
+        <div class="statsmap-track">
+          {types.map((t) => (
+            <div
+              class={`statsmap-seg statsmap-seg--${t}`}
+              style={`width:${segPct(t)}%`}
+              title={`${TYPE_LABEL[t]} · ${typeCount(t)}`}
+            >
+              <span class="statsmap-seg-num">{typeCount(t)}</span>
+              <span class="statsmap-seg-lab">{TYPE_LABEL[t]}</span>
+            </div>
+          ))}
+        </div>
+        <div class="statsmap-footer">
+          <div class="statsmap-foot statsmap-foot--total">
+            <span class="smf-num">{stats.total}</span>
+            <span class="smf-lab">件藏品</span>
+          </div>
+          <div class="statsmap-foot">
+            <span class="smf-num smf-num--red">{stats.avg}</span>
+            <span class="smf-lab">均分</span>
+          </div>
+          <div class="statsmap-foot">
+            <span class="smf-num">{stats.done}</span>
+            <span class="smf-lab">已阅</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mlib-bar">
+    <label class="msearch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+      <input id="msearch" type="search" placeholder="搜标题、导演、作者、品类…" autocomplete="off" aria-label="搜索藏品" />
+    </label>
+    <div class="frow" role="group" aria-label="排序">
+      <span class="flabel">排序</span>
+      <button type="button" class="fchip is-on" data-sort="score">评分</button>
+      <button type="button" class="fchip" data-sort="year">年代</button>
+      <button type="button" class="fchip" data-sort="title">标题</button>
+    </div>
+  </div>
+
+  <button type="button" class="mlib-filter-toggle" id="mfiltertoggle" aria-expanded="false">
+    筛选<span class="mft-badge" id="mftbadge" hidden>0</span><span class="mft-arr" aria-hidden="true">▼</span>
+  </button>
+
+  <div class="filters mlib-filters" id="mlib-filters-panel">
+    <div class="frow" role="group" aria-label="按类型筛选">
+      <span class="flabel">类型</span>
+      <button type="button" class="fchip is-on" data-facet="type" data-val="*">全部</button>
+      {types.map((t) => <button type="button" class="fchip" data-facet="type" data-val={t}>{TYPE_LABEL[t]} · {typeCount(t)}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按评分筛选">
+      <span class="flabel">评分</span>
+      <button type="button" class="fchip is-on" data-facet="score" data-val="*">全部</button>
+      <button type="button" class="fchip" data-facet="score" data-val="9">9+ 殿堂</button>
+      <button type="button" class="fchip" data-facet="score" data-val="8">8–9 杰作</button>
+      <button type="button" class="fchip" data-facet="score" data-val="7">7–8 佳作</button>
+      <button type="button" class="fchip" data-facet="score" data-val="lt7">7 以下</button>
+    </div>
+    <div class="frow" role="group" aria-label="按品类筛选">
+      <span class="flabel">品类</span>
+      <button type="button" class="fchip is-on" data-facet="cat" data-val="*">全部</button>
+      {topCats.map((c) => <button type="button" class="fchip" data-facet="cat" data-val={c}>{c}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按年代筛选">
+      <span class="flabel">年代</span>
+      <button type="button" class="fchip is-on" data-facet="decade" data-val="*">全部</button>
+      {decades.map((d) => <button type="button" class="fchip" data-facet="decade" data-val={d}>{decadeLabel[d]}</button>)}
+    </div>
+    <div class="frow" role="group" aria-label="按状态筛选">
+      <span class="flabel">状态</span>
+      <button type="button" class="fchip is-on" data-facet="status" data-val="*">全部</button>
+      <button type="button" class="fchip" data-facet="status" data-val="done">已阅</button>
+      <button type="button" class="fchip" data-facet="status" data-val="todo">想看</button>
+    </div>
+  </div>
+
+  <div class="mlib-meta">
+    <span class="mcount">馆藏中 <b id="mcount">{items.length}</b> 件</span>
+    <button type="button" class="mreset" id="mreset">清除筛选</button>
+  </div>
+
+  <div class="mlib">
+    <div class="pgrid" id="pgrid">
+      {items.map((it) => (
+        <article
+          class="pcard"
+          data-type={it.type}
+          data-score={it.score}
+          data-year={it.year}
+          data-decade={decadeOf(it.year) ?? ''}
+          data-status={it.status ? 'done' : 'todo'}
+          data-cats={it.categories.join('|')}
+          data-q={searchText(it)}
+        >
+          <div class={it.cover ? 'poster' : 'poster poster--text'}>
+            {it.cover
+              ? <img loading="lazy" src={it.cover} alt={it.title} width="200" height="300" />
+              : <span class="ptext">{it.title}</span>}
+            <span class="ptype">{TYPE_LABEL[it.type]}</span>
+            {it.status && <span class="pdone" title="已阅" aria-label="已阅">✓</span>}
+            {it.score > 0
+              ? <span class="pscore">{fmtScore(it.score)}</span>
+              : <span class="pscore pscore--none">想看</span>}
+          </div>
+          <div class="pcap">
+            <h3 class="pt">{it.title}</h3>
+            <p class="pm">{[it.year, it.creator].filter(Boolean).join(' · ')}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="noresult" id="mnone" hidden>没有藏品符合当前条件——试着放宽筛选。</p>
+  </div>
+
+  <div class="mpager" id="mpager" hidden>
+    <button type="button" class="mpager-btn" id="mprev" aria-label="上一页">← 上一页</button>
+    <span class="mpager-info" id="mpinfo">第 1 / 1 页</span>
+    <button type="button" class="mpager-btn" id="mnext" aria-label="下一页">下一页 →</button>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const grid = document.getElementById('pgrid');
+      if (!grid) return;
+      const cards = Array.from(grid.children);
+      const none = document.getElementById('mnone');
+      const count = document.getElementById('mcount');
+      const search = document.getElementById('msearch');
+      const pager = document.getElementById('mpager');
+      const pprev = document.getElementById('mprev');
+      const pnext = document.getElementById('mnext');
+      const pinfo = document.getElementById('mpinfo');
+      const ftoggle = document.getElementById('mfiltertoggle');
+      const ftbadge = document.getElementById('mftbadge');
+      const filterPanel = document.getElementById('mlib-filters-panel');
+      const PAGE_SIZE = 30;
+      const state = { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score', page: 0 };
+
+      const updateBadge = () => {
+        const n = ['type', 'score', 'cat', 'decade', 'status'].filter(k => state[k] !== '*').length;
+        if (ftbadge) { ftbadge.textContent = n; ftbadge.hidden = n === 0; }
+      };
+      ftoggle?.addEventListener('click', () => {
+        const open = filterPanel.classList.toggle('is-open');
+        ftoggle.setAttribute('aria-expanded', String(open));
+        const arr = ftoggle.querySelector('.mft-arr');
+        if (arr) arr.textContent = open ? '▲' : '▼';
+      });
+
+      const scoreOk = (s, band) => {
+        s = parseFloat(s) || 0;
+        if (band === '9') return s >= 9;
+        if (band === '8') return s >= 8 && s < 9;
+        if (band === '7') return s >= 7 && s < 8;
+        if (band === 'lt7') return s > 0 && s < 7;
+        return true;
+      };
+      const visible = (c) => {
+        const d = c.dataset;
+        if (state.type !== '*' && d.type !== state.type) return false;
+        if (state.cat !== '*' && !d.cats.split('|').includes(state.cat)) return false;
+        if (state.decade !== '*' && d.decade !== state.decade) return false;
+        if (state.status !== '*' && d.status !== state.status) return false;
+        if (!scoreOk(d.score, state.score)) return false;
+        if (state.q && !d.q.includes(state.q)) return false;
+        return true;
+      };
+      const apply = () => {
+        const vis = cards.filter((c) => visible(c));
+        vis.sort((a, b) => {
+          if (state.sort === 'score') return (b.dataset.score - a.dataset.score) || b.dataset.year.localeCompare(a.dataset.year);
+          if (state.sort === 'year') return (b.dataset.year || '').localeCompare(a.dataset.year || '') || (b.dataset.score - a.dataset.score);
+          return a.querySelector('.pt').textContent.localeCompare(b.querySelector('.pt').textContent, 'zh');
+        });
+        const totalPages = Math.max(1, Math.ceil(vis.length / PAGE_SIZE));
+        if (state.page >= totalPages) state.page = totalPages - 1;
+        const start = state.page * PAGE_SIZE;
+        const pageItems = new Set(vis.slice(start, start + PAGE_SIZE));
+        cards.forEach((c) => { c.hidden = !pageItems.has(c); });
+        vis.slice(start, start + PAGE_SIZE).forEach((c) => grid.appendChild(c));
+        if (count) count.textContent = vis.length;
+        if (none) none.hidden = vis.length > 0;
+        if (pager) {
+          pager.hidden = totalPages <= 1;
+          if (pprev) pprev.disabled = state.page === 0;
+          if (pnext) pnext.disabled = state.page === totalPages - 1;
+          if (pinfo) pinfo.textContent = `第 ${state.page + 1} / ${totalPages} 页`;
+        }
+      };
+
+      document.querySelectorAll('[data-facet]').forEach((btn) => btn.addEventListener('click', () => {
+        const f = btn.dataset.facet;
+        state[f] = btn.dataset.val;
+        document.querySelectorAll(`[data-facet="${f}"]`).forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
+        apply();
+        updateBadge();
+      }));
+      document.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
+        state.sort = btn.dataset.sort;
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b === btn));
+        state.page = 0;
+        apply();
+      }));
+      let t;
+      search?.addEventListener('input', (e) => {
+        clearTimeout(t);
+        t = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); state.page = 0; apply(); }, 120);
+      });
+      document.getElementById('mreset')?.addEventListener('click', () => {
+        Object.assign(state, { type: '*', score: '*', cat: '*', decade: '*', status: '*', q: '', sort: 'score', page: 0 });
+        if (search) search.value = '';
+        document.querySelectorAll('[data-facet]').forEach((b) => b.classList.toggle('is-on', b.dataset.val === '*'));
+        document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b.dataset.sort === 'score'));
+        apply();
+        updateBadge();
+      });
+      pprev?.addEventListener('click', () => {
+        if (state.page > 0) { state.page--; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+      pnext?.addEventListener('click', () => {
+        const totalPages = Math.max(1, Math.ceil(cards.filter((c) => visible(c)).length / PAGE_SIZE));
+        if (state.page < totalPages - 1) { state.page++; apply(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+      apply();
+    })();
+  </script>
+</BaseLayout>

@@ -956,3 +956,27 @@ main > h1 { font-family: var(--read); letter-spacing: .04em; }
   .masonry .mcard:hover .motif { transform: none; }
 }
 /* ===== 宋韵 end ===== */
+
+/* ── 私藏 hub ───────────────────────────── */
+.hub-head { max-width: 680px; margin: 0 auto 2rem; }
+.hub-head h1 { font-family: var(--disp, inherit); margin: .2rem 0; }
+.hub-lede { color: var(--muted, inherit); }
+.hub-grid {
+  max-width: 680px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+}
+@media (max-width: 560px) { .hub-grid { grid-template-columns: 1fr; } }
+.hub-card {
+  display: block; padding: 1.4rem 1.2rem; text-decoration: none; color: inherit;
+  background: var(--paper, #fff);
+  border: 3px solid var(--ink, #1a1a1a);
+  box-shadow: 5px 5px 0 var(--ink, #1a1a1a);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.hub-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--seal, #b22);
+}
+.hub-card-kicker { display: block; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold, #c89a2b); }
+.hub-card-title { margin: .35rem 0 .15rem; font-family: var(--disp, inherit); }
+.hub-card-meta { margin: 0; font-family: var(--mono, monospace); font-size: .85rem; color: var(--muted, inherit); }
