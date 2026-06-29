@@ -24,7 +24,7 @@ const stats = {
 };
 
 const searchText = (i: typeof items[number]) =>
-  [i.name, ...i.cuisine, ...i.dishes].join(' ').toLowerCase();
+  [i.name, i.city, i.area, ...i.cuisine, ...i.dishes].join(' ').toLowerCase();
 const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
 <BaseLayout title="美食 · 私藏" description="私人觅食地图——亲自去过的宝藏馆子，按城市、菜系、评分检索。" wide>
@@ -94,6 +94,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
           data-city={it.city}
           data-cuisine={it.cuisine.join('|')}
           data-band={scoreBand(it.score) ?? ''}
+          data-score={it.score}
           data-date={it.date}
           data-q={searchText(it)}
         >
@@ -123,6 +124,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
   </div>
 
   <script is:inline>
+    // 筛选/排序/分页逻辑与 collections/media.astro 同构，改动需同步两处
     (() => {
       const grid = document.getElementById('fgrid');
       if (!grid) return;
@@ -160,13 +162,11 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         if (state.q && !d.q.includes(state.q)) return false;
         return true;
       };
-      const bandRank = { '9': 4, '8': 3, '7': 2, 'lt7': 1, '': 0 };
       const apply = () => {
         const vis = cards.filter((c) => visible(c));
         vis.sort((a, b) => {
           if (state.sort === 'date') return (b.dataset.date || '').localeCompare(a.dataset.date || '');
-          return (bandRank[b.dataset.band] || 0) - (bandRank[a.dataset.band] || 0)
-            || (b.dataset.date || '').localeCompare(a.dataset.date || '');
+          return (b.dataset.score - a.dataset.score) || (b.dataset.date || '').localeCompare(a.dataset.date || '');
         });
         const totalPages = Math.max(1, Math.ceil(vis.length / PAGE_SIZE));
         if (state.page >= totalPages) state.page = totalPages - 1;
