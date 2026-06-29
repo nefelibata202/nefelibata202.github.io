@@ -24,7 +24,7 @@ const stats = {
 };
 
 const searchText = (i: typeof items[number]) =>
-  [i.name, i.city, i.area, ...i.cuisine, ...i.dishes].join(' ').toLowerCase();
+  [i.name, i.city, ...i.cuisine, ...i.dishes].join(' ').toLowerCase();
 const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
 <BaseLayout title="美食 · 私藏" description="私人觅食地图——亲自去过的宝藏馆子，按城市、菜系、评分检索。" wide>
@@ -102,7 +102,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
             <h3 class="fcard-name">{it.name}</h3>
             {it.score > 0 && <span class="fcard-score">{fmtScore(it.score)}</span>}
           </div>
-          <p class="fcard-loc">{[it.city, it.area].filter(Boolean).join(' · ')}</p>
+          <p class="fcard-loc">{it.city}</p>
           {it.cuisine.length > 0 && (
             <div class="fcard-tags">
               {it.cuisine.map((c) => <span class="fcard-tag">{c}</span>)}

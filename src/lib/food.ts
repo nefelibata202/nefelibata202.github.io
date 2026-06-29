@@ -3,7 +3,6 @@ import { z } from 'astro/zod';
 export const foodSchema = z.object({
   name: z.string(),
   city: z.string(),
-  area: z.string().default(''),
   cuisine: z.array(z.string()).default([]),
   score: z.number().min(0).max(10).default(0),
   recommend: z.string().default(''),

@@ -9,7 +9,6 @@ describe('loadFood', () => {
     expect(item).toEqual({
       name: '明婷饭店',
       city: '成都',
-      area: '',
       cuisine: ['川菜'],
       score: 8.8,
       recommend: '',
