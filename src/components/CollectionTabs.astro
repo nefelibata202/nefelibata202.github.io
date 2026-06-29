@@ -1,0 +1,7 @@
+---
+const { active } = Astro.props as { active: 'media' | 'food' };
+---
+<nav class="ctabs" aria-label="私藏分区">
+  <a href="/collections/media" class="ctab" aria-current={active === 'media' ? 'page' : undefined}>书影</a>
+  <a href="/collections/food" class="ctab" aria-current={active === 'food' ? 'page' : undefined}>美食</a>
+</nav>
