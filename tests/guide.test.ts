@@ -7,15 +7,14 @@ const EXPECTED = [
   'people',
   'interests',
   'philosophy',
-  'info-sources',
   'fragmented-time',
   'knowledge-gaps',
 ];
 
 describe('guide content collection', () => {
-  it('has exactly 7 markdown files', () => {
+  it('has exactly 5 markdown files', () => {
     const files = readdirSync(GUIDE_DIR).filter(f => f.endsWith('.md'));
-    expect(files).toHaveLength(6);
+    expect(files).toHaveLength(5);
   });
 
   it('all required island files are present', () => {
