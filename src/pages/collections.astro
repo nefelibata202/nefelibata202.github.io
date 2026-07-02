@@ -8,23 +8,106 @@ import foodRaw from '../data/food.json';
 const media = loadFavorites(favRaw);
 const food = loadFood(foodRaw);
 const foodCities = new Set(food.map((f) => f.city)).size;
+const scored = food.filter((f) => f.score > 0);
+const avg = scored.length ? (scored.reduce((s, f) => s + f.score, 0) / scored.length).toFixed(1) : '—';
+const top3 = [...food].sort((a, b) => b.score - a.score).slice(0, 3);
+
+const typeCount = (t: string) => media.filter((m: any) => m.type === t).length;
+const spines = [
+  { zh: '影', n: typeCount('movie'), bg: 'var(--ink)', fg: 'var(--bg)' },
+  { zh: '剧', n: typeCount('teleplay'), bg: 'var(--gold)', fg: 'var(--on-gold)' },
+  { zh: '书', n: typeCount('book'), bg: 'var(--seal)', fg: '#F6F1E4' },
+  { zh: '乐', n: typeCount('music'), bg: 'var(--soft)', fg: 'var(--muted)' },
+];
 ---
-<BaseLayout title="私藏 · 归来" description="私人珍藏——读过看过的书影，与亲自去过的宝藏馆子。">
-  <header class="hub-head">
-    <p class="kicker">私人珍藏</p>
-    <h1>私藏</h1>
-    <p class="hub-lede">经手挑选的偏爱——读过看过的作品，与亲自去过的宝藏馆子。</p>
+<BaseLayout title="私藏 · 归来" description="私人珍藏——读过看过的书影，与亲自去过的宝藏馆子。" wide>
+  <header class="rd-head rd-reveal">
+    <span class="rd-mark" aria-hidden="true" data-parallax="-0.05" style="font-size:200px;top:-12%">藏</span>
+    <div class="rd-head-text">
+      <p class="rd-kicker">私人珍藏 · The Private Collection</p>
+      <div class="rd-title-row">
+        <h1 class="rd-title">私藏</h1>
+        <span class="rd-seal" aria-hidden="true"><span>藏</span></span>
+      </div>
+      <p class="rd-lede" style="max-width:30em">经手挑选的偏爱——读过看过的作品，与亲自去过的宝藏馆子。每一件，都值得再来一次。</p>
+    </div>
+    <div class="rd-stats">
+      <div class="rd-stat"><span class="rd-stat-num">{media.length}</span><span class="rd-stat-lab">件藏品</span></div>
+      <div class="rd-stat"><span class="rd-stat-num">{food.length}</span><span class="rd-stat-lab">家馆子</span></div>
+      <div class="rd-stat"><span class="rd-stat-num">{foodCities}</span><span class="rd-stat-lab">座城</span></div>
+    </div>
   </header>
-  <div class="hub-grid">
-    <a class="hub-card" href="/collections/media">
-      <span class="hub-card-kicker">影 / 视 / 书 / 乐</span>
-      <h2 class="hub-card-title">书影</h2>
-      <p class="hub-card-meta">{media.length} 件藏品</p>
+
+  <div class="rd-hub-grid">
+    <a class="rd-door rd-reveal" href="/collections/media">
+      <span class="rd-door-glyph" aria-hidden="true">影</span>
+      <p class="rd-door-kicker">影 / 视 / 书 / 乐</p>
+      <div class="rd-door-title-row">
+        <h2 class="rd-door-title">书影</h2>
+        <span class="rd-door-en">Screens &amp; Pages</span>
+      </div>
+      <p class="rd-door-lede">看过的电影与剧集、读完的书、循环的唱片——按评分收进同一面墙。</p>
+      <div class="rd-spines">
+        {spines.map((s, i) => (
+          <div class="rd-spine">
+            <div class="rd-spine-cover" style={`background:${s.bg};color:${s.fg};transform:rotate(${[-2, 1.5, -1, 2][i]}deg)${i === 3 ? ';border:1px solid var(--hair);box-shadow:none' : ''}`}>{s.zh}</div>
+            <p class="rd-spine-n">{s.n}</p>
+          </div>
+        ))}
+      </div>
+      <div class="rd-door-foot">
+        <span class="rd-door-meta">{media.length} 件 · 0–10 评分</span>
+        <span class="rd-door-go">进入书影 →</span>
+      </div>
     </a>
-    <a class="hub-card" href="/collections/food">
-      <span class="hub-card-kicker">私人觅食地图</span>
-      <h2 class="hub-card-title">美食</h2>
-      <p class="hub-card-meta">{food.length} 家 · {foodCities} 城</p>
+
+    <a class="rd-door rd-reveal" href="/collections/food">
+      <span class="rd-door-glyph" aria-hidden="true">味</span>
+      <p class="rd-door-kicker">私 人 觅 食 地 图</p>
+      <div class="rd-door-title-row">
+        <h2 class="rd-door-title">美食</h2>
+        <span class="rd-door-en">The Food Map</span>
+      </div>
+      <p class="rd-door-lede">亲自去过、值得回头的宝藏馆子，按城市与菜系收档。</p>
+      <div class="rd-toplist">
+        {top3.map((f) => (
+          <div class="rd-toprow">
+            <span class="rd-toprow-score">{f.score.toFixed(1)}</span>
+            <span class="rd-toprow-name">{f.name}</span>
+            <span class="rd-toprow-meta">{f.city} · {f.cuisine[0]}</span>
+          </div>
+        ))}
+      </div>
+      <div class="rd-door-foot">
+        <span class="rd-door-meta">{food.length} 家 · {foodCities} 城 · 均分 {avg}</span>
+        <span class="rd-door-go">进入美食 →</span>
+      </div>
     </a>
   </div>
+
+  <p class="rd-coda rd-reveal">Every piece here was kept on purpose. <span class="zh">每一件，都是亲手挑过的偏爱。</span></p>
 </BaseLayout>
+
+<script>
+  import { enhance } from '../scripts/rd-enhance.js';
+  enhance();
+  // 3D 微倾（仅指针设备 + 未开启减弱动效）
+  if (matchMedia('(hover: hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.rd-door').forEach((card) => {
+      let raf = 0;
+      card.addEventListener('pointermove', (ev) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const r = card.getBoundingClientRect();
+          const rx = ((ev.clientY - r.top) / r.height - 0.5) * -2.6;
+          const ry = ((ev.clientX - r.left) / r.width - 0.5) * 3.0;
+          card.style.transform = `perspective(1100px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-4px)`;
+        });
+      });
+      card.addEventListener('pointerleave', () => {
+        cancelAnimationFrame(raf);
+        card.style.transform = '';
+      });
+    });
+  }
+</script>

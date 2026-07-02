@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleList from '../../components/ArticleList.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const f = (d: Date) => d.toISOString().slice(0, 10);
@@ -17,12 +16,63 @@ export const getStaticPaths = (async ({ paginate }) => {
       tags: e.data.tags,
       read: rt(e.body),
     }));
-  return paginate(items, { pageSize: 8 });
+  // 单页全量：卡片流 + 客户端标签筛选取代分页
+  return paginate(items, { pageSize: 999 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
+const items = page.data;
+const tagCount = new Map<string, number>();
+for (const it of items) for (const t of it.tags ?? []) tagCount.set(t, (tagCount.get(t) ?? 0) + 1);
+const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]);
 ---
 <BaseLayout title="文章 · 归来" wide>
-  <h1>文章</h1>
-  <ArticleList items={page.data} page={page} activeTag={null} />
+  <header class="rd-head rd-reveal">
+    <span class="rd-mark" aria-hidden="true" data-parallax="-0.05">文</span>
+    <div class="rd-head-text">
+      <p class="rd-kicker">写作博客 · The Essays</p>
+      <div class="rd-title-row">
+        <h1 class="rd-title">文章</h1>
+        <span class="rd-seal" aria-hidden="true"><span>文</span></span>
+      </div>
+      <p class="rd-lede">写长一点、想清楚再留下的东西。</p>
+    </div>
+    <div class="rd-stats">
+      <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{items.length}</span><span class="rd-stat-lab">篇文章</span></div>
+      <div class="rd-stat"><span class="rd-stat-num">{tags.length}</span><span class="rd-stat-lab">个标签</span></div>
+    </div>
+  </header>
+
+  <div class="rd-chips rd-reveal" id="rd-chips" role="group" aria-label="按标签筛选">
+    <span class="rd-chips-lab">Filter —</span>
+    <button type="button" class="rd-chip is-on" data-chip="*">全部</button>
+    {tags.map((t) => <button type="button" class="rd-chip" data-chip={t}>{t}</button>)}
+  </div>
+
+  <div class="rd-cards" id="rd-cards">
+    {items.map((it) => (
+      <a class="rd-card rd-reveal" href={it.url} data-tags={(it.tags ?? []).join('|')}>
+        <svg class="rd-card-glyph" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="24" r="11"/><circle cx="31" cy="24" r="11"/></svg>
+        <div class="rd-card-meta">
+          {it.tags?.[0] && <span class="rd-card-tag">{it.tags[0]}</span>}
+          <span class="rd-card-date">{it.date} · {it.read}</span>
+        </div>
+        <h3 class="rd-card-title">{it.title}</h3>
+        {it.summary && <p class="rd-card-sum">{it.summary}</p>}
+      </a>
+    ))}
+  </div>
+  <p class="rd-empty" id="rd-empty" hidden>这个标签下还没有文章。</p>
 </BaseLayout>
+
+<script>
+  import { enhance, chipFilter } from '../../scripts/rd-enhance.js';
+  enhance();
+  chipFilter({
+    chips: document.getElementById('rd-chips'),
+    list: document.getElementById('rd-cards'),
+    items: () => [...document.querySelectorAll('#rd-cards .rd-card')],
+    count: document.getElementById('rd-count'),
+    empty: document.getElementById('rd-empty'),
+  });
+</script>

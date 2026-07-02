@@ -1,248 +1,77 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+// 归图 · 重构：六宫格 → 一条「归家的路」。
+// 五座岛的内容直接摊开在驿站里（不再需要点进 /guide/[island] 二级页；
+// 若保留二级页也不冲突，驿站标题仍链接过去）。
 const entries = await getCollection('guide');
 const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'knowledge-gaps'];
 entries.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
 
-const meta: Record<string, string> = {
-  'people':           'PEOPLE',
-  'philosophy':       'PHILOSOPHY',
-  'interests':        'INTERESTS',
-  'fragmented-time':  'FRAGMENTED TIME',
-  'knowledge-gaps':   'KNOWLEDGE GAPS',
+const meta: Record<string, { en: string; note: string }> = {
+  'people':          { en: 'People',          note: '我所欣赏与追随的人物。' },
+  'philosophy':      { en: 'Philosophy',      note: '思考框架与人生观。' },
+  'interests':       { en: 'Interests',       note: '长期喜好与痴迷领域。' },
+  'fragmented-time': { en: 'Fragmented Time', note: '零散时间的最优解法。' },
+  'knowledge-gaps':  { en: 'Knowledge Gaps',  note: '待填补的知识空白地图——地图上真正诚实的部分。' },
 };
+const nums = ['壹', '贰', '叁', '肆', '伍', '陆'];
+
+const rendered = [];
+for (const e of entries) rendered.push({ entry: e, Content: (await render(e)).Content });
 ---
-
-<BaseLayout title="归图 · 个人导览" description="个人知识导览——关于我、知识理念、兴趣、碎片时间、信息源、知识缺口。">
-  <div class="guide-page">
-
-    <header class="guide-header">
-      <a href="/" class="guide-back-link" aria-label="返回归来首页">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M19 12H5M12 5l-7 7 7 7"/>
-        </svg>
-        归来
-      </a>
-      <div class="guide-header-title">
-        <p class="guide-kicker">个人知识导览</p>
-        <h1 class="guide-title">归图</h1>
+<BaseLayout title="归图 · 个人导览" description="个人知识导览——一张回家的地图：人物、人生哲学、兴趣、碎片时间、知识缺口。">
+  <header class="rd-head rd-reveal" style="display:block">
+    <span class="rd-mark" aria-hidden="true" data-parallax="-0.05" style="font-size:210px;top:-14%">图</span>
+    <div class="rd-head-text" style="max-width:none">
+      <p class="rd-kicker">个人知识导览 · An Atlas of One Mind</p>
+      <div class="rd-title-row">
+        <h1 class="rd-title">归图</h1>
+        <span class="rd-seal" aria-hidden="true"><span>图</span></span>
       </div>
-    </header>
+      <p class="rd-lede" style="max-width:32em">{entries.length} 座岛屿，一张回家的地图——我欣赏谁、信什么、被什么吸引、把时间花在哪、还有哪些空白要去填。</p>
+    </div>
+  </header>
 
-    <main class="guide-grid">
-      {entries.map(({ data }, i) => (
-        <a
-          href={`/guide/${data.island}`}
-          class="guide-card"
-          style={`animation-delay: ${i * 65}ms`}
-        >
-          <span class="guide-card-icon">
-            {data.island === 'people' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            )}
-            {data.island === 'philosophy' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 22 12 12 22 2 12"/>
-              </svg>
-            )}
-            {data.island === 'interests' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-            )}
-            {data.island === 'fragmented-time' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-            )}
-            {data.island === 'info-sources' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-            )}
-            {data.island === 'knowledge-gaps' && (
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            )}
-          </span>
-          <span class="guide-card-title">{data.title}</span>
-          <span class="guide-card-en">{meta[data.island]}</span>
-        </a>
-      ))}
+  <div class="rd-atlas" id="rd-atlas">
+    <span class="rd-rail" aria-hidden="true"></span>
+    <span class="rd-rail-fill" id="rd-rail-fill" aria-hidden="true"></span>
 
-      <a
-        href="/guide/websites"
-        class="guide-card"
-        style={`animation-delay: ${entries.length * 65}ms`}
-      >
-        <span class="guide-card-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="2" y1="12" x2="22" y2="12"/>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-          </svg>
-        </span>
-        <span class="guide-card-title">网站</span>
-        <span class="guide-card-en">WEBSITES</span>
-      </a>
-    </main>
+    {rendered.map(({ entry, Content }, i) => (
+      <section class="rd-station rd-reveal">
+        <span class="rd-stamp"><span>{nums[i]}</span></span>
+        <div>
+          <div class="rd-station-head">
+            <h2 class="rd-station-title"><a href={`/guide/${entry.data.island}`} style="color:inherit">{entry.data.title}</a></h2>
+            <span class="rd-station-en">{meta[entry.data.island]?.en}</span>
+          </div>
+          <p class="rd-station-note">{meta[entry.data.island]?.note}</p>
+          <div class="rd-station-body"><Content /></div>
+        </div>
+      </section>
+    ))}
 
+    <div class="rd-atlas-coda rd-reveal">
+      <span class="rd-seal" aria-hidden="true"><span>归</span></span>
+      <p class="rd-atlas-coda-text">所有路径，最终归于一处。<span class="rd-atlas-coda-en">All roads on this map lead home.</span></p>
+    </div>
   </div>
 </BaseLayout>
 
-<style>
-.guide-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px 28px 80px;
-}
-
-/* ── header ── */
-.guide-header {
-  padding-bottom: 24px;
-  border-bottom: 2px solid var(--line);
-  margin-bottom: 0;
-}
-
-.guide-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 4px 8px;
-  border: 2px solid transparent;
-  transition: all 0.12s;
-  margin-bottom: 20px;
-}
-
-.guide-back-link:hover {
-  color: var(--ink);
-  border-color: var(--line);
-  background: var(--soft);
-  box-shadow: var(--shadow-sm);
-}
-
-.guide-kicker {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0 0 2px;
-}
-
-.guide-title {
-  font-family: var(--disp);
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  margin: 0;
-}
-
-/* ── card grid ── */
-.guide-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding-top: 32px;
-}
-
-.guide-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 44px 20px 40px;
-  border: 2px solid var(--hair);
-  background: var(--paper);
-  text-decoration: none;
-  color: var(--ink);
-  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
-  animation: guidePopIn 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.guide-card:hover {
-  border-color: var(--line);
-  box-shadow: var(--shadow-sm);
-  transform: translate(-3px, -3px);
-}
-
-.guide-card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gold);
-  transition: transform 0.15s;
-}
-
-.guide-card:hover .guide-card-icon {
-  transform: scale(1.1);
-}
-
-.guide-card-title {
-  font-family: var(--disp);
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.guide-card-en {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-align: center;
-}
-
-@keyframes guidePopIn {
-  from {
-    opacity: 0;
-    transform: scale(0.82) translateY(16px);
+<script>
+  import { enhance } from '../scripts/rd-enhance.js';
+  enhance();
+  // 阅读进度：墨线随滚动填色
+  const atlas = document.getElementById('rd-atlas');
+  const fill = document.getElementById('rd-rail-fill');
+  if (atlas && fill) {
+    const onScroll = () => {
+      const r = atlas.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (innerHeight * 0.72 - r.top) / r.height));
+      fill.style.height = (pct * 100).toFixed(2) + '%';
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .guide-card {
-    animation: none;
-  }
-}
-
-/* ── responsive ── */
-@media (max-width: 600px) {
-  .guide-page {
-    padding: 20px 16px 60px;
-  }
-
-  .guide-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-}
-
-@media (max-width: 360px) {
-  .guide-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+</script>

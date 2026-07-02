@@ -4,6 +4,8 @@
    字：得意黑 Smiley Sans（展示）· 系统无衬线（正文）· Archivo（拉丁）· JetBrains Mono（数据）
    ============================================================ */
 
+@import './redesign.css';
+
 :root {
   --bg: #F1EBDB;          /* 暖纸背景 */
   --paper: #FCF8EE;       /* 卡片 / 面板 */

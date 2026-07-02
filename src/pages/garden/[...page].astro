@@ -8,38 +8,79 @@ export const getStaticPaths = (async ({ paginate }) => {
   const notes = (await getCollection('garden'))
     .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf())
     .map((e) => ({ url: `/garden/${e.id}`, title: e.data.title, tag: e.data.tags[0], updated: fmt(e.data.updated) }));
-  return paginate(notes, { pageSize: 16 });
+  // 单页全量索引：筛选 + 随手翻一株 取代分页
+  return paginate(notes, { pageSize: 999 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
+const notes = page.data;
+const tagCount = new Map<string, number>();
+for (const n of notes) if (n.tag) tagCount.set(n.tag, (tagCount.get(n.tag) ?? 0) + 1);
+const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]);
 ---
 <BaseLayout title="花园 · 归来">
-  <h1>数字花园</h1>
-  <p class="lead">慢慢生长、互相链接的笔记。</p>
+  <header class="rd-head rd-reveal">
+    <span class="rd-mark" aria-hidden="true" data-parallax="-0.05">园</span>
+    <div class="rd-head-text">
+      <p class="rd-kicker">数字花园 · The Digital Garden</p>
+      <div class="rd-title-row">
+        <h1 class="rd-title">花园</h1>
+        <span class="rd-seal" aria-hidden="true"><span>园</span></span>
+      </div>
+      <p class="rd-lede">慢慢生长、互相链接的笔记。不求完整，只求常来看看。</p>
+    </div>
+    <div class="rd-stats">
+      <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{notes.length}</span><span class="rd-stat-lab">株笔记</span></div>
+      <button type="button" class="rd-random" id="rd-random">随手翻一株 ✳</button>
+    </div>
+  </header>
 
-  <ul class="gindex">
-    {page.data.map((n) => (
-      <li class="grow">
-        <a class="grow-link" href={n.url}>
-          <span class="grow-title">{n.title}</span>
-          <span class="grow-meta">
-            {n.tag && <span class="grow-tag">{n.tag}</span>}
-            <span class="grow-date">{n.updated}</span>
+  <div class="rd-chips rd-reveal" id="rd-chips" role="group" aria-label="按标签筛选">
+    <span class="rd-chips-lab">Filter —</span>
+    <button type="button" class="rd-chip is-on" data-chip="*">全部</button>
+    {tags.map((t) => <button type="button" class="rd-chip" data-chip={t}>{t}</button>)}
+  </div>
+
+  <div class="rd-glist" id="rd-glist">
+    {notes.map((n) => (
+      <div class="rd-grow" data-tags={n.tag ?? ''}>
+        <a class="rd-grow-link" href={n.url}>
+          <span class="rd-grow-title">{n.title}</span>
+          <span class="rd-grow-meta">
+            {n.tag && <span class="rd-grow-tag">{n.tag}</span>}
+            <span class="rd-grow-date">{n.updated}</span>
           </span>
         </a>
-      </li>
+      </div>
     ))}
-  </ul>
+    <p class="rd-empty" id="rd-empty" hidden>这个标签下还没有笔记。</p>
+  </div>
 
-  {page.lastPage > 1 && (
-    <nav class="pager" aria-label="分页">
-      {page.url.prev
-        ? <a class="pager-btn" href={page.url.prev}>‹ 上一页</a>
-        : <span class="pager-btn is-off">‹ 上一页</span>}
-      <span class="pager-num">{page.currentPage} / {page.lastPage}</span>
-      {page.url.next
-        ? <a class="pager-btn" href={page.url.next}>下一页 ›</a>
-        : <span class="pager-btn is-off">下一页 ›</span>}
-    </nav>
-  )}
+  <p class="rd-coda rd-reveal">Notes grow slowly here. <span class="zh">笔记在这里慢慢生长。</span></p>
 </BaseLayout>
+
+<script>
+  import { enhance, chipFilter } from '../../scripts/rd-enhance.js';
+  enhance();
+  const rows = () => [...document.querySelectorAll('#rd-glist .rd-grow')];
+  chipFilter({
+    chips: document.getElementById('rd-chips'),
+    list: document.getElementById('rd-glist'),
+    items: rows,
+    count: document.getElementById('rd-count'),
+    empty: document.getElementById('rd-empty'),
+  });
+  // 随手翻一株：当前筛选内随机一株，平滑滚到并朱砂高亮
+  let flashT;
+  document.getElementById('rd-random')?.addEventListener('click', () => {
+    const pool = rows().filter((r) => !r.hidden);
+    if (!pool.length) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    rows().forEach((r) => r.classList.remove('is-flash'));
+    pick.classList.add('is-flash');
+    const y = pick.getBoundingClientRect().top + scrollY - innerHeight * 0.38;
+    scrollTo({ top: y, behavior: 'smooth' });
+    clearTimeout(flashT);
+    flashT = setTimeout(() => pick.classList.remove('is-flash'), 2400);
+  });
+</script>
