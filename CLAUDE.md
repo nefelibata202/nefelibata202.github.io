@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-「归来」(Guī Lái) — Evan's personal **writing blog + digital garden**. Astro 5 static site, zero client-side JS. Visual direction is **neo-brutalist** (Direction "D2"): ink + warm paper + 马金黄 marigold accent + 朱砂 seal red, hard 3px borders with offset hard shadows, a typographic 归来 masthead with a seal stamp, full-bleed ticker/footer. Display face is 得意黑 Smiley Sans (`cn-fontsource-smiley-sans-oblique-regular`), with Archivo for Latin and JetBrains Mono for data; body is system sans. The home is a wide two-column showcase (hero + feed + sidebar); article/garden detail pages stay a single ~680px reading column. Dark mode follows `prefers-color-scheme` by default but can be overridden by a nav toggle (`<html data-theme="light|dark">`, persisted in `localStorage`). Deployed to GitHub Pages at https://nefelibata202.github.io/ (repo `nefelibata202/nefelibata202.github.io`).
+「归来」(Guī Lái) — Evan's personal **writing blog + digital garden**. Astro 5 static site, zero client-side JS. Visual direction is **neo-brutalist** (Direction "D2"): ink + warm paper + 马金黄 marigold accent + 朱砂 seal red, hard 3px borders with offset hard shadows, a typographic 归来 masthead with a seal stamp, full-bleed ticker/footer. Display face is 得意黑 Smiley Sans (`cn-fontsource-smiley-sans-oblique-regular`), with Archivo for Latin and JetBrains Mono for data; body is system sans. The home is a wide two-column showcase (hero + feed + sidebar); article/garden detail pages stay a single ~680px reading column. Dark mode follows `prefers-color-scheme` by default but can be overridden by a nav toggle (`<html data-theme="light|dark">`, persisted in `localStorage`). Deployed to GitHub Pages (repo `nefelibata202/nefelibata202.github.io`) and served at the custom domain https://guilai.me/ (the old `nefelibata202.github.io` URL 301-redirects there).
 
 ## Commands
 
@@ -51,9 +51,9 @@ The site is the publishing end of Evan's Obsidian PKM vault: the `compose` skill
 - Match the existing per-page idiom: small inline `fmt` date helper, server-side `getCollection` in frontmatter, `entry.id` as slug. Don't introduce a framework or client runtime.
 - Keep `src/lib/links.ts` and `src/lib/favorites.ts` pure and unit-tested. Page/layout `.astro` files are verified by `npm run build` (+ grep of `dist/`), not unit tests.
 
-## Custom domain (future)
+## Custom domain
 
-Currently `astro.config.ts` `site` = `https://nefelibata202.github.io` (root path, no `base` — user-site repo). To bind a custom domain: add `public/CNAME` with the domain, set `site` to the domain, point DNS at GitHub Pages.
+The site is bound to **guilai.me**: `public/CNAME` holds the domain and `astro.config.ts` `site` = `https://guilai.me` (root path, no `base` — user-site repo). DNS points at GitHub Pages, and the old `nefelibata202.github.io` URL 301-redirects to guilai.me. To change the domain: update `public/CNAME` + `site` together and repoint DNS.
 
 ## Project docs
 
