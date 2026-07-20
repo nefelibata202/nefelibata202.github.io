@@ -579,70 +579,8 @@ main > h1 {
 .bl-card::before { content: "← "; color: var(--seal); }
 .bl-card:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow); }
 
-/* ---------- 关于页（释义 = 朱砂印 + 词条；签名元素） ---------- */
-.about { padding-top: 14px; max-width: 720px; }
-.about .eyebrow {
-  font-family: var(--mono); font-weight: 700; font-size: .74rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--muted); margin: 0 0 26px; display: flex; align-items: center; gap: 12px;
-}
-.about .eyebrow::before { content: ""; width: 40px; height: 3px; background: var(--seal); flex: 0 0 auto; }
-
-/* 释义块：把站名当词条解释——印章在左，词义在右 */
-.about .define {
-  display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
-  padding-bottom: 32px; border-bottom: 3px solid var(--line);
-}
-.about .seal {
-  width: 138px; height: 138px; flex: 0 0 auto;
-  background: var(--seal); color: var(--paper); border: 3px solid var(--line); box-shadow: var(--shadow);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--disp); font-weight: 700; font-size: 5.8rem; line-height: 1; user-select: none;
-}
-.about .gloss .word { font-family: var(--disp); font-weight: 700; font-size: clamp(2.1rem, 7vw, 3rem); line-height: 1; margin: 0; letter-spacing: .02em; }
-.about .gloss .word .py { font-family: var(--lat); font-style: italic; font-weight: 700; font-size: .4em; color: var(--muted); margin-left: .65em; letter-spacing: .03em; }
-.about .gloss .pos { font-family: var(--mono); font-weight: 700; font-size: .72rem; color: var(--seal); letter-spacing: .05em; margin: 14px 0 5px; }
-.about .gloss .def { font-family: var(--zh); color: var(--muted); font-size: 1rem; line-height: 1.7; margin: 0 0 12px; }
-.about .gloss .mine { font-family: var(--zh); color: var(--ink); font-size: 1.04rem; line-height: 1.7; margin: 0; border-left: 4px solid var(--gold); padding-left: 14px; }
-
-/* 自述：用文章正文的阅读体 */
-.about .manifesto { font-family: var(--read); font-size: 1.06rem; line-height: 1.95; letter-spacing: .01em; margin: 30px 0 0; }
-.about .manifesto p { margin: 0 0 1.4em; }
-.about .manifesto p:last-child { margin-bottom: 0; }
-
-.about h2 {
-  font-family: var(--disp); font-weight: 700; font-size: 1.5rem; color: var(--ink);
-  margin: 2.4em 0 1.1em; letter-spacing: .01em; display: inline-block;
-  border-bottom: 5px solid var(--gold); padding-bottom: 1px;
-}
-
-/* 流水线：真实的「剪藏→提炼→织网→归来」序列，故编号 */
-.about .flow { border: 3px solid var(--line); box-shadow: var(--shadow); background: var(--paper); }
-.about .flow .step { display: grid; grid-template-columns: 50px 1fr; align-items: baseline; gap: 16px; padding: 15px 18px; border-bottom: 1px solid var(--hair); }
-.about .flow .step:last-child { border-bottom: none; background: var(--soft); }
-.about .flow .n { font-family: var(--mono); font-weight: 700; font-size: 1.45rem; color: var(--seal); line-height: 1; }
-.about .flow .st b { font-family: var(--disp); font-weight: 700; font-size: 1.15rem; display: block; margin-bottom: 1px; }
-.about .flow .st span { font-family: var(--zh); color: var(--muted); font-size: .92rem; }
-
-/* 联系卡：呼应首页 profile，但收束 */
-.about .contact { margin-top: 2.8em; border: 3px solid var(--line); box-shadow: var(--shadow); background: var(--paper); }
-.about .contact .chead { display: flex; align-items: center; gap: 13px; background: var(--gold); border-bottom: 3px solid var(--line); padding: 14px 18px; }
-.about .contact .avatar {
-  width: 46px; height: 46px; flex: 0 0 auto; border: 3px solid var(--ink); background: var(--paper); color: var(--ink);
-  font-family: var(--disp); font-weight: 700; font-size: 1.55rem; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 var(--ink);
-}
-.about .contact .name { font-family: var(--disp); font-weight: 700; font-size: 1.3rem; color: var(--on-gold); line-height: 1; }
-.about .contact .role { font-family: var(--mono); font-weight: 700; font-size: .62rem; text-transform: uppercase; color: var(--on-gold); letter-spacing: .06em; margin-top: 5px; opacity: .85; }
-.about .contact .cbody { padding: 16px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.about .contact .cline { font-family: var(--mono); font-size: .8rem; color: var(--muted); letter-spacing: .02em; }
-.about .contact .csocial { display: flex; gap: 10px; margin-left: auto; }
-.about .contact .csocial a { width: 40px; height: 40px; border: 2.5px solid var(--line); display: flex; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); transition: transform .12s, background .12s, color .12s, box-shadow .12s; }
-.about .contact .csocial a:hover { background: var(--gold); color: var(--on-gold); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--line); }
-.about .contact .csocial svg { width: 20px; height: 20px; }
-
-@media (max-width: 560px) {
-  .about .define { grid-template-columns: 1fr; gap: 20px; justify-items: start; }
-  .about .seal { width: 104px; height: 104px; font-size: 4.2rem; }
-}
+/* 关于页样式已迁至 redesign.css 的 rd-def / rd-manifesto / rd-flow / rd-contact，
+   与全站 rd- 语言统一（发丝边 + 柔投影 + 霞鹜文楷 + 印章 + 渐显）。 */
 
 /* ---------- 页脚（full-bleed 马金黄） ---------- */
 .site-footer { border-top: 3px solid var(--line); background: var(--gold); margin-top: 64px; }
