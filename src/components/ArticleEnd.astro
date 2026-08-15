@@ -1,0 +1,32 @@
+---
+interface Item { title: string; url: string; meta: string; }
+interface Props { roots: Item[]; related: Item[]; }
+const { roots, related } = Astro.props;
+// 有出链就先给「延伸」——这篇是从哪些花园笔记长出来的；没有再退回同标签文章。
+const useRoots = roots.length > 0;
+const items = useRoots ? roots : related;
+---
+<footer class="ar-end">
+  <div class="ar-seal" aria-hidden="true"><span>归</span></div>
+
+  {items.length > 0 && (
+    <section class="ar-next">
+      <p class="ar-next-kick">
+        <span class="zh">{useRoots ? '延伸' : '相关'}</span>
+        <span class="en">{useRoots ? 'The notes this grew from' : 'Nearby essays'}</span>
+        {useRoots && <span class="n">{items.length} 则</span>}
+      </p>
+      <ul>
+        {items.map((it) => (
+          <li>
+            <a href={it.url}>
+              <span class="t">{it.title}</span>
+              {/* 延伸清单整列都是花园笔记，逐行标注只是噪音——数量已写在题头 */}
+              {!useRoots && <span class="m">{it.meta}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</footer>

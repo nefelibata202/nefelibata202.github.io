@@ -1,0 +1,91 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/article.css';
+
+interface Props {
+  title: string;
+  summary: string;
+  date: string;
+  tags: string[];
+  words: string;
+  read: string;
+}
+const { title, summary, date, tags, words, read } = Astro.props;
+---
+<BaseLayout title={title} description={summary}>
+  <div class="ar">
+    <div class="ar-prog" id="ar-prog" aria-hidden="true"></div>
+
+    <header class="ar-head">
+      {tags.length > 0 && (
+        <p class="ar-kicker rd-reveal">
+          {tags.map((t, i) => (
+            <>
+              {i > 0 && <span class="sep" aria-hidden="true">·</span>}
+              <a href={`/tags/${t}`}>{t}</a>
+            </>
+          ))}
+        </p>
+      )}
+      <h1 class="ar-title rd-reveal">{title}</h1>
+      <p class="ar-lede rd-reveal">{summary}</p>
+      <p class="ar-data rd-reveal">
+        <span>{date}</span>
+        <span class="dot" aria-hidden="true">/</span>
+        <span>{words} 字</span>
+        <span class="dot" aria-hidden="true">/</span>
+        <span>{read}</span>
+      </p>
+    </header>
+
+    <div class="ar-main">
+      <nav class="ar-rail" id="ar-rail" aria-label="本篇分节">
+        <span class="ar-rail-line" aria-hidden="true"></span>
+        <span class="ar-rail-ticks"></span>
+        <span class="ar-fish" aria-hidden="true">
+          <svg viewBox="0 0 14 18"><path d="M0 0h14L7 9zM0 18h14L7 9z" /></svg>
+          <span class="ar-fish-name"></span>
+        </span>
+      </nav>
+
+      <article class="post is-article" data-pagefind-body>
+        <slot />
+      </article>
+    </div>
+
+    <slot name="after" />
+  </div>
+</BaseLayout>
+
+<script>
+  import { enhance } from '../scripts/rd-enhance.js';
+  import { rail } from '../scripts/article-rail.js';
+
+  enhance();
+  rail();
+
+  // 只有真带流程图的文章才去拉 mermaid（动态 import，其余文章不下载）
+  if (document.querySelector('pre[data-language="mermaid"]')) {
+    import('mermaid').then(({ default: mermaid }) => {
+      const isDark =
+        document.documentElement.dataset.theme === 'dark' ||
+        (!document.documentElement.dataset.theme &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'neutral' });
+      document.querySelectorAll('pre[data-language="mermaid"]').forEach(async (pre) => {
+        const code = pre.querySelector('code');
+        if (!code) return;
+        const id = 'mmd-' + Math.random().toString(36).slice(2);
+        try {
+          const { svg } = await mermaid.render(id, (code.textContent ?? '').trim());
+          const wrap = document.createElement('div');
+          wrap.className = 'mermaid-wrap';
+          wrap.innerHTML = svg;
+          pre.replaceWith(wrap);
+        } catch (e) {
+          console.warn('Mermaid render error:', e);
+        }
+      });
+    });
+  }
+</script>

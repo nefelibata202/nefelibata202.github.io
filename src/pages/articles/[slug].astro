@@ -1,17 +1,68 @@
 ---
 import { getCollection, render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import ArticleEnd from '../../components/ArticleEnd.astro';
+import { buildLinkMap, extractWikiLinks, toUrl, type LinkTarget } from '../../lib/links';
 
 export async function getStaticPaths() {
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  // 与列表页 / 标签页同一口径，读时不打架
+  const chars = (body = '') => body.replace(/\s/g, '').length;
+  const group = (n: number) => String(n).replace(/\B(?=(\d{3})+$)/g, ',');
+
   const articles = await getCollection('articles', ({ data }) => !data.draft);
-  return articles.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  const garden = await getCollection('garden');
+
+  const linkMap = buildLinkMap([
+    ...articles.map((e): LinkTarget => ({ title: e.data.title, collection: 'articles', slug: e.id, url: toUrl('articles', e.id) })),
+    ...garden.map((e): LinkTarget => ({ title: e.data.title, collection: 'garden', slug: e.id, url: toUrl('garden', e.id) })),
+  ]);
+
+  return articles.map((entry) => {
+    const self = toUrl('articles', entry.id);
+    const n = chars(entry.body);
+
+    // 延伸：正文 [[wikilink]] 命中的条目，去重后按出现顺序
+    const roots = extractWikiLinks(entry.body ?? '')
+      .map((t) => linkMap.get(t))
+      .filter((t): t is LinkTarget => !!t && t.url !== self)
+      .map((t) => ({ title: t.title, url: t.url, meta: t.collection === 'garden' ? '花园' : '文章' }));
+
+    // 相关：共享标签最多者优先，同分取新
+    const own = new Set(entry.data.tags);
+    const related = articles
+      .filter((e) => e.id !== entry.id)
+      .map((e) => ({ e, shared: e.data.tags.filter((t) => own.has(t)).length }))
+      .filter((x) => x.shared > 0)
+      .sort((a, b) => b.shared - a.shared || b.e.data.date.valueOf() - a.e.data.date.valueOf())
+      .slice(0, 3)
+      .map((x) => ({ title: x.e.data.title, url: toUrl('articles', x.e.id), meta: fmt(x.e.data.date) }));
+
+    return {
+      params: { slug: entry.id },
+      props: {
+        entry,
+        roots,
+        related,
+        date: fmt(entry.data.date),
+        words: group(n),
+        read: `读 ${Math.max(1, Math.round(n / 350))} 分钟`,
+      },
+    };
+  });
 }
 
-const { entry } = Astro.props;
+const { entry, roots, related, date, words, read } = Astro.props;
 const { Content } = await render(entry);
-const meta = entry.data.date.toISOString().slice(0, 10);
-const hasMermaid = (entry.body ?? '').includes('```mermaid');
 ---
-<PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags} hasMermaid={hasMermaid}>
+<ArticleLayout
+  title={entry.data.title}
+  summary={entry.data.summary}
+  date={date}
+  tags={entry.data.tags}
+  words={words}
+  read={read}
+>
   <Content />
-</PostLayout>
+  <ArticleEnd slot="after" roots={roots} related={related} />
+</ArticleLayout>

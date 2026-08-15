@@ -1,0 +1,144 @@
+/* ============================================================
+   归来 · 文章阅读页（ar-）
+   形制取自中式雕版书的「版心」：一条版口细线立于正文左侧，
+   短刻标出分节，朱砂双鱼尾随阅读下移，尾侧竖排当前节名。
+   复用 global.css 令牌，暗色自动跟随。选择器一律 .ar 起手，
+   正文覆写用 .ar-main .post 提高优先级，不受 @import 顺序影响。
+   ============================================================ */
+
+.ar { position: relative; }
+
+/* ---------- 篇首 ---------- */
+.ar-head {
+  padding: 10px 0 26px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--hair);
+}
+.ar-kicker {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  font-family: var(--read); font-size: .92rem; letter-spacing: .12em;
+  color: var(--muted); margin: 0 0 16px;
+}
+.ar-kicker::before { content: ''; width: 34px; height: 2px; background: var(--seal); flex: 0 0 auto; }
+.ar-kicker a { color: var(--muted); }
+.ar-kicker a:hover { color: var(--seal); }
+.ar-kicker .sep { color: var(--hair); }
+
+.ar-title {
+  font-family: var(--read); font-weight: 700;
+  font-size: clamp(1.78rem, 4.2vw, 2.5rem); line-height: 1.4; letter-spacing: .02em;
+  margin: 0; color: var(--ink);
+}
+
+.ar-lede {
+  font-family: var(--read); font-size: .98rem; line-height: 1.9; color: var(--muted);
+  margin: 24px 0 0; padding-left: 16px; border-left: 2px solid var(--seal);
+}
+
+.ar-data {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; color: var(--muted);
+  margin: 26px 0 0; display: flex; gap: 14px; flex-wrap: wrap;
+}
+.ar-data .dot { opacity: .45; }
+
+/* ---------- 正文微调 ---------- */
+.ar-main { position: relative; }
+.ar-main .post { padding-top: 0; }
+/* 分节标题：左侧朱砂短刻，与版心上的刻度互为回响 */
+.ar-main .post h2 { position: relative; scroll-margin-top: 84px; }
+.ar-main .post h2::before {
+  content: ''; position: absolute; left: -22px; top: .68em;
+  width: 12px; height: 2px; background: var(--seal);
+}
+
+/* ---------- 版心（≥1080px 才立） ---------- */
+.ar-rail { display: none; }
+.ar-fish svg { display: block; width: 13px; height: 17px; fill: var(--seal); }
+
+@media (min-width: 1080px) {
+  .ar-rail {
+    display: block; position: absolute; left: -78px; top: 0; bottom: 0; width: 14px;
+    opacity: 0; transition: opacity .7s ease;
+  }
+  .ar-rail.is-on { opacity: 1; }
+
+  /* 版口：一条贯穿正文的细线 */
+  .ar-rail-line { position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--hair); }
+
+  /* 短刻：每一节在版口上的位置，可点击直达 */
+  .ar-tick { position: absolute; left: 0; width: 14px; height: 15px; margin-top: -7px; display: block; }
+  .ar-tick::before {
+    content: ''; position: absolute; left: 2px; top: 7px; width: 9px; height: 1px;
+    background: var(--hair); transition: background .3s, width .3s, left .3s;
+  }
+  .ar-tick:hover::before, .ar-tick.is-cur::before { background: var(--seal); width: 13px; left: 0; }
+  .ar-tick:focus-visible { outline-offset: 1px; }
+
+  /* 双鱼尾：读到哪里，它就停在哪里 */
+  .ar-fish {
+    position: absolute; left: 0; top: 0; width: 13px; margin-top: -9px;
+    transition: top .16s linear, opacity .4s ease;
+  }
+  .ar-rail.is-pre .ar-fish { opacity: .5; }
+
+  /* 节名竖排，自鱼尾向下 */
+  .ar-fish-name {
+    position: absolute; left: 21px; top: -2px;
+    writing-mode: vertical-rl;
+    font-family: var(--read); font-size: .8rem; letter-spacing: .16em; line-height: 1;
+    color: var(--muted); white-space: nowrap;
+    max-height: 210px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent);
+    mask-image: linear-gradient(to bottom, #000 76%, transparent);
+  }
+}
+
+/* 窄屏：版心收起，只留顶部一道朱砂进度线 */
+.ar-prog {
+  position: fixed; left: 0; top: 0; z-index: 90;
+  width: 100%; height: 2px; background: var(--seal);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+@media (min-width: 1080px) { .ar-prog { display: none; } }
+
+/* ---------- 篇末：落款 + 去处 ---------- */
+.ar-end { margin-top: 66px; padding-top: 34px; border-top: 1px solid var(--hair); }
+
+.ar-seal {
+  width: 44px; height: 44px; margin: 0 auto 36px;
+  background: var(--seal); color: #F6F1E4; border-radius: 4px;
+  font-family: var(--read); font-weight: 700; font-size: 1.45rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(-4deg); box-shadow: 0 4px 14px -3px rgba(178, 58, 46, .38);
+  user-select: none;
+}
+.ar-seal > span { transform: rotate(4deg); }
+
+.ar-next-kick { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; }
+.ar-next-kick::before { content: ''; width: 34px; height: 2px; background: var(--seal); align-self: center; flex: 0 0 auto; }
+.ar-next-kick .zh { font-family: var(--read); font-weight: 700; font-size: 1.05rem; letter-spacing: .12em; color: var(--ink); }
+.ar-next-kick .en { font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: .85rem; color: var(--muted); }
+.ar-next-kick .n { font-family: var(--mono); font-size: .7rem; letter-spacing: .08em; color: var(--muted); margin-left: auto; }
+
+.ar-next ul { list-style: none; padding: 0; margin: 0; }
+.ar-next li { border-bottom: 1px solid var(--hair); }
+.ar-next li:first-child { border-top: 1px solid var(--hair); }
+.ar-next a {
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 14px 10px 14px 2px; color: var(--ink);
+  border-left: 2px solid transparent;
+  transition: padding .25s cubic-bezier(.2, .7, .2, 1), border-color .25s, background .25s;
+}
+.ar-next a:hover { padding-left: 14px; border-left-color: var(--seal); background: var(--paper); }
+.ar-next .t { font-family: var(--read); font-weight: 700; font-size: 1.05rem; line-height: 1.4; flex: 1 1 auto; }
+.ar-next .m { font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; color: var(--muted); flex: 0 0 auto; }
+
+@media (max-width: 560px) {
+  .ar-main .post h2::before { display: none; }
+  .ar-next a { gap: 10px; }
+  .ar-next .t { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ar-fish, .ar-tick::before, .ar-next a, .ar-rail { transition: none; }
+}
