@@ -46,7 +46,9 @@ Collections are defined in `src/content.config.ts` (Astro 5 glob loader + zod). 
 
 ## Adding content (publish flow)
 
-The site is the publishing end of Evan's Obsidian PKM vault: the `compose` skill writes drafts to the vault's `12-Resource/drafts/`, then Evan **manually copies** the `.md` into `src/content/articles/` or `src/content/garden/`, fixes frontmatter, and pushes. Push to `main` → Actions builds and deploys. Use English filenames (they become the slug).
+The site is the publishing end of Evan's Obsidian PKM vault: the `/compose` skill writes drafts to the vault's **`07-Articles/`**, then the `.md` is copied into `src/content/articles/` or `src/content/garden/` **with the body unchanged** — only the frontmatter is swapped from the vault schema (`title, date, tags[] (block list, 二级 tags), summary, status: draft, sources[]`) to the site schema (`title, date, tags[] (inline array, 顶级中文标签), summary, draft: false`); `sources[]` and `status` are dropped. Verify with `npm run build` before committing. Push to `main` → Actions builds and deploys. Use English filenames (they become the slug).
+
+> The archived spec/plan under `docs/superpowers/` still names the old `12-Resource/drafts/` path; those are dated records of the 2026-06 build and are left as-is. This section is the current one.
 
 ## Conventions
 
