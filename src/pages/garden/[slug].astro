@@ -20,9 +20,16 @@ export async function getStaticPaths() {
 
 const { entry, backlinks } = Astro.props;
 const { Content } = await render(entry);
-const meta = `更新于 ${entry.data.updated.toISOString().slice(0, 10)}`;
+const isRediscovery = entry.data.kind === 'rediscovery';
+const meta = `${isRediscovery ? '今日重逢 ·' : '更新于'} ${entry.data.updated.toISOString().slice(0, 10)}${isRediscovery ? ' · AI 依据库内笔记整理' : ''}`;
 ---
 <PostLayout title={entry.data.title} meta={meta} tags={entry.data.tags} kind="note">
+  {isRediscovery && <nav class="rediscovery-back" aria-label="返回"><a href="/garden/">返回花园</a></nav>}
   <Content />
   <Backlinks slot="after" items={backlinks} />
 </PostLayout>
+
+<style>
+  .rediscovery-back { font-family: var(--read); font-size: 15px; margin: 0 0 28px; }
+  .rediscovery-back a { color: var(--seal); border-bottom: 1px solid var(--hair); }
+</style>

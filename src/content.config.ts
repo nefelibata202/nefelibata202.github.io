@@ -18,6 +18,8 @@ const garden = defineCollection({
     title: z.string(),
     updated: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    kind: z.enum(['note', 'rediscovery']).default('note'),
+    summary: z.string().optional(),
   }),
 });
 

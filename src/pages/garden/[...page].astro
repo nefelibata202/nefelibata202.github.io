@@ -5,14 +5,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
-  const notes = (await getCollection('garden'))
-    .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf())
+  const garden = (await getCollection('garden'))
+    .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf());
+  const rediscoveries = garden.filter((e) => e.data.kind === 'rediscovery')
+    .map((e) => ({ url: `/garden/${e.id}`, title: e.data.title, summary: e.data.summary, updated: fmt(e.data.updated) }));
+  const notes = garden.filter((e) => e.data.kind === 'note')
     .map((e) => ({ url: `/garden/${e.id}`, title: e.data.title, tag: e.data.tags[0], updated: fmt(e.data.updated) }));
   // 单页全量索引：筛选 + 随手翻一株 取代分页
-  return paginate(notes, { pageSize: 999 });
+  return paginate(notes, { pageSize: 999, props: { rediscoveries } });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+const { page, rediscoveries } = Astro.props;
+const [latest, ...previous] = rediscoveries;
 const notes = page.data;
 const tagCount = new Map<string, number>();
 for (const n of notes) if (n.tag) tagCount.set(n.tag, (tagCount.get(n.tag) ?? 0) + 1);
@@ -27,7 +31,7 @@ const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]
         <h1 class="rd-title">花园</h1>
         <span class="rd-seal" aria-hidden="true"><span>园</span></span>
       </div>
-      <p class="rd-lede">慢慢生长、互相链接的笔记。不求完整，只求常来看看。</p>
+      <p class="rd-lede">重逢旧知，也让新的念头慢慢生长。</p>
     </div>
     <div class="rd-stats">
       <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{notes.length}</span><span class="rd-stat-lab">株笔记</span></div>
@@ -35,6 +39,30 @@ const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]
     </div>
   </header>
 
+  {latest && (
+    <section class="garden-rediscovery" aria-labelledby="rediscovery-heading">
+      <div class="rediscovery-heading">
+        <h2 id="rediscovery-heading">今日重逢</h2>
+        <time datetime={latest.updated}>{latest.updated}</time>
+      </div>
+      <p class="rediscovery-intro">从几篇旧笔记出发，重新看懂一个小主题。</p>
+      <a class="rediscovery-link" href={latest.url}>
+        <h3>{latest.title}</h3>
+        {latest.summary && <p>{latest.summary}</p>}
+        <span class="rediscovery-read">读这一期</span>
+      </a>
+      {previous.length > 0 && (
+        <details class="rediscovery-history">
+          <summary>往期重逢（{previous.length}）</summary>
+          <ul>{previous.map((entry) => (
+            <li><a href={entry.url}>{entry.title}</a><time datetime={entry.updated}>{entry.updated}</time></li>
+          ))}</ul>
+        </details>
+      )}
+    </section>
+  )}
+
+  <h2 class="garden-notes-heading">园中笔记</h2>
   <div class="rd-chips rd-reveal" id="rd-chips" role="group" aria-label="按标签筛选">
     <span class="rd-chips-lab">Filter —</span>
     <button type="button" class="rd-chip is-on" data-chip="*">全部</button>
@@ -58,6 +86,28 @@ const tags = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]
 
   <p class="rd-coda rd-reveal">Notes grow slowly here. <span class="zh">笔记在这里慢慢生长。</span></p>
 </BaseLayout>
+
+<style>
+  .garden-rediscovery { margin: 4px 0 42px; padding: 25px 28px 28px; border: 1px solid var(--hair); border-top: 3px solid var(--seal); background: var(--paper); font-family: var(--read); }
+  .rediscovery-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; }
+  .rediscovery-heading h2 { margin: 0; color: var(--seal); font-size: 20px; font-weight: 700; }
+  .rediscovery-heading time { color: var(--muted); font-size: 13px; }
+  .rediscovery-intro { color: var(--muted); font-size: 15px; line-height: 1.8; margin: 8px 0 22px; }
+  .rediscovery-link { display: block; color: var(--ink); }
+  .rediscovery-link h3 { font-size: clamp(25px, 3.5vw, 32px); line-height: 1.5; margin: 0 0 10px; }
+  .rediscovery-link p { color: var(--muted); font-size: 17px; line-height: 1.9; max-width: 36em; margin: 0 0 20px; }
+  .rediscovery-read { display: inline-block; color: var(--seal); font-size: 16px; border-bottom: 1px solid var(--seal); }
+  .rediscovery-link:hover h3 { color: var(--seal); }
+  .rediscovery-link:focus-visible { outline: 2px solid var(--seal); outline-offset: 8px; }
+  .rediscovery-history { border-top: 1px solid var(--hair); margin-top: 24px; padding-top: 16px; font-size: 15px; }
+  .rediscovery-history summary { cursor: pointer; color: var(--muted); }
+  .rediscovery-history ul { padding-left: 20px; }
+  .rediscovery-history li { margin: 12px 0; }
+  .rediscovery-history a { color: var(--ink); }
+  .rediscovery-history time { display: inline-block; margin-left: 12px; color: var(--muted); font-size: 12px; }
+  .garden-notes-heading { font-family: var(--read); font-size: 23px; margin: 0 0 18px; }
+  @media (max-width: 560px) { .garden-rediscovery { padding: 20px; } }
+</style>
 
 <script>
   import { enhance, chipFilter } from '../../scripts/rd-enhance.js';
