@@ -105,11 +105,18 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       <button type="button" class="fchip is-on" data-facet="cat" data-val="*">全部</button>
       {topCats.map((c) => <button type="button" class="fchip" data-facet="cat" data-val={c}>{c}</button>)}
     </div>
-    <div class="frow" role="group" aria-label="按系列筛选">
-      <span class="flabel">系列</span>
-      <button type="button" class="fchip is-on" data-facet="series" data-val="*">全部</button>
-      {seriesNames.map((s) => <button type="button" class="fchip" data-facet="series" data-val={s}>{s}</button>)}
-    </div>
+    <details class="series-filter">
+      <summary class="series-summary">
+        <span class="flabel">系列</span>
+        <span class="series-current" id="mseriescurrent">全部</span>
+        <span class="series-count">{seriesNames.length} 个系列</span>
+        <span class="series-action"><span class="series-expand">展开 +</span><span class="series-collapse">收起 −</span></span>
+      </summary>
+      <div class="frow series-options" role="group" aria-label="按系列筛选">
+        <button type="button" class="fchip is-on" data-facet="series" data-val="*">全部</button>
+        {seriesNames.map((s) => <button type="button" class="fchip" data-facet="series" data-val={s}>{s}</button>)}
+      </div>
+    </details>
     <div class="frow" role="group" aria-label="按年代筛选">
       <span class="flabel">年代</span>
       <button type="button" class="fchip is-on" data-facet="decade" data-val="*">全部</button>
@@ -174,12 +181,17 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       const ftoggle = document.getElementById('mfiltertoggle');
       const ftbadge = document.getElementById('mftbadge');
       const filterPanel = document.getElementById('mlib-filters-panel');
+      const seriesCurrent = document.getElementById('mseriescurrent');
       const PAGE_SIZE = 30;
       const state = { type: '*', score: '*', cat: '*', series: '*', decade: '*', q: '', sort: 'score', page: 0 };
 
       const updateBadge = () => {
         const n = ['type', 'score', 'cat', 'series', 'decade'].filter(k => state[k] !== '*').length;
         if (ftbadge) { ftbadge.textContent = n; ftbadge.hidden = n === 0; }
+        if (seriesCurrent) {
+          seriesCurrent.textContent = state.series === '*' ? '全部' : state.series;
+          seriesCurrent.classList.toggle('is-selected', state.series !== '*');
+        }
       };
       ftoggle?.addEventListener('click', () => {
         const open = filterPanel.classList.toggle('is-open');
@@ -267,3 +279,38 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
     })();
   </script>
 </BaseLayout>
+
+<style>
+  .series-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--read);
+    font-size: .76rem;
+  }
+  .series-summary::-webkit-details-marker { display: none; }
+  .series-summary:focus-visible { outline: 2px solid var(--seal); outline-offset: 4px; }
+  .series-summary .flabel {
+    width: 40px;
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: .66rem;
+    letter-spacing: .1em;
+    color: var(--muted);
+  }
+  .series-current { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .series-current.is-selected { color: var(--seal); font-weight: 700; }
+  .series-count { flex-shrink: 0; color: var(--muted); font-size: .7rem; }
+  .series-action { margin-left: auto; flex-shrink: 0; color: var(--muted); }
+  .series-summary:hover .series-action { color: var(--seal); }
+  .series-collapse, .series-filter[open] .series-expand { display: none; }
+  .series-filter[open] .series-collapse { display: inline; }
+  .mlib-filters .series-options { flex-wrap: wrap; overflow: visible; margin: 8px 0 0 48px; }
+  @media (max-width: 560px) {
+    .mlib-filters .series-options { margin-left: 0; }
+  }
+</style>
