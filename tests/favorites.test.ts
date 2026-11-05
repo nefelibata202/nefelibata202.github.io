@@ -15,12 +15,30 @@ describe('loadFavorites', () => {
       date: '',
       cover: '/covers/x.jpg',
       categories: [],
+      series: '',
     });
   });
 
   it('accepts a null cover', () => {
     const [item] = loadFavorites([{ type: 'book', title: 'A', cover: null }]);
     expect(item.cover).toBeNull();
+  });
+
+  it('preserves and trims the series name for related seasons', () => {
+    const items = loadFavorites([
+      { type: 'teleplay', title: '大世界之旅第三季', series: ' 大世界之旅 ' },
+      { type: 'teleplay', title: '大世界之旅第五季', series: '大世界之旅' },
+    ]);
+    expect(items.map((item) => item.series)).toEqual(['大世界之旅', '大世界之旅']);
+  });
+
+  it('treats a blank series as ungrouped', () => {
+    const [item] = loadFavorites([{ type: 'movie', title: '花样年华', series: '  ' }]);
+    expect(item.series).toBe('');
+  });
+
+  it('rejects a non-text series name', () => {
+    expect(() => loadFavorites([{ type: 'teleplay', title: 'A', series: ['A'] }])).toThrow();
   });
 
   it('throws on an unknown type', () => {

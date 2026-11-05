@@ -9,6 +9,7 @@ export const favoriteSchema = z.object({
   date: z.string().default(''),
   cover: z.string().nullable().default(null),
   categories: z.array(z.string()).default([]),
+  series: z.string().trim().default(''),
 });
 
 export type Favorite = z.infer<typeof favoriteSchema>;

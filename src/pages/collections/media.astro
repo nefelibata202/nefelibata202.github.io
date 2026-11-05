@@ -14,6 +14,9 @@ const catCount = new Map<string, number>();
 for (const it of items) for (const c of it.categories) catCount.set(c, (catCount.get(c) ?? 0) + 1);
 const topCats = [...catCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map((e) => e[0]);
 
+// 系列完整展示，不受品类前 12 个的限制
+const seriesNames = [...new Set(items.map((i) => i.series).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh'));
+
 // 年代（仅保留实际出现的桶，按新→旧）
 const decadeOrder = ['2020s', '2010s', '2000s', '1990s', '1980s', 'earlier'];
 const decadeLabel: Record<string, string> = { '2020s': '2020s', '2010s': '2010s', '2000s': '2000s', '1990s': '90s', '1980s': '80s', earlier: '更早' };
@@ -27,17 +30,17 @@ const stats = {
 const segPct = (t: string) => ((typeCount(t) / stats.total) * 100).toFixed(2);
 
 const searchText = (i: typeof items[number]) =>
-  [i.title, i.creator, i.year, ...i.categories].join(' ').toLowerCase();
+  [i.title, i.creator, i.year, i.series, ...i.categories].join(' ').toLowerCase();
 const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
 ---
-<BaseLayout title="书影 · 归来" description="读过的书、看过的影视——一座私人媒体库，按类型、评分、品类、年代检索。" wide>
+<BaseLayout title="书影 · 归来" description="读过的书、看过的影视——一座私人媒体库，按类型、评分、品类、系列、年代检索。" wide>
   <CollectionTabs active="media" />
   <header class="mlib-head">
     <div class="mlib-head-inner">
       <div class="mlib-head-text">
         <p class="kicker">私人甄选 · 影 / 视 / 书 / 乐</p>
         <h1>书影</h1>
-        <p class="mlib-lede">一座私人的媒体库。每一件都经手挑选、亲自评分——在此按类型、评分、品类与年代自由穿行。</p>
+        <p class="mlib-lede">一座私人的媒体库。每一件都经手挑选、亲自评分——在此按类型、评分、品类、系列与年代自由穿行。</p>
       </div>
       <div class="statsmap" aria-label="藏品统计">
         <div class="statsmap-track">
@@ -69,7 +72,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
   <div class="mlib-bar">
     <label class="msearch">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-      <input id="msearch" type="search" placeholder="搜标题、导演、作者、品类…" autocomplete="off" aria-label="搜索藏品" />
+      <input id="msearch" type="search" placeholder="搜标题、导演、作者、品类、系列…" autocomplete="off" aria-label="搜索藏品" />
     </label>
     <div class="frow" role="group" aria-label="排序">
       <span class="flabel">排序</span>
@@ -102,6 +105,11 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       <button type="button" class="fchip is-on" data-facet="cat" data-val="*">全部</button>
       {topCats.map((c) => <button type="button" class="fchip" data-facet="cat" data-val={c}>{c}</button>)}
     </div>
+    <div class="frow" role="group" aria-label="按系列筛选">
+      <span class="flabel">系列</span>
+      <button type="button" class="fchip is-on" data-facet="series" data-val="*">全部</button>
+      {seriesNames.map((s) => <button type="button" class="fchip" data-facet="series" data-val={s}>{s}</button>)}
+    </div>
     <div class="frow" role="group" aria-label="按年代筛选">
       <span class="flabel">年代</span>
       <button type="button" class="fchip is-on" data-facet="decade" data-val="*">全部</button>
@@ -124,6 +132,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
           data-year={it.year}
           data-decade={decadeOf(it.year) ?? ''}
           data-cats={it.categories.join('|')}
+          data-series={it.series}
           data-q={searchText(it)}
         >
           <div class={it.cover ? 'poster' : 'poster poster--text'}>
@@ -136,6 +145,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
           <div class="pcap">
             <h3 class="pt">{it.title}</h3>
             <p class="pm">{[it.year, it.creator].filter(Boolean).join(' · ')}</p>
+            {it.series && <span class="pseries">系列 · {it.series}</span>}
           </div>
         </article>
       ))}
@@ -165,10 +175,10 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       const ftbadge = document.getElementById('mftbadge');
       const filterPanel = document.getElementById('mlib-filters-panel');
       const PAGE_SIZE = 30;
-      const state = { type: '*', score: '*', cat: '*', decade: '*', q: '', sort: 'score', page: 0 };
+      const state = { type: '*', score: '*', cat: '*', series: '*', decade: '*', q: '', sort: 'score', page: 0 };
 
       const updateBadge = () => {
-        const n = ['type', 'score', 'cat', 'decade'].filter(k => state[k] !== '*').length;
+        const n = ['type', 'score', 'cat', 'series', 'decade'].filter(k => state[k] !== '*').length;
         if (ftbadge) { ftbadge.textContent = n; ftbadge.hidden = n === 0; }
       };
       ftoggle?.addEventListener('click', () => {
@@ -190,6 +200,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         const d = c.dataset;
         if (state.type !== '*' && d.type !== state.type) return false;
         if (state.cat !== '*' && !d.cats.split('|').includes(state.cat)) return false;
+        if (state.series !== '*' && d.series !== state.series) return false;
         if (state.decade !== '*' && d.decade !== state.decade) return false;
         if (!scoreOk(d.score, state.score)) return false;
         if (state.q && !d.q.includes(state.q)) return false;
@@ -238,7 +249,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         t = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); state.page = 0; apply(); }, 120);
       });
       document.getElementById('mreset')?.addEventListener('click', () => {
-        Object.assign(state, { type: '*', score: '*', cat: '*', decade: '*', q: '', sort: 'score', page: 0 });
+        Object.assign(state, { type: '*', score: '*', cat: '*', series: '*', decade: '*', q: '', sort: 'score', page: 0 });
         if (search) search.value = '';
         document.querySelectorAll('[data-facet]').forEach((b) => b.classList.toggle('is-on', b.dataset.val === '*'));
         document.querySelectorAll('[data-sort]').forEach((b) => b.classList.toggle('is-on', b.dataset.sort === 'score'));

@@ -55,6 +55,7 @@
   {
     "type": "teleplay",
     "title": "大世界之旅第三季",
+    "series": "大世界之旅",
     "creator": "凯特·林奇·罗宾森，菲尔·查沃德",
     "score": 9.7,
     "year": "2019",
@@ -67,6 +68,7 @@
   {
     "type": "teleplay",
     "title": "大世界之旅第五季",
+    "series": "大世界之旅",
     "creator": "菲尔·查沃德",
     "score": 9.7,
     "year": "2022",
@@ -117,6 +119,7 @@
   {
     "type": "teleplay",
     "title": "克拉克森的农场第一季",
+    "series": "克拉克森的农场",
     "creator": "加文·怀特海德",
     "score": 9.6,
     "year": "2021",
@@ -131,6 +134,7 @@
   {
     "type": "teleplay",
     "title": "克拉克森的农场第二季",
+    "series": "克拉克森的农场",
     "creator": "威尔·亚普",
     "score": 9.6,
     "year": "2023",
