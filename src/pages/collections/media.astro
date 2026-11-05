@@ -105,6 +105,11 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
       <button type="button" class="fchip is-on" data-facet="cat" data-val="*">全部</button>
       {topCats.map((c) => <button type="button" class="fchip" data-facet="cat" data-val={c}>{c}</button>)}
     </div>
+    <div class="frow" role="group" aria-label="按年代筛选">
+      <span class="flabel">年代</span>
+      <button type="button" class="fchip is-on" data-facet="decade" data-val="*">全部</button>
+      {decades.map((d) => <button type="button" class="fchip" data-facet="decade" data-val={d}>{decadeLabel[d]}</button>)}
+    </div>
     <details class="series-filter">
       <summary class="series-summary">
         <span class="flabel">系列</span>
@@ -117,11 +122,6 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
         {seriesNames.map((s) => <button type="button" class="fchip" data-facet="series" data-val={s}>{s}</button>)}
       </div>
     </details>
-    <div class="frow" role="group" aria-label="按年代筛选">
-      <span class="flabel">年代</span>
-      <button type="button" class="fchip is-on" data-facet="decade" data-val="*">全部</button>
-      {decades.map((d) => <button type="button" class="fchip" data-facet="decade" data-val={d}>{decadeLabel[d]}</button>)}
-    </div>
   </div>
 
   <div class="mlib-meta">
