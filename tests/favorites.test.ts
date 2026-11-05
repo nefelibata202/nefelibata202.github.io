@@ -15,7 +15,6 @@ describe('loadFavorites', () => {
       date: '',
       cover: '/covers/x.jpg',
       categories: [],
-      status: false,
     });
   });
 

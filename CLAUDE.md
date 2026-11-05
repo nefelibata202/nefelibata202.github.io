@@ -26,7 +26,7 @@ Static-only: all HTML is generated at build time. "No client JS" is the default 
 **Content is data, not pages.** Three sources drive everything:
 - `src/content/articles/*.md` — blog posts. Frontmatter: `title, date, tags[], summary, draft`.
 - `src/content/garden/*.md` — digital-garden notes. Frontmatter: `title, updated, tags[]`. Bodies may use `[[wikilink]]`.
-- `src/data/favorites.json` — a private media library (电影/剧集/书籍/音乐) with 0–10 scores, genres, year, cover image path, and watched/read status (validated by `src/lib/favorites.ts`). Cover images live in `public/covers/`.
+- `src/data/favorites.json` — a private collection of favorite works (电影/剧集/书籍/音乐) with 0–10 scores, genres, year, and cover image path (validated by `src/lib/favorites.ts`). Entries do not track watched/read status; a score of 0 means unrated and displays no score badge. Cover images live in `public/covers/`.
 
 Collections are defined in `src/content.config.ts` (Astro 5 glob loader + zod). **Slug = the collection-relative path of the `.md` file** (= Astro's `entry.id`); slugs are English, titles may be Chinese.
 

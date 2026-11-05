@@ -9,7 +9,6 @@ export const favoriteSchema = z.object({
   date: z.string().default(''),
   cover: z.string().nullable().default(null),
   categories: z.array(z.string()).default([]),
-  status: z.boolean().default(false), // 已看 / 读毕 = true；想看 / 在读 = false
 });
 
 export type Favorite = z.infer<typeof favoriteSchema>;
