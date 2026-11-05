@@ -50,7 +50,8 @@
       "动作",
       "动画",
       "科幻"
-    ]
+    ],
+    "series": "进击的巨人"
   },
   {
     "type": "teleplay",
@@ -91,7 +92,8 @@
     "cover": "/covers/p2186920269.webp",
     "categories": [
       "情景喜剧"
-    ]
+    ],
+    "series": "老友记"
   },
   {
     "type": "movie",
@@ -228,7 +230,8 @@
     "cover": "/covers/p2609644777.webp",
     "categories": [
       "动画"
-    ]
+    ],
+    "series": "黄金神威"
   },
   {
     "type": "teleplay",
@@ -256,7 +259,8 @@
       "冒险",
       "剧情",
       "奇幻"
-    ]
+    ],
+    "series": "权力的游戏"
   },
   {
     "type": "teleplay",
@@ -318,7 +322,8 @@
     "cover": "/covers/p2501604748.webp",
     "categories": [
       "纪录片"
-    ]
+    ],
+    "series": "巅峰拍档"
   },
   {
     "type": "teleplay",
@@ -360,7 +365,8 @@
       "剧情",
       "惊悚",
       "犯罪"
-    ]
+    ],
+    "series": "火线"
   },
   {
     "type": "teleplay",
@@ -423,7 +429,8 @@
     "categories": [
       "动画",
       "喜剧"
-    ]
+    ],
+    "series": "齐木楠雄的灾难"
   },
   {
     "type": "movie",
@@ -474,7 +481,8 @@
     "categories": [
       "剧情",
       "犯罪"
-    ]
+    ],
+    "series": "教父"
   },
   {
     "type": "teleplay",
@@ -510,7 +518,8 @@
     "cover": "/covers/极限挑战第一季.webp",
     "categories": [
       "真人秀"
-    ]
+    ],
+    "series": "极限挑战"
   },
   {
     "type": "teleplay",
@@ -523,7 +532,8 @@
     "categories": [
       "剧情",
       "犯罪"
-    ]
+    ],
+    "series": "浴血黑帮"
   },
   {
     "type": "movie",
@@ -721,7 +731,8 @@
       "剧情",
       "奇幻",
       "恐怖"
-    ]
+    ],
+    "series": "怪奇物语"
   },
   {
     "type": "movie",
@@ -857,7 +868,8 @@
       "剧情",
       "动画",
       "奇幻"
-    ]
+    ],
+    "series": "文豪野犬"
   },
   {
     "type": "movie",
@@ -1542,5 +1554,693 @@
     "date": "2025-01-01",
     "cover": "/covers/s35041581.jpg",
     "categories": []
+  },
+  {
+    "type": "movie",
+    "title": "八仙！",
+    "creator": "牟正洋",
+    "score": 8.2,
+    "year": "2026",
+    "date": "2026-07-18",
+    "cover": "/covers/八仙！.webp",
+    "categories": [
+      "喜剧",
+      "动画",
+      "奇幻",
+      "冒险"
+    ]
+  },
+  {
+    "type": "movie",
+    "title": "教父2",
+    "creator": "弗朗西斯·福特·科波拉",
+    "score": 9.3,
+    "year": "1974",
+    "date": "1974-12-12",
+    "cover": "/covers/教父2.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "series": "教父"
+  },
+  {
+    "type": "movie",
+    "title": "教父3",
+    "creator": "弗朗西斯·福特·科波拉",
+    "score": 9,
+    "year": "1990",
+    "date": "1990-12-25",
+    "cover": "/covers/教父3.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "series": "教父"
+  },
+  {
+    "type": "movie",
+    "title": "谍影重重",
+    "creator": "道格·里曼",
+    "score": 8.6,
+    "year": "2002",
+    "date": "2002-06-14",
+    "cover": "/covers/谍影重重.webp",
+    "categories": [
+      "动作",
+      "悬疑",
+      "惊悚"
+    ],
+    "series": "谍影重重"
+  },
+  {
+    "type": "movie",
+    "title": "谍影重重2",
+    "creator": "保罗·格林格拉斯",
+    "score": 8.7,
+    "year": "2004",
+    "date": "2004-07-15",
+    "cover": "/covers/谍影重重2.webp",
+    "categories": [
+      "动作",
+      "悬疑",
+      "惊悚"
+    ],
+    "series": "谍影重重"
+  },
+  {
+    "type": "movie",
+    "title": "谍影重重3",
+    "creator": "保罗·格林格拉斯",
+    "score": 8.9,
+    "year": "2007",
+    "date": "2007-08-03",
+    "cover": "/covers/谍影重重3.webp",
+    "categories": [
+      "动作",
+      "悬疑",
+      "惊悚"
+    ],
+    "series": "谍影重重"
+  },
+  {
+    "type": "teleplay",
+    "title": "巅峰拍档第三季",
+    "creator": "",
+    "score": 9.4,
+    "year": "2003",
+    "date": "2003-10-26",
+    "cover": "/covers/巅峰拍档第三季.webp",
+    "categories": [
+      "喜剧",
+      "冒险",
+      "运动"
+    ],
+    "series": "巅峰拍档"
+  },
+  {
+    "type": "teleplay",
+    "title": "巅峰拍档第二季",
+    "creator": "",
+    "score": 9.5,
+    "year": "2003",
+    "date": "2003-05-11",
+    "cover": "/covers/巅峰拍档第二季.webp",
+    "categories": [
+      "纪录片"
+    ],
+    "series": "巅峰拍档"
+  },
+  {
+    "type": "teleplay",
+    "title": "巅峰拍档第四季",
+    "creator": "",
+    "score": 9.4,
+    "year": "2004",
+    "date": "2004-05-09",
+    "cover": "/covers/巅峰拍档第四季.webp",
+    "categories": [
+      "喜剧",
+      "冒险",
+      "运动"
+    ],
+    "series": "巅峰拍档"
+  },
+  {
+    "type": "teleplay",
+    "title": "异兽魔都第二季",
+    "creator": "林祐一郎",
+    "score": 9.5,
+    "year": "2026",
+    "date": "2026-04-01",
+    "cover": "/covers/异兽魔都第二季.webp",
+    "categories": [
+      "动作",
+      "动画",
+      "悬疑",
+      "奇幻"
+    ]
+  },
+  {
+    "type": "teleplay",
+    "title": "怪奇物语第二季",
+    "creator": "马特·达菲，罗斯·达菲",
+    "score": 8.9,
+    "year": "2017",
+    "date": "2017-10-27",
+    "cover": "/covers/怪奇物语第二季.webp",
+    "categories": [
+      "剧情",
+      "科幻",
+      "悬疑",
+      "惊悚",
+      "恐怖",
+      "奇幻"
+    ],
+    "series": "怪奇物语"
+  },
+  {
+    "type": "teleplay",
+    "title": "怪奇物语第五季",
+    "creator": "肖恩·利维，马特·达菲",
+    "score": 9.2,
+    "year": "2025",
+    "date": "2025-11-26",
+    "cover": "/covers/怪奇物语第五季.webp",
+    "categories": [
+      "剧情",
+      "科幻",
+      "悬疑",
+      "惊悚",
+      "恐怖",
+      "奇幻"
+    ],
+    "series": "怪奇物语"
+  },
+  {
+    "type": "teleplay",
+    "title": "怪奇物语第四季",
+    "creator": "马特·达菲，罗斯·达菲",
+    "score": 9.2,
+    "year": "2022",
+    "date": "2022-05-27",
+    "cover": "/covers/怪奇物语第四季.webp",
+    "categories": [
+      "剧情",
+      "科幻",
+      "悬疑",
+      "惊悚",
+      "恐怖",
+      "奇幻"
+    ],
+    "series": "怪奇物语"
+  },
+  {
+    "type": "teleplay",
+    "title": "摩登家庭第三季",
+    "creator": "杰森·维纳，布莱恩·克兰斯顿",
+    "score": 9.6,
+    "year": "2011",
+    "date": "2011-09-21",
+    "cover": "/covers/摩登家庭第三季.webp",
+    "categories": [
+      "喜剧",
+      "家庭"
+    ],
+    "series": "摩登家庭"
+  },
+  {
+    "type": "teleplay",
+    "title": "摩登家庭第一季",
+    "creator": "凯文·罗德尼·沙利文，迈克尔·斯皮勒",
+    "score": 9.5,
+    "year": "2009",
+    "date": "2009-09-23",
+    "cover": "/covers/摩登家庭第一季.webp",
+    "categories": [
+      "喜剧",
+      "家庭"
+    ],
+    "series": "摩登家庭"
+  },
+  {
+    "type": "teleplay",
+    "title": "摩登家庭第二季",
+    "creator": "贝丝·麦卡锡-米勒，迪恩·帕里索",
+    "score": 9.6,
+    "year": "2010",
+    "date": "2010-09-22",
+    "cover": "/covers/摩登家庭第二季.webp",
+    "categories": [
+      "喜剧",
+      "家庭"
+    ],
+    "series": "摩登家庭"
+  },
+  {
+    "type": "teleplay",
+    "title": "摩登家庭第五季",
+    "creator": "詹姆斯·R·巴格多纳斯，布莱恩·克兰斯顿",
+    "score": 9.6,
+    "year": "2013",
+    "date": "2013-09-25",
+    "cover": "/covers/摩登家庭第五季.webp",
+    "categories": [
+      "喜剧",
+      "家庭"
+    ],
+    "series": "摩登家庭"
+  },
+  {
+    "type": "teleplay",
+    "title": "摩登家庭第四季",
+    "creator": "斯蒂文·莱维坦，盖尔·曼库索",
+    "score": 9.6,
+    "year": "2012",
+    "date": "2012-09-26",
+    "cover": "/covers/摩登家庭第四季.webp",
+    "categories": [
+      "喜剧",
+      "家庭"
+    ],
+    "series": "摩登家庭"
+  },
+  {
+    "type": "teleplay",
+    "title": "文豪野犬第二季",
+    "creator": "五十岚卓哉",
+    "score": 8.9,
+    "year": "2016",
+    "date": "2016-10-06",
+    "cover": "/covers/文豪野犬第二季.webp",
+    "categories": [
+      "剧情",
+      "动画"
+    ],
+    "series": "文豪野犬"
+  },
+  {
+    "type": "teleplay",
+    "title": "文豪野犬第四季",
+    "creator": "五十岚卓哉",
+    "score": 8.9,
+    "year": "2023",
+    "date": "2023-01-04",
+    "cover": "/covers/文豪野犬第四季.webp",
+    "categories": [
+      "剧情",
+      "动作",
+      "动画"
+    ],
+    "series": "文豪野犬"
+  },
+  {
+    "type": "teleplay",
+    "title": "权力的游戏第二季",
+    "creator": "阿兰·泰勒，阿利克·萨哈罗夫",
+    "score": 9.5,
+    "year": "2012",
+    "date": "2012-04-01",
+    "cover": "/covers/权力的游戏第二季.webp",
+    "categories": [
+      "剧情",
+      "奇幻",
+      "冒险"
+    ],
+    "series": "权力的游戏"
+  },
+  {
+    "type": "teleplay",
+    "title": "权力的游戏第三季",
+    "creator": "丹尼尔·米纳汉，戴维·贝尼奥夫",
+    "score": 9.5,
+    "year": "2013",
+    "date": "2013-03-31",
+    "cover": "/covers/权力的游戏第三季.webp",
+    "categories": [
+      "剧情",
+      "奇幻",
+      "冒险"
+    ],
+    "series": "权力的游戏"
+  },
+  {
+    "type": "teleplay",
+    "title": "权力的游戏第四季",
+    "creator": "D·B·威斯，亚历克斯·格雷夫斯",
+    "score": 9.6,
+    "year": "2014",
+    "date": "2014-04-06",
+    "cover": "/covers/权力的游戏第四季.webp",
+    "categories": [
+      "剧情",
+      "奇幻",
+      "冒险"
+    ],
+    "series": "权力的游戏"
+  },
+  {
+    "type": "teleplay",
+    "title": "极限挑战第三季",
+    "creator": "严敏",
+    "score": 8.3,
+    "year": "2017",
+    "date": "2017-07-09",
+    "cover": "/covers/极限挑战第三季.webp",
+    "categories": [
+      "真人秀"
+    ],
+    "series": "极限挑战"
+  },
+  {
+    "type": "teleplay",
+    "title": "极限挑战第二季",
+    "creator": "任静，严敏",
+    "score": 9.4,
+    "year": "2016",
+    "date": "2016-04-17",
+    "cover": "/covers/极限挑战第二季.webp",
+    "categories": [
+      "冒险",
+      "真人秀"
+    ],
+    "series": "极限挑战"
+  },
+  {
+    "type": "teleplay",
+    "title": "浴血黑帮第三季",
+    "creator": "蒂姆·米兰特斯",
+    "score": 9.2,
+    "year": "2016",
+    "date": "2016-05-05",
+    "cover": "/covers/浴血黑帮第三季.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "series": "浴血黑帮"
+  },
+  {
+    "type": "teleplay",
+    "title": "浴血黑帮第四季",
+    "creator": "大卫·卡弗里",
+    "score": 9.2,
+    "year": "2017",
+    "date": "2017-11-15",
+    "cover": "/covers/浴血黑帮第四季.webp",
+    "categories": [
+      "剧情",
+      "犯罪"
+    ],
+    "series": "浴血黑帮"
+  },
+  {
+    "type": "teleplay",
+    "title": "火线第二季",
+    "creator": "艾德·比安奇，艾洛迪·基恩",
+    "score": 9.6,
+    "year": "2003",
+    "date": "2003-06-01",
+    "cover": "/covers/火线第二季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "惊悚",
+      "犯罪"
+    ],
+    "series": "火线"
+  },
+  {
+    "type": "teleplay",
+    "title": "火线第四季",
+    "creator": "乔·施佩尔，克里斯汀·摩尔",
+    "score": 9.7,
+    "year": "2006",
+    "date": "2006-09-10",
+    "cover": "/covers/火线第四季.webp",
+    "categories": [
+      "剧情"
+    ],
+    "series": "火线"
+  },
+  {
+    "type": "teleplay",
+    "title": "火线第三季",
+    "creator": "艾德·比安奇，史蒂夫·希尔",
+    "score": 9.6,
+    "year": "2004",
+    "date": "2004-09-19",
+    "cover": "/covers/火线第三季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "犯罪"
+    ],
+    "series": "火线"
+  },
+  {
+    "type": "teleplay",
+    "title": "火线第五季",
+    "creator": "乔·施佩尔，厄内斯特·R·迪克森",
+    "score": 9.7,
+    "year": "2008",
+    "date": "2008-01-06",
+    "cover": "/covers/火线第五季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "惊悚",
+      "犯罪"
+    ],
+    "series": "火线"
+  },
+  {
+    "type": "teleplay",
+    "title": "神探夏洛克第二季",
+    "creator": "保罗·麦圭根，托比·海恩斯",
+    "score": 9.6,
+    "year": "2012",
+    "date": "2012-01-01",
+    "cover": "/covers/神探夏洛克第二季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "犯罪"
+    ],
+    "series": "神探夏洛克"
+  },
+  {
+    "type": "teleplay",
+    "title": "神探夏洛克第一季",
+    "creator": "保罗·麦圭根，尤洛斯·林",
+    "score": 9.5,
+    "year": "2010",
+    "date": "2010-07-25",
+    "cover": "/covers/神探夏洛克第一季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "犯罪"
+    ],
+    "series": "神探夏洛克"
+  },
+  {
+    "type": "teleplay",
+    "title": "神探夏洛克第三季",
+    "creator": "柯尔姆·麦卡锡，杰里米·洛夫林",
+    "score": 9.2,
+    "year": "2014",
+    "date": "2014-01-01",
+    "cover": "/covers/神探夏洛克第三季.webp",
+    "categories": [
+      "剧情",
+      "悬疑",
+      "犯罪"
+    ],
+    "series": "神探夏洛克"
+  },
+  {
+    "type": "teleplay",
+    "title": "老友记第七季",
+    "creator": "凯文·布莱特，迈克尔·莱拜克",
+    "score": 9.8,
+    "year": "2000",
+    "date": "2000-10-12",
+    "cover": "/covers/老友记第七季.webp",
+    "categories": [
+      "喜剧",
+      "爱情"
+    ],
+    "series": "老友记"
+  },
+  {
+    "type": "teleplay",
+    "title": "老友记第六季",
+    "creator": "凯文·布莱特，盖尔·曼库索",
+    "score": 9.8,
+    "year": "1999",
+    "date": "1999-09-23",
+    "cover": "/covers/老友记第六季.webp",
+    "categories": [
+      "喜剧",
+      "爱情"
+    ],
+    "series": "老友记"
+  },
+  {
+    "type": "teleplay",
+    "title": "老友记第二季",
+    "creator": "迈克尔·莱拜克，托马斯·施拉梅",
+    "score": 9.8,
+    "year": "1995",
+    "date": "1995-09-21",
+    "cover": "/covers/老友记第二季.webp",
+    "categories": [
+      "喜剧",
+      "爱情"
+    ],
+    "series": "老友记"
+  },
+  {
+    "type": "teleplay",
+    "title": "进击的巨人第三季",
+    "creator": "荒木哲郎，肥冢正史",
+    "score": 9.7,
+    "year": "2018",
+    "date": "2018-07-22",
+    "cover": "/covers/进击的巨人第三季.webp",
+    "categories": [
+      "动作",
+      "科幻",
+      "动画",
+      "灾难"
+    ],
+    "series": "进击的巨人"
+  },
+  {
+    "type": "teleplay",
+    "title": "进击的巨人第二季",
+    "creator": "荒木哲郎，肥冢正史",
+    "score": 9.6,
+    "year": "2017",
+    "date": "2017-04-01",
+    "cover": "/covers/进击的巨人第二季.webp",
+    "categories": [
+      "动作",
+      "科幻",
+      "动画",
+      "灾难"
+    ],
+    "series": "进击的巨人"
+  },
+  {
+    "type": "teleplay",
+    "title": "进击的巨人",
+    "creator": "荒木哲郎，肥冢正史",
+    "score": 9.4,
+    "year": "2013",
+    "date": "2013-04-06",
+    "cover": "/covers/进击的巨人.webp",
+    "categories": [
+      "动作",
+      "科幻",
+      "动画",
+      "灾难"
+    ],
+    "series": "进击的巨人"
+  },
+  {
+    "type": "teleplay",
+    "title": "马大帅",
+    "creator": "赵本山",
+    "score": 9.1,
+    "year": "2004",
+    "date": "2004-01-24",
+    "cover": "/covers/马大帅.webp",
+    "categories": [
+      "喜剧"
+    ]
+  },
+  {
+    "type": "teleplay",
+    "title": "黄金神威最终季",
+    "creator": "菅原静贵",
+    "score": 9.4,
+    "year": "2026",
+    "date": "2026-01-05",
+    "cover": "/covers/黄金神威最终季.webp",
+    "categories": [
+      "动画"
+    ],
+    "series": "黄金神威"
+  },
+  {
+    "type": "teleplay",
+    "title": "黄金神威第二季",
+    "creator": "难波日登志，川越崇弘",
+    "score": 9.4,
+    "year": "2018",
+    "date": "2018-10-08",
+    "cover": "/covers/黄金神威第二季.webp",
+    "categories": [
+      "动画",
+      "历史",
+      "冒险"
+    ],
+    "series": "黄金神威"
+  },
+  {
+    "type": "teleplay",
+    "title": "黄金神威第四季",
+    "creator": "菅原静贵，藤井隆文",
+    "score": 9.4,
+    "year": "2022",
+    "date": "2022-10-03",
+    "cover": "/covers/黄金神威第四季.webp",
+    "categories": [],
+    "series": "黄金神威"
+  },
+  {
+    "type": "teleplay",
+    "title": "黄金神威",
+    "creator": "难波日登志，川越崇弘",
+    "score": 9.1,
+    "year": "2018",
+    "date": "2018-04-09",
+    "cover": "/covers/黄金神威.webp",
+    "categories": [
+      "剧情",
+      "动画"
+    ],
+    "series": "黄金神威"
+  },
+  {
+    "type": "teleplay",
+    "title": "齐木楠雄的灾难Ψ始动篇",
+    "creator": "樱井弘明，则座诚",
+    "score": 9.3,
+    "year": "2019",
+    "date": "2019-12-30",
+    "cover": "/covers/齐木楠雄的灾难Ψ始动篇.webp",
+    "categories": [
+      "喜剧",
+      "动画"
+    ],
+    "series": "齐木楠雄的灾难"
+  },
+  {
+    "type": "teleplay",
+    "title": "齐木楠雄的灾难完结篇",
+    "creator": "樱井弘明，则座诚",
+    "score": 9.4,
+    "year": "2018",
+    "date": "2018-12-28",
+    "cover": "/covers/齐木楠雄的灾难完结篇.webp",
+    "categories": [
+      "喜剧",
+      "动画",
+      "奇幻"
+    ],
+    "series": "齐木楠雄的灾难"
   }
 ]
