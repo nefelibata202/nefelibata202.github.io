@@ -30,6 +30,9 @@ function renderText(text: string): string {
 
 const sections = parseSections(body);
 const total = sections.reduce((s, sec) => s + sec.items.length, 0);
+if (total > 10) {
+  throw new Error(`随时探索清单最多 10 个问题，当前有 ${total} 个。请先清理已完成或不再想探索的条目。`);
+}
 ---
 
 <BaseLayout title="随时探索 · 归图" description="我愿意在碎片时间继续了解、并带去和 AI 讨论的问题。" wide>
