@@ -7,9 +7,6 @@ const mdPath = join(process.cwd(), 'src/content/guide/knowledge-gaps.md');
 const rawMd = readFileSync(mdPath, 'utf-8');
 const body = rawMd.replace(/^---[\s\S]*?---\n/, '');
 
-const updatedMatch = body.match(/<!-- sync-updated: (\d{4}-\d{2}-\d{2}) -->/);
-const updated = updatedMatch ? updatedMatch[1] : '';
-
 interface Section { title: string; items: string[]; id: string; }
 
 function parseSections(text: string): Section[] {
@@ -19,8 +16,8 @@ function parseSections(text: string): Section[] {
     if (line.startsWith('## ')) {
       if (cur && cur.items.length > 0) secs.push(cur);
       cur = { title: line.slice(3).trim(), items: [], id: `gap-${secs.length}` };
-    } else if (cur && line.startsWith('- [ ]')) {
-      cur.items.push(line.slice(6).trim());
+    } else if (cur && line.startsWith('- ')) {
+      cur.items.push(line.slice(2).trim());
     }
   }
   if (cur && cur.items.length > 0) secs.push(cur);
@@ -35,7 +32,7 @@ const sections = parseSections(body);
 const total = sections.reduce((s, sec) => s + sec.items.length, 0);
 ---
 
-<BaseLayout title="知识缺口 · 归图" description="知识库高优先级缺口精选——知道自己不知道什么，才能有方向地学习。">
+<BaseLayout title="随时探索 · 归图" description="我愿意在碎片时间继续了解、并带去和 AI 讨论的问题。">
   <div class="gaps-page">
 
     <header class="gaps-header">
@@ -46,45 +43,47 @@ const total = sections.reduce((s, sec) => s + sec.items.length, 0);
         归图
       </a>
       <div class="gaps-title-block">
-        <p class="gaps-kicker">/ 05 · KNOWLEDGE GAPS</p>
-        <h1 class="gaps-title">知识缺口</h1>
+        <p class="gaps-kicker">/ 05 · OPEN QUESTIONS</p>
+        <h1 class="gaps-title">随时探索</h1>
         <p class="gaps-meta">
-          <span>{sections.length} 个领域</span>
-          <span class="gaps-meta-dot">·</span>
-          <span>{total} 条精选缺口</span>
-          {updated && (
-            <>
-              <span class="gaps-meta-dot">·</span>
-              <span class="gaps-meta-date">同步自 {updated}</span>
-            </>
-          )}
+          <span>{total} 个待探索问题</span>
         </p>
-        <p class="gaps-lede">知道自己不知道什么，比知道自己知道什么更重要。这些缺口不是焦虑的来源，而是学习的路线图。</p>
+        <p class="gaps-lede">挑一个此刻感兴趣的问题，复制到手机上的 AI 对话里，顺着好奇心继续问下去。</p>
       </div>
     </header>
 
-    <nav class="gaps-nav" aria-label="领域导航">
-      {sections.map((sec, i) => (
-        <a href={`#${sec.id}`} class="gaps-pill">
-          <span class="gaps-pill-num">/{String(i + 1).padStart(2, '0')}</span>
-          <span class="gaps-pill-label">{sec.title}</span>
-          <span class="gaps-pill-count">{sec.items.length}</span>
-        </a>
-      ))}
-    </nav>
+    {sections.length > 1 && (
+      <nav class="gaps-nav" aria-label="主题导航">
+        {sections.map((sec, i) => (
+          <a href={`#${sec.id}`} class="gaps-pill">
+            <span class="gaps-pill-num">/{String(i + 1).padStart(2, '0')}</span>
+            <span class="gaps-pill-label">{sec.title}</span>
+            <span class="gaps-pill-count">{sec.items.length}</span>
+          </a>
+        ))}
+      </nav>
+    )}
 
     <main class="gaps-body">
-      {sections.map((sec, i) => (
+      {sections.length === 0 ? (
+        <section class="gaps-empty" aria-live="polite">
+          <span class="gaps-empty-mark" aria-hidden="true">？</span>
+          <div>
+            <h2>这里暂时空着</h2>
+            <p>只有我自己确认、确实想继续了解的问题，才会出现在这里。下次遇到好奇的事，再把它记下来。</p>
+          </div>
+        </section>
+      ) : sections.map((sec, i) => (
         <section class="gap-section" id={sec.id}>
           <div class="gap-section-hd">
             <span class="gap-section-num">/{String(i + 1).padStart(2, '0')}</span>
             <h2 class="gap-section-title">{sec.title}</h2>
-            <span class="gap-section-count">{sec.items.length} 条</span>
+            <span class="gap-section-count">{sec.items.length} 个问题</span>
           </div>
           <ul class="gap-list">
             {sec.items.map(item => (
               <li class="gap-item">
-                <span class="gap-check" aria-hidden="true">☐</span>
+                <span class="gap-check" aria-hidden="true">↗</span>
                 <span class="gap-text" set:html={renderText(item)} />
               </li>
             ))}
@@ -163,10 +162,6 @@ const total = sections.reduce((s, sec) => s + sec.items.length, 0);
   color: var(--hair);
 }
 
-.gaps-meta-date {
-  color: var(--gold);
-}
-
 .gaps-lede {
   font-family: var(--read);
   font-size: 0.9rem;
@@ -240,6 +235,45 @@ const total = sections.reduce((s, sec) => s + sec.items.length, 0);
 /* ── content ── */
 .gaps-body {
   padding-top: 48px;
+}
+
+.gaps-empty {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 18px;
+  align-items: start;
+  max-width: 650px;
+  padding: 24px 26px;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.gaps-empty-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--line);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--disp);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.gaps-empty h2 {
+  margin: 0 0 6px;
+  font-family: var(--disp);
+  font-size: 1.15rem;
+}
+
+.gaps-empty p {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--read);
+  font-size: 0.9rem;
+  line-height: 1.7;
 }
 
 .gap-section {
@@ -349,6 +383,15 @@ const total = sections.reduce((s, sec) => s + sec.items.length, 0);
 @media (max-width: 600px) {
   .gaps-page {
     padding: 24px 16px 60px;
+  }
+  .gaps-empty {
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+  .gaps-empty-mark {
+    width: 38px;
+    height: 38px;
   }
   .gap-section-hd {
     flex-wrap: wrap;

@@ -14,14 +14,14 @@ const meta: Record<string, { en: string; note: string }> = {
   'philosophy':      { en: 'Philosophy',      note: '思考框架与人生观。' },
   'interests':       { en: 'Interests',       note: '长期喜好与痴迷领域。' },
   'fragmented-time': { en: 'Fragmented Time', note: '零散时间的最优解法。' },
-  'knowledge-gaps':  { en: 'Knowledge Gaps',  note: '待填补的知识空白地图——地图上真正诚实的部分。' },
+  'knowledge-gaps':  { en: 'Open Questions',  note: '我愿意在碎片时间继续了解的问题。' },
 };
 const nums = ['壹', '贰', '叁', '肆', '伍', '陆'];
 
 const rendered = [];
 for (const e of entries) rendered.push({ entry: e, Content: (await render(e)).Content });
 ---
-<BaseLayout title="归图 · 个人导览" description="个人知识导览——一张回家的地图：人物、人生哲学、兴趣、碎片时间、知识缺口。">
+<BaseLayout title="归图 · 个人导览" description="个人知识导览——一张回家的地图：人物、人生哲学、兴趣、碎片时间，以及我想继续了解的问题。">
   <header class="rd-head rd-reveal" style="display:block">
     <span class="rd-mark" aria-hidden="true" data-parallax="-0.05" style="font-size:210px;top:-14%">图</span>
     <div class="rd-head-text" style="max-width:none">
@@ -30,7 +30,7 @@ for (const e of entries) rendered.push({ entry: e, Content: (await render(e)).Co
         <h1 class="rd-title">归图</h1>
         <span class="rd-seal" aria-hidden="true"><span>图</span></span>
       </div>
-      <p class="rd-lede" style="max-width:32em">{entries.length} 座岛屿，一张回家的地图——我欣赏谁、信什么、被什么吸引、把时间花在哪、还有哪些空白要去填。</p>
+      <p class="rd-lede" style="max-width:32em">{entries.length} 座岛屿，一张回家的地图——我欣赏谁、信什么、被什么吸引、把时间花在哪，还有什么值得继续追问。</p>
     </div>
   </header>
 
