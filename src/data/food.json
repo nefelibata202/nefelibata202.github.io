@@ -12,6 +12,7 @@
     "dishes": [],
     "map": "",
     "image": "/food/hangzhou-snacks.jpg",
+    "address": "杭州市上城区光复路169号",
     "date": "2026-06"
   },
   {
@@ -27,6 +28,7 @@
     "dishes": [],
     "map": "",
     "image": "/food/sukiyaki.jpg",
+    "address": "杭州市上城区和兴路129号",
     "date": "2026-06"
   },
   {
@@ -57,6 +59,7 @@
     ],
     "map": "",
     "image": "/food/northeast-bbq.jpg",
+    "address": "上海市杨浦区五角场镇国和路498号",
     "date": "2026-06"
   },
   {
@@ -70,6 +73,7 @@
     "dishes": [],
     "map": "",
     "image": "/food/charcoal-bbq.jpg",
+    "address": "杭州市余杭区天空之城A区",
     "date": "2026-06"
   },
   {
@@ -97,6 +101,7 @@
     "dishes": [],
     "map": "",
     "image": "/food/sichuan-fish.jpg",
+    "address": "上海市黄浦区淮海中路99号",
     "date": "2026-06"
   },
   {
@@ -114,6 +119,7 @@
     ],
     "map": "",
     "image": "/food/frog-hotpot.jpg",
+    "address": "郑州市金水区丰乐路21号",
     "date": "2026-06"
   },
   {
@@ -168,7 +174,8 @@
     "recommend": "",
     "dishes": [],
     "map": "",
-    "image": "/food/guangde-tu-cai.jpg"
+    "image": "/food/guangde-tu-cai.jpg",
+    "address": "宣城市广德市凤翔小区127"
   },
   {
     "name": "永乐饭店",
