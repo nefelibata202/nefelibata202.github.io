@@ -6,7 +6,7 @@ import favRaw from '../data/favorites.json';
 import foodRaw from '../data/food.json';
 
 const media = loadFavorites(favRaw);
-const food = loadFood(foodRaw);
+const food = loadFood(foodRaw).filter((item) => (item.status ?? 'visited') === 'visited');
 const foodCities = new Set(food.map((f) => f.city)).size;
 const scored = food.filter((f) => f.score > 0);
 const avg = scored.length ? (scored.reduce((s, f) => s + f.score, 0) / scored.length).toFixed(1) : '—';

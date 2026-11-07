@@ -3,10 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { loadFood } from '../../lib/food';
 import raw from '../../data/food.json';
 
-const items = loadFood(raw).sort((a, b) => b.score - a.score || b.date.localeCompare(a.date));
+const allItems = loadFood(raw);
+const items = allItems.filter((item) => (item.status ?? 'visited') === 'visited').sort((a, b) => b.score - a.score || b.date.localeCompare(a.date));
+const wishlist = allItems.filter((item) => item.status === 'wishlist').sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
 
 const cityCount = new Map<string, number>();
-for (const it of items) cityCount.set(it.city, (cityCount.get(it.city) ?? 0) + 1);
+for (const it of allItems) cityCount.set(it.city, (cityCount.get(it.city) ?? 0) + 1);
 const cities = [...cityCount.entries()].sort((a, b) => b[1] - a[1]);
 
 const scored = items.filter((i) => i.score > 0);
@@ -19,7 +21,7 @@ const bands = [
   { name: '尚可', en: 'Worth a Try', range: '< 7', test: (s: number) => s < 7 },
 ].map((b) => ({ ...b, items: items.filter((i) => b.test(i.score)) })).filter((b) => b.items.length);
 ---
-<BaseLayout title="美食 · 私藏" description="私人觅食地图——亲自去过的宝藏馆子，按城市与评分检索。" wide>
+<BaseLayout title="美食 · 私藏" description="私人觅食地图——去过的宝藏馆子与想去的餐厅。" wide>
   <nav class="rd-crumbs rd-reveal" aria-label="私藏内导航">
     <a href="/collections">← 私藏</a>
     <span class="sep">/</span>
@@ -35,10 +37,11 @@ const bands = [
         <h1 class="rd-title">美食</h1>
         <span class="rd-seal" aria-hidden="true"><span>味</span></span>
       </div>
-      <p class="rd-lede">都是亲自去过、值得回头的宝藏馆子。评分只对自己负责。</p>
+      <p class="rd-lede">去过的馆子认真记，想去的餐厅慢慢攒。评分只对自己负责。</p>
     </div>
     <div class="rd-stats">
-      <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{items.length}</span><span class="rd-stat-lab">家馆子</span></div>
+      <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{items.length}</span><span class="rd-stat-lab">去过</span></div>
+      <div class="rd-stat"><span class="rd-stat-num">{wishlist.length}</span><span class="rd-stat-lab">想去</span></div>
       <div class="rd-stat"><span class="rd-stat-num">{cityCount.size}</span><span class="rd-stat-lab">座城</span></div>
       <div class="rd-stat"><span class="rd-stat-num">{avg}</span><span class="rd-stat-lab">均分</span></div>
     </div>
@@ -46,13 +49,17 @@ const bands = [
 
   <div class="rd-chips rd-reveal" id="rd-chips" role="group" aria-label="按城市筛选">
     <span class="rd-chips-lab">City —</span>
-    <button type="button" class="rd-chip is-on" data-chip="*">全部 {items.length}</button>
+    <button type="button" class="rd-chip is-on" data-chip="*">全部 {allItems.length}</button>
     {cities.map(([c, n]) => <button type="button" class="rd-chip" data-chip={c}>{c} {n}</button>)}
   </div>
 
   <div id="rd-bands" style="transition:opacity .18s ease;padding-bottom:30px">
-    {bands.map((b) => (
-      <section class="rd-band">
+    <div id="rd-visited">
+      <div class="rd-band-head">
+        <h2 class="rd-band-name">去过的店</h2><span class="rd-band-en">Been There</span><span class="rd-band-rule"></span><span class="rd-band-range">{items.length} 家</span>
+      </div>
+      {bands.map((b) => (
+        <section class="rd-band">
         <div class="rd-band-head">
           <h2 class="rd-band-name">{b.name}</h2>
           <span class="rd-band-en">{b.en}</span>
@@ -61,26 +68,55 @@ const bands = [
         </div>
         {b.items.map((f) => (
           <article class="rd-spot" data-tags={f.city}>
-            <div class="rd-spot-scorebox">
-              <span class="rd-spot-score">{f.score > 0 ? f.score.toFixed(1) : '—'}</span>
-              <span class="rd-spot-of">/ 10</span>
-            </div>
-            <div>
+            {f.image ? <div class="rd-spot-media">
+              <img class="rd-spot-photo" src={f.image} alt={`${f.name} 的照片`} loading="lazy" />
+              <div class="rd-spot-scorebox">
+                <span class="rd-spot-score">{f.score > 0 ? f.score.toFixed(1) : '—'}</span>
+                <span class="rd-spot-of">/ 10</span>
+              </div>
+            </div> : <div class="rd-spot-scorebox rd-spot-scorebox--plain"><span class="rd-spot-score">{f.score > 0 ? f.score.toFixed(1) : '—'}</span><span class="rd-spot-of">/ 10</span></div>}
+            <div class="rd-spot-content">
               <div class="rd-spot-head">
                 <h3 class="rd-spot-name">{f.name}</h3>
                 <span class="rd-spot-meta">{f.city} · {f.cuisine.join(' · ')}</span>
                 {f.score >= 9 && <span class="rd-spot-seal" aria-label="值得回头">回头</span>}
               </div>
               {f.recommend && <p class="rd-spot-comment">{f.recommend}</p>}
-              {f.dishes?.length > 0 && (
-                <p class="rd-spot-must"><span class="lab">必点</span><span class="dash">—</span><span class="val">{f.dishes.join(' / ')}</span></p>
-              )}
+              <p class="rd-spot-must" data-dishes-display><span class="lab">喜欢的招牌菜</span><span class="dash">—</span><span class="val">{f.dishes.length ? f.dishes.join(' / ') : '还没记'}</span></p>
+              {f.address && <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div>}
+              {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
+              <details class="rd-dish-editor" data-dish-editor data-name={f.name} data-city={f.city} data-default={f.dishes.join(', ')}>
+                <summary>记下我喜欢的菜</summary>
+                <form data-dish-form>
+                  <label><span class="sr-only">{f.name} 喜欢的招牌菜，多个菜名用逗号分隔</span><input type="text" data-dish-input value={f.dishes.join('， ')} placeholder="例如：红烧肉，酒酿馒头" /></label>
+                  <button type="submit">保存</button>
+                  <span class="rd-save-status" aria-live="polite">仅保存在这台设备</span>
+                </form>
+              </details>
             </div>
           </article>
         ))}
-      </section>
-    ))}
-    <p class="rd-empty" id="rd-empty" hidden>这座城还没有收录馆子。</p>
+        </section>
+      ))}
+    </div>
+    <section class="rd-wishlist" id="rd-wishlist">
+      <div class="rd-band-head">
+        <h2 class="rd-band-name">想去吃</h2><span class="rd-band-en">On My List</span><span class="rd-band-rule"></span><span class="rd-band-range">{wishlist.length} 家</span>
+      </div>
+      {wishlist.length ? wishlist.map((f) => (
+        <article class="rd-spot rd-spot--wishlist" data-tags={f.city}>
+          {f.image ? <div class="rd-spot-media"><img class="rd-spot-photo" src={f.image} alt={`${f.name} 的照片`} loading="lazy" /><div class="rd-spot-scorebox"><span class="rd-wish-mark" aria-hidden="true">想</span></div></div> : <div class="rd-spot-scorebox rd-spot-scorebox--plain"><span class="rd-wish-mark" aria-hidden="true">想</span></div>}
+          <div class="rd-spot-content">
+            <div class="rd-spot-head"><h3 class="rd-spot-name">{f.name}</h3><span class="rd-spot-meta">{f.city} · {f.cuisine.join(' · ')}</span></div>
+            {f.recommend && <p class="rd-spot-comment">{f.recommend}</p>}
+            {f.dishes.length > 0 && <p class="rd-spot-must"><span class="lab">想尝</span><span class="dash">—</span><span class="val">{f.dishes.join(' / ')}</span></p>}
+            {f.address && <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div>}
+            {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
+          </div>
+        </article>
+      )) : <p class="rd-empty rd-wishlist-empty">还没收录想去的餐厅。在 <code>src/data/food.json</code> 添加条目并将 <code>status</code> 设为 <code>wishlist</code>；照片放入 <code>public/food/</code> 后填写图片路径。</p>}
+    </section>
+    <p class="rd-empty" id="rd-empty" hidden>这座城还没有收录餐厅。</p>
   </div>
 
   <p class="rd-coda rd-reveal">Only places worth a second visit. <span class="zh">只收值得再去一次的地方。</span></p>
@@ -88,7 +124,9 @@ const bands = [
 
 <script>
   import { enhance, chipFilter } from '../../scripts/rd-enhance.js';
+  import { initFoodTools } from '../../scripts/food-tools.js';
   enhance();
+  initFoodTools();
   chipFilter({
     chips: document.getElementById('rd-chips'),
     list: document.getElementById('rd-bands'),
@@ -100,6 +138,9 @@ const bands = [
       document.querySelectorAll('.rd-band').forEach((band) => {
         band.hidden = ![...band.querySelectorAll('.rd-spot')].some((s) => !s.hidden);
       });
+      document.getElementById('rd-visited').hidden = ![...document.querySelectorAll('#rd-visited .rd-spot')].some((s) => !s.hidden);
+      document.getElementById('rd-wishlist').hidden = ![...document.querySelectorAll('#rd-wishlist .rd-spot')].some((s) => !s.hidden);
+      document.getElementById('rd-count').textContent = String([...document.querySelectorAll('#rd-visited .rd-spot')].filter((s) => !s.hidden).length);
     },
   });
 </script>

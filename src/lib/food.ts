@@ -3,12 +3,15 @@ import { z } from 'astro/zod';
 export const foodSchema = z.object({
   name: z.string(),
   city: z.string(),
+  status: z.enum(['visited', 'wishlist']).optional(),
   cuisine: z.array(z.string()).default([]),
   score: z.number().min(0).max(10).default(0),
   recommend: z.string().default(''),
   dishes: z.array(z.string()).default([]),
   map: z.string().default(''),
   date: z.string().default(''),
+  image: z.string().optional(),
+  address: z.string().optional(),
 });
 
 export type FoodSpot = z.infer<typeof foodSchema>;

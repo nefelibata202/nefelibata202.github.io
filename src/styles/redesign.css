@@ -100,11 +100,16 @@
 .rd-band-en { font-family: Georgia, serif; font-style: italic; font-size: 14.5px; color: var(--muted); }
 .rd-band-rule { flex: 1; height: 1px; background: var(--hair); align-self: center; }
 .rd-band-range { font-family: var(--mono); font-size: 12.2px; color: var(--muted); }
-.rd-spot { position: relative; display: grid; grid-template-columns: 76px 1fr; gap: 22px; padding: 22px 8px 24px 2px; border-bottom: 1px solid var(--hair); transition: background .3s; }
+.rd-spot { position: relative; display: grid; grid-template-columns: minmax(118px, 180px) minmax(0, 1fr); gap: 22px; padding: 22px 8px 24px 2px; border-bottom: 1px solid var(--hair); transition: background .3s; }
 .rd-spot:hover { background: color-mix(in oklab, var(--paper) 75%, transparent); }
-.rd-spot-scorebox { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 2px; }
+.rd-spot-media { position: relative; min-width: 0; align-self: start; }
+.rd-spot-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--hair); background: var(--soft); }
+.rd-spot-photo--empty { display: flex; align-items: center; justify-content: center; color: var(--muted); background: repeating-linear-gradient(135deg, var(--soft) 0 8px, color-mix(in oklab, var(--soft) 65%, var(--bg)) 8px 16px); font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-align: center; }
+.rd-spot-scorebox { position: absolute; left: 7px; bottom: 7px; display: flex; align-items: baseline; gap: 4px; padding: 4px 7px; background: var(--bg); border: 1.5px solid var(--seal); }
+.rd-spot-scorebox--plain { position: static; align-self: start; justify-self: start; background: transparent; border: 0; padding: 0; }
 .rd-spot-score { font-family: Georgia, serif; font-size: 31px; line-height: 1; color: var(--seal); }
 .rd-spot-of { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--muted); }
+.rd-spot-content { min-width: 0; }
 .rd-spot-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .rd-spot-name { font-family: var(--read); font-weight: 700; font-size: 22.1px; letter-spacing: .02em; margin: 0; line-height: 1.4; }
 .rd-spot-meta { font-family: var(--mono); font-size: 12.2px; color: var(--muted); letter-spacing: .06em; }
@@ -114,7 +119,23 @@
 .rd-spot-must .lab { color: var(--seal); letter-spacing: .18em; font-family: var(--read); }
 .rd-spot-must .dash { color: var(--hair); margin: 0 10px; }
 .rd-spot-must .val { font-family: var(--read); letter-spacing: .04em; }
-@media (max-width: 560px) { .rd-spot { grid-template-columns: 56px 1fr; gap: 14px; } .rd-spot-seal { display: none; } }
+.rd-spot-address { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; margin-top: 11px; font-size: 13px; }
+.rd-spot-address-text { color: var(--muted); line-height: 1.6; }
+.rd-copy, .rd-dish-editor button { border: 1.5px solid var(--ink); background: var(--bg); color: var(--ink); padding: 4px 9px; font: 700 11px var(--mono); cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+.rd-copy:hover, .rd-dish-editor button:hover { background: var(--gold); }
+.rd-copy:disabled { opacity: .65; cursor: default; }
+.rd-map-link { display: inline-block; margin-top: 9px; color: var(--seal); font: 12px var(--mono); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.rd-dish-editor { margin-top: 12px; font-size: 12px; }
+.rd-dish-editor summary { width: fit-content; color: var(--muted); cursor: pointer; text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 4px; }
+.rd-dish-editor form { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.rd-dish-editor label { flex: 1 1 220px; }
+.rd-dish-editor input { width: 100%; min-height: 36px; padding: 6px 9px; border: 1.5px solid var(--hair); background: var(--bg); color: var(--ink); font: 13px var(--read); }
+.rd-save-status { color: var(--muted); font-size: 10px; }
+.rd-wish-mark { color: var(--seal); font: 700 20px var(--read); }
+.rd-wishlist-empty { padding: 12px 0 24px; }
+.rd-wishlist-empty code { font-family: var(--mono); font-size: .9em; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 560px) { .rd-spot { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; padding-right: 0; } .rd-spot-score { font-size: 24px; } .rd-spot-of { font-size: 9px; } .rd-spot-head { gap: 5px 9px; } .rd-spot-name { font-size: 18px; } .rd-spot-comment { font-size: 14.5px; } .rd-spot-seal { display: none; } }
 
 /* ---------- 归图（归家之路） ---------- */
 .rd-atlas { position: relative; padding: 10px 0 0; }
