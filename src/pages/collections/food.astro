@@ -86,6 +86,10 @@ const dishDefault = (dishes: string[]) => dishes.join('， ');
     </aside>
 
     <div class="food-main">
+      <div class="food-view-tabs" id="food-view-tabs" role="group" aria-label="选择餐厅清单">
+        <button type="button" class="food-view-tab is-on" data-food-status="visited" aria-pressed="true"><span>已去过</span><span class="food-tab-count">{items.length}</span></button>
+        <button type="button" class="food-view-tab" data-food-status="wishlist" aria-pressed="false"><span>想去吃</span><span class="food-tab-count">{wishlist.length}</span></button>
+      </div>
       <div class="food-filter-panel">
         <div class="food-filter-row">
           <div class="food-city-filters" id="food-city-filters" role="group" aria-label="按城市筛选">
@@ -100,6 +104,9 @@ const dishDefault = (dishes: string[]) => dishes.join('， ');
         <label class="food-search"><span aria-hidden="true">⌕</span><span class="sr-only">搜索餐厅、菜系或菜品</span><input id="food-search" type="search" placeholder="搜餐厅、菜系或喜欢的菜…" autocomplete="off" /></label>
       </div>
 
+      <nav class="food-pagination" data-food-pagination aria-label="餐厅分页">
+        <button type="button" data-page-prev aria-label="上一页">←</button><span data-page-label></span><button type="button" data-page-next aria-label="下一页">→</button>
+      </nav>
       <div id="rd-bands" class="food-results">
         <section id="rd-visited" class="food-section">
           <div class="food-section-heading">
@@ -163,6 +170,9 @@ const dishDefault = (dishes: string[]) => dishes.join('， ');
         </section>
         <p class="rd-empty food-no-results" id="rd-empty" hidden>没有找到符合条件的餐厅，换个筛选试试。</p>
       </div>
+      <nav class="food-pagination food-pagination--bottom" data-food-pagination aria-label="餐厅分页">
+        <button type="button" data-page-prev aria-label="上一页">←</button><span data-page-label></span><button type="button" data-page-next aria-label="下一页">→</button>
+      </nav>
     </div>
   </div>
 
