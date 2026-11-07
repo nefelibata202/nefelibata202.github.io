@@ -157,5 +157,34 @@
     "map": "",
     "image": "/food/sushi.jpg",
     "date": "2026-06"
+  },
+  {
+    "name": "文桃土菜馆",
+    "city": "广德",
+    "cuisine": [
+      "土菜"
+    ],
+    "score": 10,
+    "recommend": "",
+    "dishes": [],
+    "map": "",
+    "image": "/food/guangde-tu-cai.jpg"
+  },
+  {
+    "name": "永乐饭店",
+    "city": "成都",
+    "status": "wishlist",
+    "cuisine": [
+      "川菜"
+    ],
+    "score": 0,
+    "recommend": "",
+    "dishes": [
+      "肝腰合炒",
+      "外婆回锅肉"
+    ],
+    "map": "",
+    "image": "/food/sichuan-fish.jpg",
+    "address": "四川省成都市武侯区肖家河中街32号"
   }
 ]
