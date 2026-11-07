@@ -111,26 +111,26 @@
   {
     "name": "御鲤湘",
     "city": "上海",
+    "status": "wishlist",
     "cuisine": [
       "湘菜"
     ],
-    "score": 7,
-    "recommend": "",
+    "score": 0,
+    "recommend": "朋友推荐",
     "dishes": [],
-    "map": "",
-    "date": "2026-06"
+    "map": ""
   },
   {
     "name": "棠记",
     "city": "上海",
+    "status": "wishlist",
     "cuisine": [
       "粤菜"
     ],
-    "score": 7,
-    "recommend": "地道粤菜。",
+    "score": 0,
+    "recommend": "朋友推荐",
     "dishes": [],
-    "map": "",
-    "date": "2026-06"
+    "map": ""
   },
   {
     "name": "金匠寿司",
