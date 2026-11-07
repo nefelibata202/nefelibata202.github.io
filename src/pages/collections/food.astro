@@ -8,139 +8,171 @@ const items = allItems.filter((item) => (item.status ?? 'visited') === 'visited'
 const wishlist = allItems.filter((item) => item.status === 'wishlist').sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
 
 const cityCount = new Map<string, number>();
-for (const it of allItems) cityCount.set(it.city, (cityCount.get(it.city) ?? 0) + 1);
+for (const item of allItems) cityCount.set(item.city, (cityCount.get(item.city) ?? 0) + 1);
 const cities = [...cityCount.entries()].sort((a, b) => b[1] - a[1]);
 
-const scored = items.filter((i) => i.score > 0);
-const avg = scored.length ? (scored.reduce((s, i) => s + i.score, 0) / scored.length).toFixed(1) : '—';
+const cuisineCount = new Map<string, number>();
+for (const item of items) for (const cuisine of item.cuisine) cuisineCount.set(cuisine, (cuisineCount.get(cuisine) ?? 0) + 1);
+const cuisines = [...new Set(allItems.flatMap((item) => item.cuisine))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+const topCuisines = [...cuisineCount.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN')).slice(0, 5);
+const scored = items.filter((item) => item.score > 0);
+const avg = scored.length ? (scored.reduce((sum, item) => sum + item.score, 0) / scored.length).toFixed(1) : '—';
+const dishesCount = items.reduce((sum, item) => sum + item.dishes.length, 0);
 
-// 评分分档：殿堂 9+ / 佳作 7–8 / 尚可 <7
 const bands = [
-  { name: '殿堂', en: 'The Hall', range: '9 – 10', test: (s: number) => s >= 9 },
-  { name: '佳作', en: 'Fine Picks', range: '7 – 8', test: (s: number) => s >= 7 && s < 9 },
-  { name: '尚可', en: 'Worth a Try', range: '< 7', test: (s: number) => s < 7 },
-].map((b) => ({ ...b, items: items.filter((i) => b.test(i.score)) })).filter((b) => b.items.length);
+  { name: '殿堂', en: 'The Hall', range: '9 – 10', test: (score: number) => score >= 9 },
+  { name: '佳作', en: 'Fine Picks', range: '7 – 8', test: (score: number) => score >= 7 && score < 9 },
+  { name: '尚可', en: 'Worth a Try', range: '< 7', test: (score: number) => score < 7 },
+].map((band) => ({ ...band, items: items.filter((item) => band.test(item.score)) })).filter((band) => band.items.length);
+
+const dishDefault = (dishes: string[]) => dishes.join('， ');
 ---
 <BaseLayout title="美食 · 私藏" description="私人觅食地图——去过的宝藏馆子与想去的餐厅。" wide>
   <nav class="rd-crumbs rd-reveal" aria-label="私藏内导航">
-    <a href="/collections">← 私藏</a>
-    <span class="sep">/</span>
-    <span class="here">美食</span>
-    <a href="/collections/media" style="font-family:var(--read);font-style:normal;letter-spacing:.08em">书影</a>
+    <a href="/collections">← 私藏</a><span class="sep">/</span><span class="here">美食</span>
+    <a href="/collections/media" class="food-crumb-sibling">书影</a>
   </nav>
 
-  <header class="rd-head rd-reveal" style="padding-top:26px">
-    <span class="rd-mark" aria-hidden="true" data-parallax="-0.05" style="top:-30%">味</span>
-    <div class="rd-head-text" style="max-width:520px">
-      <p class="rd-kicker">私人觅食地图 · The Food Map</p>
-      <div class="rd-title-row">
-        <h1 class="rd-title">美食</h1>
-        <span class="rd-seal" aria-hidden="true"><span>味</span></span>
-      </div>
+  <header class="food-hero rd-reveal">
+    <span class="rd-mark" aria-hidden="true">味</span>
+    <div class="food-hero-copy">
+      <p class="rd-kicker">我的私藏餐厅地图</p>
+      <div class="rd-title-row"><h1 class="rd-title">美食</h1><span class="rd-seal" aria-hidden="true"><span>味</span></span></div>
       <p class="rd-lede">去过的馆子认真记，想去的餐厅慢慢攒。评分只对自己负责。</p>
+      <p class="food-image-note">餐厅照片尚未提供，配图为按菜系生成的氛围示意图。</p>
     </div>
-    <div class="rd-stats">
+    <div class="food-hero-stats" aria-label="美食档案统计">
       <div class="rd-stat"><span class="rd-stat-num" id="rd-count">{items.length}</span><span class="rd-stat-lab">去过</span></div>
-      <div class="rd-stat"><span class="rd-stat-num">{wishlist.length}</span><span class="rd-stat-lab">想去</span></div>
+      <div class="rd-stat"><span class="rd-stat-num" id="rd-wish-count">{wishlist.length}</span><span class="rd-stat-lab">想去</span></div>
       <div class="rd-stat"><span class="rd-stat-num">{cityCount.size}</span><span class="rd-stat-lab">座城</span></div>
       <div class="rd-stat"><span class="rd-stat-num">{avg}</span><span class="rd-stat-lab">均分</span></div>
     </div>
+    <img class="food-hero-dish" src="/food/hangzhou-longjing-shrimp.jpg" alt="" aria-hidden="true" />
   </header>
 
-  <div class="rd-chips rd-reveal" id="rd-chips" role="group" aria-label="按城市筛选">
-    <span class="rd-chips-lab">City —</span>
-    <button type="button" class="rd-chip is-on" data-chip="*">全部 {allItems.length}</button>
-    {cities.map(([c, n]) => <button type="button" class="rd-chip" data-chip={c}>{c} {n}</button>)}
-  </div>
+  <div class="food-shell">
+    <aside class="food-sidebar" aria-label="美食档案概览">
+      <section class="food-side-card food-score-card">
+        <p class="food-side-title"><span aria-hidden="true">▤</span> 我的美食档案</p>
+        <div class="food-average"><strong>{avg}</strong><span>/ 10</span></div>
+        <p class="food-average-caption">收藏餐厅均分</p>
+        <div class="food-score-track" aria-label={`平均评分 ${avg} 分`}><span style={`width:${Number(avg) * 10 || 0}%`}></span></div>
+        <dl class="food-totals">
+          <div><dt><span aria-hidden="true">▦</span> 共收藏餐厅</dt><dd>{allItems.length} 家</dd></div>
+          <div><dt><span aria-hidden="true">♨</span> 去过餐厅</dt><dd>{items.length} 家</dd></div>
+          <div><dt><span aria-hidden="true">♡</span> 想去餐厅</dt><dd>{wishlist.length} 家</dd></div>
+          <div><dt><span aria-hidden="true">⌖</span> 覆盖城市</dt><dd>{cityCount.size} 座</dd></div>
+          <div><dt><span aria-hidden="true">♧</span> 记录菜品</dt><dd>{dishesCount} 道</dd></div>
+        </dl>
+      </section>
 
-  <div id="rd-bands" style="transition:opacity .18s ease;padding-bottom:30px">
-    <div id="rd-visited">
-      <div class="rd-band-head">
-        <h2 class="rd-band-name">去过的店</h2><span class="rd-band-en">Been There</span><span class="rd-band-rule"></span><span class="rd-band-range">{items.length} 家</span>
-      </div>
-      {bands.map((b) => (
-        <section class="rd-band">
-        <div class="rd-band-head">
-          <h2 class="rd-band-name">{b.name}</h2>
-          <span class="rd-band-en">{b.en}</span>
-          <span class="rd-band-rule"></span>
-          <span class="rd-band-range">{b.range}</span>
-        </div>
-        {b.items.map((f) => (
-          <article class="rd-spot" data-tags={f.city}>
-            {f.image ? <div class="rd-spot-media">
-              <img class="rd-spot-photo" src={f.image} alt={`${f.name} 的照片`} loading="lazy" />
-              <div class="rd-spot-scorebox">
-                <span class="rd-spot-score">{f.score > 0 ? f.score.toFixed(1) : '—'}</span>
-                <span class="rd-spot-of">/ 10</span>
-              </div>
-            </div> : <div class="rd-spot-scorebox rd-spot-scorebox--plain"><span class="rd-spot-score">{f.score > 0 ? f.score.toFixed(1) : '—'}</span><span class="rd-spot-of">/ 10</span></div>}
-            <div class="rd-spot-content">
-              <div class="rd-spot-head">
-                <h3 class="rd-spot-name">{f.name}</h3>
-                <span class="rd-spot-meta">{f.city} · {f.cuisine.join(' · ')}</span>
-                {f.score >= 9 && <span class="rd-spot-seal" aria-label="值得回头">回头</span>}
-              </div>
-              {f.recommend && <p class="rd-spot-comment">{f.recommend}</p>}
-              <p class="rd-spot-must" data-dishes-display><span class="lab">喜欢的招牌菜</span><span class="dash">—</span><span class="val">{f.dishes.length ? f.dishes.join(' / ') : '还没记'}</span></p>
-              {f.address && <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div>}
-              {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
-              <details class="rd-dish-editor" data-dish-editor data-name={f.name} data-city={f.city} data-default={f.dishes.join(', ')}>
-                <summary>记下我喜欢的菜</summary>
-                <form data-dish-form>
-                  <label><span class="sr-only">{f.name} 喜欢的招牌菜，多个菜名用逗号分隔</span><input type="text" data-dish-input value={f.dishes.join('， ')} placeholder="例如：红烧肉，酒酿馒头" /></label>
-                  <button type="submit">保存</button>
-                  <span class="rd-save-status" aria-live="polite">仅保存在这台设备</span>
-                </form>
-              </details>
-            </div>
-          </article>
-        ))}
-        </section>
-      ))}
-    </div>
-    <section class="rd-wishlist" id="rd-wishlist">
-      <div class="rd-band-head">
-        <h2 class="rd-band-name">想去吃</h2><span class="rd-band-en">On My List</span><span class="rd-band-rule"></span><span class="rd-band-range">{wishlist.length} 家</span>
-      </div>
-      {wishlist.length ? wishlist.map((f) => (
-        <article class="rd-spot rd-spot--wishlist" data-tags={f.city}>
-          {f.image ? <div class="rd-spot-media"><img class="rd-spot-photo" src={f.image} alt={`${f.name} 的照片`} loading="lazy" /><div class="rd-spot-scorebox"><span class="rd-wish-mark" aria-hidden="true">想</span></div></div> : <div class="rd-spot-scorebox rd-spot-scorebox--plain"><span class="rd-wish-mark" aria-hidden="true">想</span></div>}
-          <div class="rd-spot-content">
-            <div class="rd-spot-head"><h3 class="rd-spot-name">{f.name}</h3><span class="rd-spot-meta">{f.city} · {f.cuisine.join(' · ')}</span></div>
-            {f.recommend && <p class="rd-spot-comment">{f.recommend}</p>}
-            {f.dishes.length > 0 && <p class="rd-spot-must"><span class="lab">想尝</span><span class="dash">—</span><span class="val">{f.dishes.join(' / ')}</span></p>}
-            {f.address && <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div>}
-            {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
+      <section class="food-side-card">
+        <h2 class="food-side-heading">城市分布 <span>City notes</span></h2>
+        <ul class="food-city-list">
+          {cities.map(([city, count]) => (
+            <li><span class="food-city-dot" aria-hidden="true"></span><span>{city}</span><strong>{count}</strong></li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="food-side-card">
+        <h2 class="food-side-heading">菜系偏好 <span>Top 5</span></h2>
+        <ul class="food-cuisine-list">
+          {topCuisines.map(([cuisine, count]) => (
+            <li><span>{cuisine}</span><span class="food-cuisine-bar"><i style={`width:${Math.round((count / (topCuisines[0]?.[1] || 1)) * 100)}%`}></i></span><strong>{count}</strong></li>
+          ))}
+        </ul>
+      </section>
+    </aside>
+
+    <div class="food-main">
+      <div class="food-filter-panel">
+        <div class="food-filter-row">
+          <div class="food-city-filters" id="food-city-filters" role="group" aria-label="按城市筛选">
+            <span class="food-filter-label"><span aria-hidden="true">⌖</span> 城市</span>
+            <button type="button" class="food-filter-chip is-on" data-city-filter="*">全部 {allItems.length}</button>
+            {cities.map(([city, count]) => <button type="button" class="food-filter-chip" data-city-filter={city}>{city} {count}</button>)}
           </div>
-        </article>
-      )) : <p class="rd-empty rd-wishlist-empty">还没收录想去的餐厅。在 <code>src/data/food.json</code> 添加条目并将 <code>status</code> 设为 <code>wishlist</code>；照片放入 <code>public/food/</code> 后填写图片路径。</p>}
-    </section>
-    <p class="rd-empty" id="rd-empty" hidden>这座城还没有收录餐厅。</p>
+          <label class="food-cuisine-filter"><span class="food-filter-label"><span aria-hidden="true">♨</span> 菜系</span>
+            <select id="food-cuisine-filter" aria-label="按菜系筛选"><option value="*">全部菜系</option>{cuisines.map((cuisine) => <option value={cuisine}>{cuisine}</option>)}</select>
+          </label>
+        </div>
+        <label class="food-search"><span aria-hidden="true">⌕</span><span class="sr-only">搜索餐厅、菜系或菜品</span><input id="food-search" type="search" placeholder="搜餐厅、菜系或喜欢的菜…" autocomplete="off" /></label>
+      </div>
+
+      <div id="rd-bands" class="food-results">
+        <section id="rd-visited" class="food-section">
+          <div class="food-section-heading">
+            <div><p class="food-section-kicker">BEEN THERE</p><h2>去过的店 <span id="visited-section-count">{items.length} 家</span></h2></div>
+            <span class="food-section-aside">按个人评分收档</span>
+          </div>
+          {bands.map((band) => (
+            <section class="rd-band food-rating-band">
+              <div class="rd-band-head"><h3 class="rd-band-name">{band.name}</h3><span class="rd-band-en">{band.en}</span><span class="rd-band-rule"></span><span class="rd-band-range">{band.range} 分</span></div>
+              {band.items.map((f) => (
+                <article class="rd-spot" data-food-spot data-status="visited" data-city={f.city} data-cuisines={f.cuisine.join('|')}>
+                  <div class="rd-spot-media">
+                    <img class="rd-spot-photo" src={f.image || '/food/hangzhou-longjing-shrimp.jpg'} alt={`${f.cuisine[0] || '中式'}菜系氛围图`} loading="lazy" />
+                    <span class="food-image-badge">菜系示意</span>
+                  </div>
+                  <div class="rd-spot-content">
+                    <div class="food-spot-score"><strong>{f.score.toFixed(1)}</strong><span>/ 10</span></div>
+                    <div class="rd-spot-head"><h4 class="rd-spot-name">{f.name}</h4><span class="rd-spot-seal" hidden={!f.score || f.score < 9} aria-label="值得回头">回头</span></div>
+                    <p class="food-spot-meta"><span>⌖</span>{f.city}<i></i><span>{f.cuisine.join(' · ')}</span></p>
+                    {f.recommend && <p class="rd-spot-comment">“{f.recommend}”</p>}
+                    <p class="rd-spot-must" data-dishes-display><span class="lab">喜欢的招牌菜</span><span class="dash">—</span><span class="val">{f.dishes.length ? f.dishes.join(' / ') : '还没记'}</span></p>
+                  </div>
+                  <aside class="rd-spot-actions">
+                    {f.address ? <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div> : <p class="food-address-empty">地址待补充</p>}
+                    {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
+                    <details class="rd-dish-editor" data-dish-editor data-name={f.name} data-city={f.city} data-default={dishDefault(f.dishes)}>
+                      <summary>记下我喜欢的菜 <span aria-hidden="true">›</span></summary>
+                      <form data-dish-form>
+                        <label><span class="sr-only">{f.name} 喜欢的招牌菜，多个菜名用逗号分隔</span><input type="text" data-dish-input value={dishDefault(f.dishes)} placeholder="例如：红烧肉，酒酿馒头" /></label>
+                        <button type="submit">保存</button><span class="rd-save-status" aria-live="polite">仅保存在这台设备</span>
+                      </form>
+                    </details>
+                  </aside>
+                </article>
+              ))}
+            </section>
+          ))}
+        </section>
+
+        <section id="rd-wishlist" class="food-section food-wishlist-section">
+          <div class="food-section-heading">
+            <div><p class="food-section-kicker">ON MY LIST</p><h2>想去吃 <span id="wishlist-section-count">{wishlist.length} 家</span></h2></div>
+            <span class="food-section-aside">朋友种草，等一次出发</span>
+          </div>
+          {wishlist.length ? wishlist.map((f) => (
+            <article class="rd-spot rd-spot--wishlist" data-food-spot data-status="wishlist" data-city={f.city} data-cuisines={f.cuisine.join('|')}>
+              <div class="rd-spot-media"><img class="rd-spot-photo" src={f.image || '/food/hangzhou-longjing-shrimp.jpg'} alt={`${f.cuisine[0] || '中式'}菜系氛围图`} loading="lazy" /><span class="food-image-badge">菜系示意</span></div>
+              <div class="rd-spot-content">
+                <div class="food-spot-score food-spot-score--wishlist"><strong>想</strong><span>等一次探店</span></div>
+                <div class="rd-spot-head"><h3 class="rd-spot-name">{f.name}</h3></div>
+                <p class="food-spot-meta"><span>⌖</span>{f.city}<i></i><span>{f.cuisine.join(' · ')}</span></p>
+                {f.recommend && <p class="rd-spot-comment">{f.recommend}</p>}
+                {f.dishes.length > 0 && <p class="rd-spot-must"><span class="lab">想尝</span><span class="dash">—</span><span class="val">{f.dishes.join(' / ')}</span></p>}
+              </div>
+              <aside class="rd-spot-actions">
+                {f.address ? <div class="rd-spot-address"><span class="rd-spot-address-text">{f.address}</span><button type="button" class="rd-copy" data-copy-address={f.address}>复制地址</button></div> : <p class="food-address-empty">地址待补充</p>}
+                {f.map && <a class="rd-map-link" href={f.map} target="_blank" rel="noopener noreferrer">打开地图 ↗</a>}
+              </aside>
+            </article>
+          )) : <p class="rd-empty rd-wishlist-empty">还没收录想去的餐厅。在 <code>src/data/food.json</code> 添加条目并将 <code>status</code> 设为 <code>wishlist</code>。</p>}
+        </section>
+        <p class="rd-empty food-no-results" id="rd-empty" hidden>没有找到符合条件的餐厅，换个筛选试试。</p>
+      </div>
+    </div>
   </div>
 
-  <p class="rd-coda rd-reveal">Only places worth a second visit. <span class="zh">只收值得再去一次的地方。</span></p>
+  <p class="rd-coda rd-reveal">Every place has a story worth keeping. <span class="zh">每一家，都有值得留下的味道。</span></p>
 </BaseLayout>
 
 <script>
-  import { enhance, chipFilter } from '../../scripts/rd-enhance.js';
-  import { initFoodTools } from '../../scripts/food-tools.js';
+  import { enhance } from '../../scripts/rd-enhance.js';
+  import { initFoodFilters, initFoodTools } from '../../scripts/food-tools.js';
   enhance();
   initFoodTools();
-  chipFilter({
-    chips: document.getElementById('rd-chips'),
-    list: document.getElementById('rd-bands'),
-    items: () => [...document.querySelectorAll('.rd-spot')],
-    count: document.getElementById('rd-count'),
-    empty: document.getElementById('rd-empty'),
-    onApply: () => {
-      // 某档为空时连同档头一起隐藏
-      document.querySelectorAll('.rd-band').forEach((band) => {
-        band.hidden = ![...band.querySelectorAll('.rd-spot')].some((s) => !s.hidden);
-      });
-      document.getElementById('rd-visited').hidden = ![...document.querySelectorAll('#rd-visited .rd-spot')].some((s) => !s.hidden);
-      document.getElementById('rd-wishlist').hidden = ![...document.querySelectorAll('#rd-wishlist .rd-spot')].some((s) => !s.hidden);
-      document.getElementById('rd-count').textContent = String([...document.querySelectorAll('#rd-visited .rd-spot')].filter((s) => !s.hidden).length);
-    },
-  });
+  initFoodFilters();
 </script>

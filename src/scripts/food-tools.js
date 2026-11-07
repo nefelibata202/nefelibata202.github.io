@@ -45,3 +45,49 @@ export function initFoodTools(root = document) {
     });
   });
 }
+
+export function initFoodFilters(root = document) {
+  const cityGroup = root.getElementById('food-city-filters');
+  const cuisineSelect = root.getElementById('food-cuisine-filter');
+  const searchInput = root.getElementById('food-search');
+  const spots = [...root.querySelectorAll('[data-food-spot]')];
+  if (!cityGroup || !cuisineSelect || !searchInput || !spots.length) return;
+
+  let city = '*';
+  const cityButtons = [...cityGroup.querySelectorAll('[data-city-filter]')];
+  const apply = () => {
+    const cuisine = cuisineSelect.value;
+    const query = searchInput.value.trim().toLocaleLowerCase();
+    const shown = [];
+    for (const spot of spots) {
+      const matches = (city === '*' || spot.dataset.city === city)
+        && (cuisine === '*' || (spot.dataset.cuisines || '').split('|').includes(cuisine))
+        && (!query || spot.textContent.toLocaleLowerCase().includes(query));
+      spot.hidden = !matches;
+      if (matches) shown.push(spot);
+    }
+
+    const visited = shown.filter((spot) => spot.dataset.status === 'visited').length;
+    const wanted = shown.filter((spot) => spot.dataset.status === 'wishlist').length;
+    const visitedSection = root.getElementById('rd-visited');
+    const wishlistSection = root.getElementById('rd-wishlist');
+    visitedSection.hidden = visited === 0;
+    wishlistSection.hidden = wanted === 0;
+    root.querySelectorAll('.rd-band').forEach((band) => {
+      band.hidden = ![...band.querySelectorAll('[data-food-spot]')].some((spot) => !spot.hidden);
+    });
+    root.getElementById('rd-empty').hidden = shown.length > 0;
+    root.getElementById('rd-count').textContent = String(visited);
+    root.getElementById('rd-wish-count').textContent = String(wanted);
+    root.getElementById('visited-section-count').textContent = `${visited} 家`;
+    root.getElementById('wishlist-section-count').textContent = `${wanted} 家`;
+  };
+
+  cityButtons.forEach((button) => button.addEventListener('click', () => {
+    city = button.dataset.cityFilter;
+    cityButtons.forEach((item) => item.classList.toggle('is-on', item === button));
+    apply();
+  }));
+  cuisineSelect.addEventListener('change', apply);
+  searchInput.addEventListener('input', apply);
+}

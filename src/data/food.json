@@ -11,6 +11,7 @@
     "recommend": "西湖边上的苍蝇小馆，适合和朋友一起聚餐。",
     "dishes": [],
     "map": "",
+    "image": "/food/hangzhou-snacks.jpg",
     "date": "2026-06"
   },
   {
@@ -25,6 +26,7 @@
     "recommend": "火车东站旁的寿喜烧自助，啤酒种类非常多。",
     "dishes": [],
     "map": "",
+    "image": "/food/sukiyaki.jpg",
     "date": "2026-06"
   },
   {
@@ -37,6 +39,7 @@
     "recommend": "价格实惠，每个菜都很好吃，无脑入。",
     "dishes": [],
     "map": "",
+    "image": "/food/hunan-stir-fry.jpg",
     "date": "2026-06"
   },
   {
@@ -53,6 +56,7 @@
       "榴莲蛋糕"
     ],
     "map": "",
+    "image": "/food/northeast-bbq.jpg",
     "date": "2026-06"
   },
   {
@@ -65,6 +69,7 @@
     "recommend": "非常有特色的烧烤，可以自己烤，很好吃。",
     "dishes": [],
     "map": "",
+    "image": "/food/charcoal-bbq.jpg",
     "date": "2026-06"
   },
   {
@@ -78,6 +83,7 @@
     "recommend": "位置比较偏远，但菜品还是非常不错的。",
     "dishes": [],
     "map": "",
+    "image": "/food/quzhou-spicy.jpg",
     "date": "2026-06"
   },
   {
@@ -90,6 +96,7 @@
     "recommend": "菜系十分精致，味道也非常好。",
     "dishes": [],
     "map": "",
+    "image": "/food/sichuan-fish.jpg",
     "date": "2026-06"
   },
   {
@@ -106,6 +113,7 @@
       "薄荷奶绿"
     ],
     "map": "",
+    "image": "/food/frog-hotpot.jpg",
     "date": "2026-06"
   },
   {
@@ -118,7 +126,8 @@
     "score": 0,
     "recommend": "朋友推荐",
     "dishes": [],
-    "map": ""
+    "map": "",
+    "image": "/food/hunan-farmhouse.jpg"
   },
   {
     "name": "棠记",
@@ -130,7 +139,8 @@
     "score": 0,
     "recommend": "朋友推荐",
     "dishes": [],
-    "map": ""
+    "map": "",
+    "image": "/food/cantonese-steamed-fish.jpg"
   },
   {
     "name": "金匠寿司",
@@ -145,6 +155,7 @@
       "鹅肝"
     ],
     "map": "",
+    "image": "/food/sushi.jpg",
     "date": "2026-06"
   }
 ]
