@@ -2242,5 +2242,18 @@
       "奇幻"
     ],
     "series": "齐木楠雄的灾难"
+  },
+  {
+    "type": "movie",
+    "title": "欢迎来龙餐馆",
+    "creator": "文牧野",
+    "score": 8.7,
+    "year": "2026",
+    "date": "2026-08-11",
+    "cover": "/covers/欢迎来龙餐馆.webp",
+    "categories": [
+      "剧情",
+      "战争"
+    ]
   }
 ]
