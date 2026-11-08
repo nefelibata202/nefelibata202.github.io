@@ -2255,5 +2255,17 @@
       "剧情",
       "战争"
     ]
+  },
+  {
+    "type": "movie",
+    "title": "我不是药神",
+    "creator": "文牧野",
+    "score": 0,
+    "year": "2018",
+    "date": "",
+    "cover": null,
+    "categories": [
+      "剧情"
+    ]
   }
 ]
