@@ -10,6 +10,9 @@ export const favoriteSchema = z.object({
   cover: z.string().nullable().default(null),
   categories: z.array(z.string()).default([]),
   series: z.string().trim().default(''),
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
+  review: z.string().startsWith('/articles/').optional(),
+  synopsis: z.string().optional(),
 });
 
 export type Favorite = z.infer<typeof favoriteSchema>;

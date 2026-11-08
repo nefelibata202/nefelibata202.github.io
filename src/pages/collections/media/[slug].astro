@@ -1,0 +1,34 @@
+---
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { loadFavorites, TYPE_LABEL } from '../../../lib/favorites';
+import raw from '../../../data/favorites.json';
+
+export function getStaticPaths() {
+  return loadFavorites(raw).filter((item) => item.slug).map((item) => ({
+    params: { slug: item.slug }, props: { item },
+  }));
+}
+const { item } = Astro.props;
+---
+<PostLayout title={item.title} meta={[TYPE_LABEL[item.type], item.year, item.creator].filter(Boolean).join(' · ')} tags={[]}>
+  <p><a href="/collections/media/">← 返回书影</a></p>
+  <div class="film-info">
+    {item.cover && <img src={item.cover} alt={`${item.title}海报`} width="200" height="300" />}
+    <dl>
+      <dt>导演</dt><dd>{item.creator}</dd>
+      <dt>上映</dt><dd>{item.date || item.year}</dd>
+      {item.score > 0 && <><dt>评分</dt><dd>{item.score.toFixed(1)} / 10</dd></>}
+      <dt>类型</dt><dd>{item.categories.join(' / ')}</dd>
+    </dl>
+  </div>
+  {item.synopsis && <><h2>剧情简介</h2><p>{item.synopsis}</p></>}
+  {item.review && <><h2>我的影评</h2><p><a href={item.review}>阅读《{item.title}》影评 →</a></p></>}
+</PostLayout>
+
+<style>
+  .film-info { display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; margin: 2rem 0; }
+  .film-info img { width: 180px; height: auto; border: 3px solid var(--ink); }
+  .film-info dl { margin: 0; }
+  .film-info dt { font-size: .8rem; color: var(--muted); }
+  .film-info dd { margin: 0 0 .8rem; }
+</style>

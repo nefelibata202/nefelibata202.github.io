@@ -30,6 +30,8 @@ Static-only: all HTML is generated at build time. "No client JS" is the default 
 
 Collections are defined in `src/content.config.ts` (Astro 5 glob loader + zod). **Slug = the collection-relative path of the `.md` file** (= Astro's `entry.id`); slugs are English, titles may be Chinese.
 
+Media entries may also have an optional English `slug`, a `synopsis`, and a `review` article URL. Entries with a slug generate `/collections/media/[slug]/` detail pages. The media card links to the detail page and, when present, directly to the review. Reviews live in the articles collection and link back to the media detail page; an editorial rewrite requires the user's request, while ordinary vault imports preserve the original body.
+
 **Wikilinks & backlinks (the signature feature):**
 - `src/lib/links.ts` — pure, dependency-free logic: `extractWikiLinks`, `buildLinkMap`, `buildBacklinkIndex`, `toUrl`. This is the unit-tested core; keep it pure.
 - `src/lib/wikilink.ts` — a remark plugin that rewrites `[[标题]]` / `[[标题|显示]]` into in-site `<a>` at build time. Matched by exact title; unmatched → plain text.
