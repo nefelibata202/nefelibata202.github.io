@@ -2260,12 +2260,13 @@
     "type": "movie",
     "title": "我不是药神",
     "creator": "文牧野",
-    "score": 0,
+    "score": 9.0,
     "year": "2018",
-    "date": "",
-    "cover": null,
+    "date": "2018-06-30",
+    "cover": "/covers/我不是药神.webp",
     "categories": [
-      "剧情"
+      "剧情",
+      "喜剧"
     ]
   }
 ]
