@@ -4,7 +4,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const entries = (await getCollection('guide')).filter(entry => entry.data.island !== 'knowledge-gaps');
+  const entries = (await getCollection('guide')).filter(entry => !['knowledge-gaps', 'people'].includes(entry.data.island));
   return entries.map(entry => ({
     params: { island: entry.data.island },
     props: { entry },

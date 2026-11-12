@@ -1,10 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import peopleGroups from '../data/people.json';
 
 // 归图 · 重构：六宫格 → 一条「归家的路」。
-// 五座岛的内容直接摊开在驿站里（不再需要点进 /guide/[island] 二级页；
-// 若保留二级页也不冲突，驿站标题仍链接过去）。
+// 人物使用共用数据预览，其他岛屿保留 Markdown 正文。
 const entries = await getCollection('guide');
 const order = ['people', 'philosophy', 'interests', 'fragmented-time', 'knowledge-gaps'];
 entries.sort((a, b) => order.indexOf(a.data.island) - order.indexOf(b.data.island));
@@ -47,7 +47,21 @@ for (const e of entries) rendered.push({ entry: e, Content: (await render(e)).Co
             <span class="rd-station-en">{meta[entry.data.island]?.en}</span>
           </div>
           <p class="rd-station-note">{meta[entry.data.island]?.note}</p>
-          <div class="rd-station-body"><Content /></div>
+          {entry.data.island === 'people' ? (
+            <div class="people-preview">
+              <div class="people-preview-faces" aria-hidden="true">
+                {peopleGroups.flatMap(group => group.people.slice(0, 1)).map(person => (
+                  <img src={person.image} alt="" width="64" height="80" loading="lazy" decoding="async" style={`object-position:${person.imagePosition}`} />
+                ))}
+              </div>
+              <ul class="people-preview-list">
+                {peopleGroups.map(group => (
+                  <li><a href={`/guide/people#${group.id}`}><span>{group.title}</span><span>{group.people.map(person => person.name).join('、')}</span></a></li>
+                ))}
+              </ul>
+              <a class="people-preview-open" href="/guide/people">翻开人物册 <span aria-hidden="true">↗</span></a>
+            </div>
+          ) : <div class="rd-station-body"><Content /></div>}
         </div>
       </section>
     ))}
@@ -75,3 +89,21 @@ for (const e of entries) rendered.push({ entry: e, Content: (await render(e)).Co
     onScroll();
   }
 </script>
+
+<style>
+.people-preview { padding-top: 8px; }
+.people-preview-faces { display: grid; grid-template-columns: repeat(5, minmax(0, 58px)); gap: 10px; margin: 0 0 22px; }
+.people-preview-faces img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border: 1px solid var(--hair); background: var(--soft); }
+.people-preview-list { list-style: none; margin: 0 0 22px; padding: 0; }
+.people-preview-list li { border-bottom: 1px solid var(--hair); }
+.people-preview-list a { display: grid; grid-template-columns: 72px minmax(0,1fr); gap: 16px; padding: 9px 0; font: .85rem/1.8 var(--read); }
+.people-preview-list a > span:first-child { color: var(--ink); }
+.people-preview-list a > span:last-child { color: var(--muted); }
+.people-preview-list a:hover > span { color: var(--seal); }
+.people-preview-open { display: inline-block; border-bottom: 2px solid var(--gold); padding-bottom: 4px; font: .9rem var(--read); }
+.people-preview-open:hover { color: var(--seal); border-color: var(--seal); }
+@media(max-width: 560px) {
+  .people-preview-faces { grid-template-columns: repeat(5, minmax(0, 42px)); gap: 7px; }
+  .people-preview-list a { grid-template-columns: 60px minmax(0,1fr); gap: 10px; font-size: .8rem; }
+}
+</style>

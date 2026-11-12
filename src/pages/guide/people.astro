@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import groups from '../../data/people.json';
+const people = groups.flatMap(group => group.people);
+---
+
+<BaseLayout title="人物 · 归图" description="我所欣赏的人：导演、演员、作家、创作者，以及陪伴个人成长的声音。" wide>
+  <div class="people-page">
+    <header class="people-header">
+      <a class="people-back" href="/guide">← 归图</a>
+      <div class="people-title-row">
+        <div>
+          <p class="people-kicker">人物册</p>
+          <h1>我所欣赏的人</h1>
+        </div>
+        <span class="people-seal" aria-hidden="true">人</span>
+      </div>
+      <p class="people-intro">在不同领域，有一些我喜欢或尊重的人。<br />把这些名字放在一起，也留下继续了解他们的入口。</p>
+    </header>
+
+    <div class="people-layout">
+      <nav class="people-index" aria-label="人物分类">
+        <p>翻到这一页</p>
+        {groups.map(group => (
+          <a href={`#${group.id}`}><span>{group.title}</span><span class="people-count">{group.people.length}</span></a>
+        ))}
+        <span class="people-total">共 {people.length} 位</span>
+      </nav>
+
+      <div class="people-sections">
+        {groups.map(group => (
+          <section class:list={['people-section', group.id === 'growth' && 'people-section--growth']} id={group.id} aria-labelledby={`${group.id}-title`}>
+            <header class="people-section-head">
+              <h2 id={`${group.id}-title`}>{group.title}</h2>
+              <p>{group.subtitle}</p>
+            </header>
+            <div class="portrait-grid">
+              {group.people.map(person => (
+                <article class="portrait" id={person.id}>
+                  <a class:list={['portrait-photo', person.imageKind !== '肖像' && 'portrait-photo--identity']} href={person.url} target="_blank" rel="noopener noreferrer" aria-label={`${person.name}：${person.linkLabel}（新窗口打开）`}>
+                    <img src={person.image} alt={`${person.name}的${person.imageKind}`} width="640" height="800" loading={group.id === 'directors' ? 'eager' : 'lazy'} decoding="async" style={`object-position:${person.imagePosition}`} />
+                    {person.imageKind === '节目封面' && <span class="portrait-kind">节目封面</span>}
+                  </a>
+                  <div class="portrait-text">
+                    <h3>{person.name}</h3>
+                    <p class="portrait-role">{person.role}</p>
+                    <p class="portrait-works">{person.works}</p>
+                    {person.note && <p class="portrait-note">{person.note}</p>}
+                    <a class="portrait-link" href={person.url} target="_blank" rel="noopener noreferrer">{person.linkLabel}<span aria-hidden="true"> ↗</span><span class="sr-only">（新窗口打开）</span></a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <details class="people-sources">
+          <summary>照片与头像来源</summary>
+          <p>节目使用官方封面，部分创作者使用公开账号头像。图片已作尺寸调整；各图来源与许可说明如下。</p>
+          <ul>
+            {people.map(person => (
+              <li><span>{person.name}</span><div><a href={person.imageSource} target="_blank" rel="noopener noreferrer">{person.imageCredit} ↗</a><small>{person.imageLicense}{person.licenseUrl && <> · <a href={person.licenseUrl} target="_blank" rel="noopener noreferrer">许可说明</a></>}</small></div></li>
+            ))}
+          </ul>
+        </details>
+        <footer class="people-end"><span aria-hidden="true">归</span><p>喜欢与敬意，慢慢积累。</p><a href="/guide">回到归图</a></footer>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .people-page { padding: 34px 0 20px; }
+  .people-back { color: var(--muted); font-family: var(--read); font-size: .9rem; }
+  .people-back:hover { color: var(--seal); }
+  .people-header { padding-bottom: 36px; border-bottom: 2px solid var(--line); }
+  .people-title-row { display: flex; align-items: center; gap: 32px; margin-top: 34px; }
+  .people-kicker { color: var(--muted); font-family: var(--read); font-size: .95rem; letter-spacing: .2em; margin: 0 0 8px; }
+  .people-header h1 { font-family: var(--read); font-size: clamp(2.3rem, 6vw, 4rem); line-height: 1.2; letter-spacing: .03em; margin: 0; font-weight: 700; }
+  .people-seal { display: grid; place-items: center; width: 54px; height: 58px; border: 2px solid var(--seal); color: var(--seal); font: 1.85rem var(--read); transform: rotate(-5deg); flex: none; }
+  .people-intro { color: var(--muted); font-family: var(--read); font-size: 1.02rem; line-height: 1.9; margin: 22px 0 0; }
+  .people-layout { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 46px; padding-top: 38px; }
+  .people-index { position: sticky; top: 28px; align-self: start; font-family: var(--read); }
+  .people-index > p { color: var(--muted); font-size: .78rem; margin: 0 0 14px; }
+  .people-index > a { display: flex; align-items: baseline; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--hair); font-size: .95rem; }
+  .people-index > a:hover { color: var(--seal); }
+  .people-count { color: var(--muted); font: .68rem var(--mono); }
+  .people-total { display: block; margin-top: 22px; font-size: .78rem; color: var(--muted); }
+  .people-section { scroll-margin-top: 24px; margin-bottom: 62px; }
+  .people-section-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
+  .people-section-head h2 { font: 700 1.6rem/1.3 var(--read); margin: 0; }
+  .people-section-head p { font: .8rem var(--read); color: var(--muted); margin: 0; }
+  .portrait-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; }
+  .portrait { min-width: 0; }
+  .portrait-photo { display: block; position: relative; aspect-ratio: 4 / 5; background: var(--soft); overflow: hidden; border: 1px solid var(--hair); }
+  .portrait-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .portrait-photo--identity img { object-fit: contain; padding: 18px; }
+  .portrait-photo:focus-visible { outline-offset: 5px; }
+  .portrait-kind { position: absolute; bottom: 0; right: 0; padding: 3px 8px; background: var(--paper); color: var(--muted); font-size: .65rem; }
+  .portrait-text { padding-top: 14px; }
+  .portrait h3 { font: 700 1.22rem/1.45 var(--read); margin: 0 0 3px; overflow-wrap: anywhere; }
+  .portrait-role { color: var(--muted); font-size: .72rem; margin: 0; }
+  .portrait-works { color: var(--muted); font: .84rem/1.8 var(--read); margin: 12px 0; }
+  .portrait-note { font: .9rem/1.8 var(--read); margin: 12px 0; }
+  .portrait-link { font: .76rem var(--read); border-bottom: 1px solid var(--hair); padding-bottom: 3px; }
+  .portrait-link:hover { border-color: var(--seal); color: var(--seal); }
+  .people-section--growth .portrait-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .people-section--growth .portrait { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 16px; border-top: 1px solid var(--hair); padding-top: 20px; }
+  .people-section--growth .portrait-photo { aspect-ratio: 1; }
+  .people-section--growth .portrait-photo img { padding: 0; }
+  .people-section--growth .portrait-text { padding-top: 0; }
+  .people-section--growth .portrait h3 { font-size: 1.12rem; }
+  .people-section--growth .portrait-works { margin: 8px 0; }
+  .people-section--growth .portrait-kind { display: none; }
+  .people-sources { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 16px 0; color: var(--muted); font: .8rem/1.8 var(--read); }
+  .people-sources summary { cursor: pointer; color: var(--ink); width: fit-content; }
+  .people-sources > p { max-width: 38em; margin: 16px 0; }
+  .people-sources ul { list-style: none; padding: 0; margin: 0; }
+  .people-sources li { display: grid; grid-template-columns: 135px minmax(0, 1fr); gap: 14px; padding: 10px 0; border-top: 1px solid var(--hair); overflow-wrap: anywhere; }
+  .people-sources li > span { color: var(--ink); }
+  .people-sources small { display: block; }
+  .people-sources a:hover { color: var(--seal); text-decoration: underline; }
+  .people-end { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 28px 0 0; color: var(--muted); font: .85rem var(--read); }
+  .people-end > span { color: var(--seal); border: 1px solid; padding: 2px 7px; }
+  .people-end p { margin: 0; }
+  .people-end a { margin-left: auto; }
+  .people-end a:hover { color: var(--seal); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  @media (max-width: 850px) {
+    .people-layout { grid-template-columns: 1fr; gap: 32px; }
+    .people-index { position: static; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; }
+    .people-index > p, .people-total { display: none; }
+    .people-index > a { gap: 12px; padding: 5px 0; }
+  }
+  @media (max-width: 560px) {
+    .people-page { padding-top: 24px; }
+    .people-header { padding-bottom: 28px; }
+    .people-title-row { margin-top: 28px; gap: 16px; }
+    .people-seal { width: 38px; height: 42px; font-size: 1.4rem; }
+    .people-header h1 { font-size: clamp(1.8rem, 7.5vw, 2.6rem); }
+    .people-intro { font-size: .9rem; }
+    .portrait-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 18px; }
+    .portrait h3 { font-size: 1.08rem; }
+    .portrait-works { font-size: .8rem; }
+    .people-section { margin-bottom: 44px; }
+    .people-section--growth .portrait-grid { grid-template-columns: 1fr; gap: 22px; }
+    .people-section--growth .portrait { grid-template-columns: 94px minmax(0, 1fr); }
+    .people-sources li { grid-template-columns: 100px minmax(0, 1fr); }
+  }
+</style>
