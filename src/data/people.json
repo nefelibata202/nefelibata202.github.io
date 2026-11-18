@@ -167,6 +167,23 @@
         "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Robert_de_Niro_Cannes_Film_Festival_%283x4_cropped%29.jpg/960px-Robert_de_Niro_Cannes_Film_Festival_%283x4_cropped%29.jpg"
       },
       {
+        "id": "maggie-cheung",
+        "name": "张曼玉",
+        "role": "演员",
+        "works": "《花样年华》 · 《甜蜜蜜》",
+        "image": "/people/maggie-cheung.webp",
+        "imageKind": "肖像",
+        "imagePosition": "center 30%",
+        "note": "",
+        "url": "https://en.wikipedia.org/wiki/Maggie_Cheung",
+        "linkLabel": "人物与作品",
+        "imageSource": "https://commons.wikimedia.org/wiki/File:Maggie_Cheung.jpg",
+        "imageCredit": "Roger Wo（裁切、缩放并转为 WebP）",
+        "imageLicense": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Maggie_Cheung.jpg"
+      },
+      {
         "id": "masaki-suda",
         "name": "菅田将晖",
         "role": "演员、歌手",
