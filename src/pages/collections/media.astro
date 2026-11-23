@@ -153,7 +153,7 @@ const fmtScore = (s: number) => (s > 0 ? s.toFixed(1) : '');
             <h3 class="pt">{it.slug ? <a href={`/collections/media/${it.slug}/`}>{it.title}</a> : it.title}</h3>
             <p class="pm">{[it.year, it.creator].filter(Boolean).join(' · ')}</p>
             {it.series && <span class="pseries">系列 · {it.series}</span>}
-            {it.review && <p class="pm"><a href={it.review}>阅读影评 →</a></p>}
+            {it.review && <p class="pm"><a href={it.review}>阅读{it.type === 'book' ? '书评' : '影评'} →</a></p>}
           </div>
         </article>
       ))}

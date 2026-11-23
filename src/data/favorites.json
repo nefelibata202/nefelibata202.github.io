@@ -2271,5 +2271,80 @@
       "剧情",
       "喜剧"
     ]
+  },
+  {
+    "type": "book",
+    "title": "克莱因壶",
+    "creator": "日/冈岛二人",
+    "score": 8.8,
+    "year": "2019",
+    "date": "",
+    "cover": "/covers/克莱因壶.webp",
+    "categories": [],
+    "slug": "klein-bottle",
+    "review": "/articles/klein-bottle-review/",
+    "synopsis": "上杉彰彦写的故事被改编成一款虚拟现实游戏，他和少女梨纱受邀担任测试员。测试中接连发生怪事，梨纱也突然失踪。上杉试图弄清她的去向，却发现自己的记忆未必可靠。"
+  },
+  {
+    "type": "book",
+    "title": "咸的玩笑",
+    "creator": "刘震云",
+    "score": 8.4,
+    "year": "2026",
+    "date": "",
+    "cover": "/covers/咸的玩笑.webp",
+    "categories": []
+  },
+  {
+    "type": "book",
+    "title": "焦虑的人",
+    "creator": "弗雷德里克·巴克曼",
+    "score": 8.5,
+    "year": "2021",
+    "date": "2021-08-01",
+    "cover": "/covers/焦虑的人.webp",
+    "categories": []
+  },
+  {
+    "type": "movie",
+    "title": "甜蜜蜜",
+    "creator": "陈可辛",
+    "score": 8.9,
+    "year": "1996",
+    "date": "1996-11-02",
+    "cover": "/covers/甜蜜蜜.webp",
+    "categories": [
+      "剧情",
+      "爱情"
+    ],
+    "slug": "tian-mi-mi",
+    "review": "/articles/tian-mi-mi-review/",
+    "synopsis": "黎小军和李翘各自来到香港谋生，在快餐店相识，因为都喜欢邓丽君而渐渐亲近。两人有各自的打算和牵挂，在异乡的生活里几度走散，又几度相逢。"
+  },
+  {
+    "type": "movie",
+    "title": "挽救计划",
+    "creator": "菲尔·罗德，克里斯托弗·米勒",
+    "score": 8.6,
+    "year": "2026",
+    "date": "2026-03-18",
+    "cover": "/covers/挽救计划.webp",
+    "categories": [
+      "剧情",
+      "科幻",
+      "惊悚"
+    ]
+  },
+  {
+    "type": "teleplay",
+    "title": "匹兹堡医护前线第一季",
+    "creator": "达米安·马尔卡诺，阿曼达·马尔萨利斯，约翰·卡梅伦，陈权，约翰·威尔斯，西尔弗·特里",
+    "score": 9.5,
+    "year": "2025",
+    "date": "2025-01-09",
+    "cover": "/covers/匹兹堡医护前线第一季.webp",
+    "categories": [
+      "剧情"
+    ]
   }
 ]

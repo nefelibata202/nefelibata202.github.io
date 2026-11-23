@@ -9,20 +9,22 @@ export function getStaticPaths() {
   }));
 }
 const { item } = Astro.props;
+const isBook = item.type === 'book';
+const reviewLabel = isBook ? '书评' : '影评';
 ---
 <PostLayout title={item.title} meta={[TYPE_LABEL[item.type], item.year, item.creator].filter(Boolean).join(' · ')} tags={[]}>
   <p><a href="/collections/media/">← 返回书影</a></p>
   <div class="film-info">
-    {item.cover && <img src={item.cover} alt={`${item.title}海报`} width="200" height="300" />}
+    {item.cover && <img src={item.cover} alt={`${item.title}${isBook ? '封面' : '海报'}`} width="200" height="300" />}
     <dl>
-      <dt>导演</dt><dd>{item.creator}</dd>
-      <dt>上映</dt><dd>{item.date || item.year}</dd>
+      <dt>{isBook ? '作者' : '导演'}</dt><dd>{item.creator}</dd>
+      <dt>{isBook ? '出版' : '上映'}</dt><dd>{item.date || item.year}</dd>
       {item.score > 0 && <><dt>评分</dt><dd>{item.score.toFixed(1)} / 10</dd></>}
-      <dt>类型</dt><dd>{item.categories.join(' / ')}</dd>
+      {item.categories.length > 0 && <><dt>类型</dt><dd>{item.categories.join(' / ')}</dd></>}
     </dl>
   </div>
-  {item.synopsis && <><h2>剧情简介</h2><p>{item.synopsis}</p></>}
-  {item.review && <><h2>我的影评</h2><p><a href={item.review}>阅读《{item.title}》影评 →</a></p></>}
+  {item.synopsis && <><h2>{isBook ? '内容简介' : '剧情简介'}</h2><p>{item.synopsis}</p></>}
+  {item.review && <><h2>我的{reviewLabel}</h2><p><a href={item.review}>阅读《{item.title}》{reviewLabel} →</a></p></>}
 </PostLayout>
 
 <style>
