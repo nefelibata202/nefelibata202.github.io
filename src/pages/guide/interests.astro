@@ -1,308 +1,296 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const interests = [
+interface Interest {
+  id: string;
+  title: string;
+  subtitle?: string;
+  sources: string;
+  inquiry: string;
+  output: string;
+  example?: { title: string; href: string };
+}
+
+const interests: Interest[] = [
   {
-    code: 'INT.01 · 历史',
-    domain: '叙事',
-    char: '历',
-    name: '历史故事',
-    en: 'History · Narrative',
-    desc: '喜欢<strong>带叙事感的历史</strong>，特别是微观史视角下普通人的故事——那些被大事件碾过的缝隙里，才是真正的人。',
+    id: 'history',
+    title: '历史故事',
+    sources: '从 B 站关注的历史区创作者和历史播客入手。遇到值得追问的地方，借助 AI 找资料，再读相关专业书籍的章节。',
+    inquiry: '先凭记忆讲一遍经过，挑一个想追问的「为什么」。当时的人有哪些选择？什么证据能解释他们为什么那么做？',
+    output: '写一则短笔记，交代因果、关键证据和存疑处。适合讲给别人听的故事，再留一张谈资卡。',
+    example: { title: '一条运河，四个主人：苏伊士的百年恩怨', href: '/articles/suez-canal/' },
   },
   {
-    code: 'INT.02 · 悬疑',
-    domain: '推理',
-    char: '悬',
-    name: '悬疑犯罪',
-    en: 'Mystery · Crime',
-    desc: '从《神探可伦坡》到真实犯罪播客，着迷于<strong>推理本身的快感</strong>，以及它揭示的人性逻辑。',
+    id: 'crime',
+    title: '悬疑犯罪',
+    sources: '从《天网》、犯罪播客、公众号和 YouTube、B 站视频认识案件。碰到关键细节或说法冲突，再回查公开裁判文书、官方通报或可靠报道。',
+    inquiry: '梳理事件经过，找出改变判断的那条证据。最后确认了什么？哪些细节只出现在转述里？',
+    output: '先记下案名、一句案情和来源。想深挖的案件，做一次两分钟口述。查证充分、值得讲的，再整理成谈资卡。',
   },
   {
-    code: 'INT.03 · 系统',
-    domain: '核心',
-    domainGold: true,
-    char: '知',
-    name: '知识管理',
-    en: 'PKM · Systems',
-    desc: '用卡片笔记法梳理思想，让笔记<strong>互相牵连生长</strong>。这个站就是这套方法最好的产物。',
+    id: 'craft-beer',
+    title: '精酿啤酒',
+    sources: '目前主要看 YouTube，也多尝不同风格的酒。喝到想弄明白的差别，再翻自己的啤酒分类笔记或风格指南。',
+    inquiry: '选两款容易混淆的酒放在一起尝。先比较香气和入口的差别，再查这些差别可能来自原料、烘焙还是发酵。',
+    output: '做一条品饮对照，记下两款酒各自的香气、喝起来最明显的差别，以及下次在什么场合会点哪一款。',
+    example: { title: '两杯酒都这么黑，为什么一杯干爽、一杯甜润？', href: '/garden/rediscovery-2026-11-21-why-dark-beers-taste-different/' },
   },
   {
-    code: 'INT.04 · 感官',
-    domain: '工艺',
-    char: '精',
-    name: '精酿啤酒',
-    en: 'Craft Beer',
-    desc: '相信好酒应该有故事。酒标、酿造工艺、风格谱系——每一杯都是<strong>值得细读的文本</strong>。',
-  },
-  {
-    code: 'INT.05 · 语言',
-    domain: '语言',
-    char: '英',
-    name: '英语学习',
-    en: 'English Learning',
-    desc: '不只是工具，而是进入<strong>另一种思维频道</strong>的方式——用英语想问题，结论有时会不一样。',
-  },
-  {
-    code: 'INT.06 · 身体',
-    domain: '习惯',
-    char: '运',
-    name: '运动锻炼',
-    en: 'Sport · Fitness',
-    desc: '重训 + 跑步。身体练出来的东西，是<strong>最难被夺走的资产</strong>，也是最稳定的心理锚点。',
+    id: 'sports',
+    title: '运动锻炼',
+    subtitle: '羽毛球与跑步',
+    sources: '从自己的打球和跑步体验出发。有录像就回看相似回合，跑步则记路线、分段配速和体感。遇到反复卡住的问题，再查资料或请教教练。',
+    inquiry: '羽毛球挑一个反复失分的场景，看回合是从哪一拍开始被动的。跑步找同一路线的几次记录，对照分段节奏和体感。',
+    output: '留一条训练复盘，写下我观察到什么、下次想试什么，以及怎么判断这次调整有没有帮助。',
+    example: { title: '跑步时，手臂和躯干在忙什么？', href: '/garden/rediscovery-2026-11-19-what-arms-and-trunk-do-while-running/' },
   },
 ];
+const description = '我怎么追历史故事、看真实案件、尝精酿、练羽毛球和跑步，又会留下什么。';
 ---
 
-<BaseLayout title="兴趣 · 归图" description="长期喜好与痴迷领域">
-  <div class="island-page">
-
-    <header class="island-header">
-      <a href="/guide" class="island-back">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M19 12H5M12 5l-7 7 7 7"/>
-        </svg>
-        归图
-      </a>
-      <div class="island-title-block">
-        <p class="island-kicker">/ 03 · INTERESTS</p>
-        <h1 class="island-title">兴趣</h1>
-        <p class="island-lede">长期喜好与痴迷领域</p>
-      </div>
+<BaseLayout title="兴趣 · 归图" description={description} wide>
+  <div class="interests-page">
+    <header class="interests-header">
+      <a class="interests-back" href="/guide">← 归图</a>
+      <h1>兴趣</h1>
+      <p>{description}</p>
     </header>
 
-    <main class="int-grid">
-      {interests.map((item) => (
-        <div class="int-card">
-          <div class="int-bar">
-            <span class="int-code">{item.code}</span>
-            <span class={`int-domain${item.domainGold ? ' int-domain--gold' : ''}`}>{item.domain}</span>
-          </div>
-          <div class="int-body">
-            <span class="int-char" aria-hidden="true">{item.char}</span>
-            <div class="int-name">{item.name}</div>
-            <div class="int-en">{item.en}</div>
-            <hr class="int-rule" />
-            <p class="int-desc" set:html={item.desc} />
-          </div>
-        </div>
-      ))}
-    </main>
+    <nav class="interests-index" aria-label="兴趣目录">
+      {interests.map(interest => <a href={`#${interest.id}`}>{interest.title}</a>)}
+      <a href="#research">深入研究</a>
+    </nav>
 
+    {interests.map(interest => (
+      <section class="interest" id={interest.id} aria-labelledby={`${interest.id}-title`}>
+        <header>
+          <h2 id={`${interest.id}-title`}>{interest.title}</h2>
+          {interest.subtitle && <p class="interest-subtitle">{interest.subtitle}</p>}
+        </header>
+
+        <div>
+          <dl class="interest-details">
+            <div>
+              <dt>资料来源</dt>
+              <dd>{interest.sources}</dd>
+            </div>
+            <div>
+              <dt>研究角度</dt>
+              <dd>{interest.inquiry}</dd>
+            </div>
+            <div>
+              <dt>输出形式</dt>
+              <dd>{interest.output}</dd>
+            </div>
+          </dl>
+          {interest.example && (
+            <p class="interest-example">
+              <span>已发表</span>
+              <a href={interest.example.href}>{interest.example.title} <span aria-hidden="true">↗</span></a>
+            </p>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section class="interest-research" id="research" aria-labelledby="research-title">
+      <h2 id="research-title">什么时候深入研究</h2>
+      <p>一个问题过了几天还想追问，我就拿它做一轮研究。</p>
+      <ol>
+        <li><strong>先想清楚要弄懂什么。</strong> 写一句「研究完，我希望自己能解释、区分或判断什么」。</li>
+        <li><strong>围绕这一问查证。</strong> 用 AI 找资料、讨论和追问，回到原始资料核对关键说法。</li>
+        <li><strong>合上资料讲一遍。</strong> 用自己的话说清结论、依据和存疑处，再写成笔记。</li>
+      </ol>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-.island-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px 28px 80px;
-}
-
-/* ── header (mirrors [island].astro) ── */
-.island-header {
-  padding-bottom: 24px;
-  border-bottom: 2px solid var(--line);
-  margin-bottom: 0;
-}
-
-.island-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 4px 8px;
-  border: 2px solid transparent;
-  transition: all 0.12s;
-  margin-bottom: 20px;
-}
-
-.island-back:hover {
-  color: var(--ink);
-  border-color: var(--line);
-  background: var(--soft);
-  box-shadow: var(--shadow-sm);
-}
-
-.island-kicker {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--gold);
-  letter-spacing: 0.1em;
-  margin: 0 0 4px;
-}
-
-.island-title {
-  font-family: var(--disp);
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  margin: 0 0 10px;
-}
-
-.island-lede {
-  font-family: var(--read);
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.65;
-}
-
-/* ── 2-col card grid ── */
-.int-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  padding-top: 32px;
-  animation: islandFadeIn 0.28s ease both;
-}
-
-@keyframes islandFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .int-grid { animation: none; }
-}
-
-/* ── card ── */
-.int-card {
-  position: relative;
-  background: var(--paper);
-  border: 3px solid var(--line);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  transition: transform 0.12s, box-shadow 0.12s;
-}
-
-.int-card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* top bar */
-.int-bar {
-  background: var(--soft);
-  border-bottom: 2px solid var(--hair);
-  padding: 7px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.int-code {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-}
-
-.int-domain {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
-  border: 1.5px solid var(--seal);
-  color: var(--seal);
-  padding: 1px 6px;
-}
-
-.int-domain--gold {
-  border-color: var(--gold);
-  color: var(--on-gold);
-  background: var(--gold);
-}
-
-/* card body */
-.int-body {
-  position: relative;
-  padding: 18px 16px 20px;
-}
-
-/* watermark character */
-.int-char {
-  position: absolute;
-  bottom: -14px;
-  right: -4px;
-  font-size: 7.5rem;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(22, 20, 15, 0.055);
-  font-family: var(--zh);
-  pointer-events: none;
-  user-select: none;
-}
-
-/* dark mode watermark */
-:global([data-theme="dark"]) .int-char {
-  color: rgba(242, 236, 220, 0.07);
-}
-
-@media (prefers-color-scheme: dark) {
-  :global(:root:not([data-theme="light"])) .int-char {
-    color: rgba(242, 236, 220, 0.07);
-  }
-}
-
-.int-name {
-  font-family: var(--disp);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
-  margin: 0 0 3px;
-  position: relative;
-  z-index: 1;
-}
-
-.int-en {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0 0 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.int-rule {
-  border: none;
-  border-top: 1px solid var(--hair);
-  margin: 0 0 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.int-desc {
-  font-family: var(--read);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  color: var(--muted);
-  margin: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.int-desc :global(strong) {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-/* ── responsive ── */
-@media (max-width: 560px) {
-  .island-page {
-    padding: 20px 16px 60px;
+  .interests-page {
+    --interest-accent: color-mix(in srgb, var(--seal) 92%, var(--ink));
+    padding: 28px 0 72px;
+    font-family: var(--read);
   }
 
-  .int-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding-top: 24px;
+  .interests-header {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--hair);
   }
-}
+
+  .interests-back {
+    display: inline-block;
+    margin-bottom: 28px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--hair);
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
+  .interests-header h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    letter-spacing: .04em;
+    line-height: 1.2;
+  }
+
+  .interests-header p {
+    max-width: 35em;
+    margin: 12px 0 0;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  .interests-index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .interests-index a {
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
+  .interests-back:hover,
+  .interests-index a:hover,
+  .interest-example a:hover {
+    color: var(--interest-accent);
+    border-color: var(--seal);
+  }
+
+  .interest {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--hair);
+    scroll-margin-top: 24px;
+  }
+
+  .interest h2,
+  .interest-research h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.4;
+  }
+
+  .interest-subtitle {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: .85rem;
+  }
+
+  .interest-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0;
+  }
+
+  .interest-details dt {
+    margin-bottom: 6px;
+    color: var(--interest-accent);
+    font-size: .88rem;
+    font-weight: 700;
+  }
+
+  .interest-details dd {
+    margin: 0;
+    font-size: .94rem;
+    line-height: 1.8;
+  }
+
+  .interest-example {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px 12px;
+    margin: 16px 0 0;
+    font-size: .85rem;
+  }
+
+  .interest-example > span {
+    color: var(--muted);
+  }
+
+  .interest-example a {
+    text-decoration: underline;
+    text-decoration-color: var(--hair);
+    text-underline-offset: 4px;
+  }
+
+  .interest-example a:hover {
+    text-decoration-color: var(--seal);
+  }
+
+  .interest-research {
+    max-width: 42rem;
+    margin-top: 42px;
+    padding: 6px 0 6px 20px;
+    border-left: 2px solid var(--gold);
+    scroll-margin-top: 24px;
+  }
+
+  .interest-research p {
+    margin: 8px 0 12px;
+    color: var(--muted);
+  }
+
+  .interest-research ol {
+    display: grid;
+    gap: 5px;
+    margin: 0;
+    padding-left: 1.25em;
+    font-size: .94rem;
+    line-height: 1.8;
+  }
+
+  .interest-research li::marker {
+    color: var(--interest-accent);
+  }
+
+  @media (max-width: 850px) {
+    .interest {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .interests-page {
+      padding: 24px 0 56px;
+    }
+
+    .interests-back {
+      margin-bottom: 22px;
+    }
+
+    .interests-index {
+      column-gap: 16px;
+    }
+
+    .interest-details {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .interest-details > div {
+      display: grid;
+      grid-template-columns: 4em minmax(0, 1fr);
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .interest-details dt {
+      margin: 0;
+    }
+
+    .interest-research {
+      margin-top: 32px;
+      padding-left: 16px;
+    }
+  }
 </style>
